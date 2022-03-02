@@ -1,5 +1,5 @@
 {
-  "name": "guildauth",
+  "name": "@d3vmark/guildauth",
   "version": "1.0.0",
   "description": "Authentication module for Guild.xyz Public API ",
   "main": "main.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/agoraxyz/guildauth.git"
+    "url": "git+https://github.com/agoraxyz/guildauth.git"
   },
   "keywords": [
     "guildxyz",
