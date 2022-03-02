@@ -1,0 +1,35 @@
+{
+  "name": "guildauth",
+  "version": "1.0.0",
+  "description": "Authentication module for Guild.xyz Public API ",
+  "main": "main.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agoraxyz/guildauth.git"
+  },
+  "keywords": [
+    "guildxyz",
+    "guildauth",
+    "agoraxyz",
+    "agoraspace"
+  ],
+  "author": {
+    "name": "D3v",
+    "email": "d3v@zgen.hu"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/agoraxyz/guildauth/issues"
+  },
+  "homepage": "https://guild.xyz",
+  "devDependencies": {
+    "jest": "^27.5.1"
+  },
+  "dependencies": {
+    "ethers": "^5.5.4",
+    "fast-json-stable-stringify": "^2.1.0"
+  }
+}
