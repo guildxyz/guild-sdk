@@ -1,5 +1,5 @@
 {
-  "name": "@d3vmark/guildauth",
+  "name": "@agoraxyz/guildauth",
   "version": "1.0.0",
   "description": "Authentication module for Guild.xyz Public API ",
   "main": "main.js",

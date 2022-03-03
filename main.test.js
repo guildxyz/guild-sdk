@@ -29,52 +29,60 @@ describe("Check nonce generation", () => {
   });
 });
 
-/*
 describe("Check prepareRequest", () => {
   const auth = new guildAuth();
 
-  describe("Test without payload", () => {
-    auth.prepareRequest().then((requestWithoutPayloadString) => {
-      test("Check request without payload return valid json", () => {
-        expect(parserTest(requestWithoutPayloadString)).toBe(0);
-      });
+  let requestWithoutPayloadString, requestWithPayloadString;
 
-      const requestWithoutPayload = JSON.parse(requestWithoutPayloadString);
-      test("Check request object is not null", () => {
-        expect(Object.entries(requestWithoutPayload).length).not.toBe(0);
-      });
-      it("asd")
-      auth
-        .signMessage(
-          requestWithoutPayload.validation.nonce,
-          requestWithoutPayload.validation.random,
-          requestWithoutPayload.validation.hash,
-          requestWithoutPayload.validation.timestamp
-        )
-        .then((signedMessage) => {
-          test("Check signMessage", () => {
-            expect(signedMessage).toMatch(
-              requestWithoutPayload.validation.addressSignedMessage
-            );
-          });
-        });
-    });
+  beforeEach(async () => {
+    requestWithoutPayloadString = await auth.prepareRequest();
+    requestWithPayloadString = await auth.prepareRequest({ test: 1234 });
   });
-});
 
-
-describe("Test with payload", () => {
-  const requestWithPayloadString = auth.prepareRequest({
-    test: 1234,
+  test("Check request without payload return valid json", () => {
+    expect(parserTest(requestWithoutPayloadString)).toBe(0);
   });
+
   test("Check request with payload return valid json", () => {
     expect(parserTest(requestWithPayloadString)).toBe(0);
   });
-  const requestWithPayload = JSON.parse(requestWithPayloadString);
-  test("Check request object is not null", () => {
+
+  test("Check request object is not null with no payload", () => {
+    const requestWithoutPayload = JSON.parse(requestWithoutPayloadString);
+    expect(Object.entries(requestWithoutPayload).length).not.toBe(0);
+  });
+
+  test("Check request object is not null with payload", () => {
+    const requestWithPayload = JSON.parse(requestWithPayloadString);
     expect(Object.entries(requestWithPayload).length).not.toBe(0);
   });
+
+  test("Check signMessage with no payload", async () => {
+    const requestWithoutPayload = JSON.parse(requestWithoutPayloadString);
+    const signedMessage = await auth.signMessage(
+      requestWithoutPayload.validation.nonce,
+      requestWithoutPayload.validation.random,
+      requestWithoutPayload.validation.hash,
+      requestWithoutPayload.validation.timestamp
+    );
+    expect(signedMessage).toMatch(
+      requestWithoutPayload.validation.addressSignedMessage
+    );
   });
+
+  test("Check signMessage with payload", async () => {
+    const requestWithPayload = JSON.parse(requestWithPayloadString);
+    const signedMessage = await auth.signMessage(
+      requestWithPayload.validation.nonce,
+      requestWithPayload.validation.random,
+      requestWithPayload.validation.hash,
+      requestWithPayload.validation.timestamp
+    );
+    expect(signedMessage).toMatch(
+      requestWithPayload.validation.addressSignedMessage
+    );
+  });
+});
 
 const parserTest = (payload) => {
   try {
@@ -84,4 +92,3 @@ const parserTest = (payload) => {
     return 1;
   }
 };
-*/

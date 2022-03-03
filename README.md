@@ -7,7 +7,7 @@ One of the most common problems with digital signature-based authentication syst
 
 ## Example
 ```javascript
-const guildAuth = require("@d3vmark/guildauth");
+const guildAuth = require("@agoraxyz/guildauth");
 
 //If you initialize guildAuth without a mnemonic, it will automatically generate a private key
 const auth = new guildAuth();
