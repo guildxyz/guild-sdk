@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import clinet from "../src/clinet";
+import clinet from "../src/client";
 
 const testWallet = ethers.Wallet.fromMnemonic(process.env.TEST_WALLET_MNEMONIC);
 
@@ -19,7 +19,7 @@ describe("Check client sdk function", () => {
   });
 
   test("POST /user/join", async () => {
-    const joinResponse = await clinet.user.join(testWallet, 2158);
+    const joinResponse = await clinet.user.join(2158, testWallet);
     expect(joinResponse.alreadyJoined).toBe(false);
     expect(joinResponse.inviteLink).toMatch(/^https:\/\/discord.gg\/.+$/);
   });
