@@ -2,7 +2,13 @@ import axios from "axios";
 import { ethers } from "ethers";
 import prepareRequest from "./auth";
 import { API_BASE_URL } from "./common";
-import { GetMembershipsResponse, JoinResponse } from "./types";
+import {
+  GetAllGuildsResponse,
+  GetGuildByIdResponse,
+  GetMembershipsResponse,
+  GetUserAccessResponse,
+  JoinResponse,
+} from "./types";
 
 const user = {
   async getMemberships(
@@ -32,6 +38,39 @@ const user = {
   },
 };
 
+const guild = {
+  async getAll(): Promise<GetAllGuildsResponse> {
+    const res = await axios.get(`${API_BASE_URL}/guild`);
+    return res.data;
+  },
+
+  async get(id: number | string): Promise<GetGuildByIdResponse> {
+    const res = await axios.get(`${API_BASE_URL}/guild/${id}`);
+    return res.data;
+  },
+
+  async getUserAccess(
+    guildId: number,
+    address: string
+  ): Promise<GetUserAccessResponse> {
+    const res = await axios.get(
+      `${API_BASE_URL}/guild/access/${guildId}/${address}`
+    );
+    return res.data;
+  },
+
+  async getUserCurrentAccess(
+    guildId: number,
+    address: string
+  ): Promise<GetUserAccessResponse> {
+    const res = await axios.get(
+      `${API_BASE_URL}/guild/member/${guildId}/${address}`
+    );
+    return res.data;
+  },
+};
+
 export default {
   user,
+  guild,
 };
