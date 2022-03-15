@@ -1,15 +1,13 @@
-import { ethers } from "ethers";
 import prepareRequest from "../src/auth";
+import { testWallet } from "./common";
 
 describe("Check prepareRequest", () => {
-  const wallet = ethers.Wallet.createRandom();
-
   test("Check request without payload returns valid json", async () => {
-    const preparedRequestString = await prepareRequest(wallet);
+    const preparedRequestString = await prepareRequest(testWallet);
     const preparedRequest = JSON.parse(preparedRequestString);
     expect(preparedRequest.payload).toStrictEqual({});
     expect(preparedRequest.validation.address).toBe(
-      wallet.address.toLowerCase()
+      testWallet.address.toLowerCase()
     );
     expect(preparedRequest.validation.addressSignedMessage.length).toBe(132);
     expect(preparedRequest.validation.nonce.length).toBe(66);
@@ -20,11 +18,11 @@ describe("Check prepareRequest", () => {
 
   test("Check request with payload returns valid json", async () => {
     const payload = { test: 1234 };
-    const preparedRequestString = await prepareRequest(wallet, payload);
+    const preparedRequestString = await prepareRequest(testWallet, payload);
     const preparedRequest = JSON.parse(preparedRequestString);
     expect(preparedRequest.payload).toStrictEqual(payload);
     expect(preparedRequest.validation.address).toBe(
-      wallet.address.toLowerCase()
+      testWallet.address.toLowerCase()
     );
     expect(preparedRequest.validation.addressSignedMessage.length).toBe(132);
     expect(preparedRequest.validation.nonce.length).toBe(66);
