@@ -215,7 +215,7 @@ type UpdateGuildParams = {
   showMembers?: boolean;
 };
 
-type CreateGUildResponse = {
+type CreateGuildResponse = {
   id: number;
   name: string;
   urlName: string;
@@ -248,6 +248,22 @@ type DeleteRoleResponse = {
   success: boolean;
 };
 
+type ErrorItem = {
+  msg: string;
+  value?: any;
+  param?: string;
+  location?: string;
+};
+
+class ApiError extends Error {
+  errors: ErrorItem[];
+
+  constructor(errors: ErrorItem[]) {
+    super(errors[0].msg);
+    this.errors = errors;
+  }
+}
+
 export {
   Chain,
   Requirement,
@@ -259,7 +275,7 @@ export {
   GetUserAccessResponse,
   CreateGuildParams,
   UpdateGuildParams,
-  CreateGUildResponse,
+  CreateGuildResponse,
   DeleteGuildResponse,
   GetRoleResponse,
   CreateRoleParams,
@@ -267,4 +283,5 @@ export {
   CreateRoleResponse,
   UpdateRoleResponse,
   DeleteRoleResponse,
+  ApiError,
 };
