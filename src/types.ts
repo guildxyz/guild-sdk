@@ -183,7 +183,7 @@ type Requirement =
       };
     }
   | {
-      type: "WHITELIST";
+      type: "ALLOWLIST";
       data: {
         addresses: string[];
       };
