@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import client from "../src/client";
+import * as client from "../src/client";
 import {
   CreateGuildParams,
   CreateRoleParams,

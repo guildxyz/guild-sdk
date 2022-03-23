@@ -5,7 +5,7 @@
   <a><img src="https://img.shields.io/badge/license-MIT-blue" /></a>
   <br/>
   <a href="https://guild.xyz">Application</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>ę
     <a href="https://twitter.com/guildxyz">Twitter</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
     <a href="https://docs.guild.xyz/guild/">Docs</a>

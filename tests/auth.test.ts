@@ -1,4 +1,4 @@
-import prepareRequest from "../src/auth";
+import { prepareRequest } from "../src/auth";
 import { testWallet } from "./common";
 
 describe("Check prepareRequest", () => {
