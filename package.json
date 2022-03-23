@@ -23,7 +23,8 @@
   },
   "homepage": "https://guild.xyz",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "npx tsc"
   },
   "dependencies": {
     "axios": "^0.26.1",
