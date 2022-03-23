@@ -2,7 +2,8 @@
     "name": "@guildxyz/sdk",
     "version": "1.0.1",
     "description": "SDK for Guild.xyz Public API ",
-    "main": "main.js",
+    "main": "./build/src/client.js",
+    "types": "./build/src/client.d.ts",
     "repository": {
         "type": "git",
         "url": "https://github.com/agoraxyz/guild-sdk.git"
@@ -34,7 +35,7 @@
     "homepage": "https://guild.xyz",
     "scripts": {
         "test": "jest",
-        "build": "npx tsc",
+        "build": "tsc",
         "prepare": "npm run build",
         "prepack": "npm run build"
     },
