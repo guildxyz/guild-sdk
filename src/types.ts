@@ -231,19 +231,19 @@ type DeleteGuildResponse = {
   success: boolean;
 };
 
-type CreateRoleParams = Role;
+type CreateRoleParams = Role & { guildId: number };
 
 type UpdateRoleParams = {
-  name?: string;
+  name: string;
   imageUrl?: string;
   description?: string;
-  logic?: Logic;
-  requirements?: Requirement[];
+  logic: Logic;
+  requirements: Requirement[];
 };
 
-type GetRoleResponse = Role;
-type CreateRoleResponse = Role;
-type UpdateRoleResponse = Role;
+type GetRoleResponse = Role & { id: number };
+type CreateRoleResponse = Role & { id: number };
+type UpdateRoleResponse = Role & { id: number };
 type DeleteRoleResponse = {
   success: boolean;
 };
