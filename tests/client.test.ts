@@ -166,7 +166,7 @@ describe("Check client sdk function", () => {
 
     // check if deleted
     const deletedRole = await client.role.get(createRoleReponse.id);
-    expect(deletedRole).toBe("");
+    expect(deletedRole).toBe(null);
 
     // delete
     const deleteGuildResponse = await client.guild.delete(
@@ -177,6 +177,14 @@ describe("Check client sdk function", () => {
 
     // check if deleted
     const deletedGuild = await client.guild.get(createGuildReponse.id);
-    expect(deletedGuild).toBe("");
+    expect(deletedGuild).toBe(null);
+  });
+
+  test("GET /guild/:id and GET /role/:id - not exists", async () => {
+    const guild = await client.guild.get(9876543287543);
+    expect(guild).toBe(null);
+
+    const role = await client.role.get(9876543287543);
+    expect(role).toBe(null);
   });
 });

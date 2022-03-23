@@ -63,6 +63,9 @@ const guild = {
 
   async get(id: number | string): Promise<GetGuildByIdResponse> {
     const res = await axios.get(`${API_BASE_URL}/guild/${id}`);
+    if (res.status === 204) {
+      return null;
+    }
     return res.data;
   },
 
@@ -144,6 +147,9 @@ const guild = {
 const role = {
   async get(id: number): Promise<GetRoleResponse> {
     const res = await axios.get(`${API_BASE_URL}/role/${id}`);
+    if (res.status === 204) {
+      return null;
+    }
     return res.data;
   },
 

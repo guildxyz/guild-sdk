@@ -225,8 +225,6 @@ type CreateGuildResponse = {
   showMembers: boolean;
 };
 
-// TODO UpdateGuildResponse
-
 type DeleteGuildResponse = {
   success: boolean;
 };
