@@ -1,31 +1,37 @@
 import { ethers } from "ethers";
-import clinet from "../src/client";
+import client from "../src/client";
+import {
+  CreateGuildParams,
+  CreateRoleParams,
+  UpdateGuildParams,
+  UpdateRoleParams,
+} from "../src/types";
 
 const testWallet = ethers.Wallet.fromMnemonic(process.env.TEST_WALLET_MNEMONIC);
 
 describe("Check client sdk function", () => {
   test("GET /user/membership/:address - interacted with guild", async () => {
-    const membership = await clinet.user.getMemberships(testWallet.address);
+    const membership = await client.user.getMemberships(testWallet.address);
     expect(
       membership.some((x) => x.guildId === 1985 && x.roleids.includes(1904))
     ).toBe(true);
   });
 
   test("GET /user/membership/:address - hasn't interacted with guild", async () => {
-    const membership = await clinet.user.getMemberships(
+    const membership = await client.user.getMemberships(
       "0x0000000000000000000000000000000000000000"
     );
     expect(membership).toStrictEqual([]);
   });
 
   test("POST /user/join", async () => {
-    const joinResponse = await clinet.user.join(2158, testWallet);
+    const joinResponse = await client.user.join(2158, testWallet);
     expect(joinResponse.alreadyJoined).toBe(false);
     expect(joinResponse.inviteLink).toMatch(/^https:\/\/discord.gg\/.+$/);
   });
 
   test("GET /guild", async () => {
-    const guilds = await clinet.guild.getAll();
+    const guilds = await client.guild.getAll();
     expect(guilds.length).toBeGreaterThan(100);
 
     const ourGuild = guilds.find((x) => x.id === 1985);
@@ -34,19 +40,19 @@ describe("Check client sdk function", () => {
   });
 
   test("GET /guild/:id - ID (number)", async () => {
-    const guild = await clinet.guild.get(1985);
+    const guild = await client.guild.get(1985);
     expect(guild.name).toBe("Our Guild");
     expect(guild.urlName).toBe("our-guild");
   });
 
   test("GET /guild/:id - urlName", async () => {
-    const guild = await clinet.guild.get("our-guild");
+    const guild = await client.guild.get("our-guild");
     expect(guild.name).toBe("Our Guild");
     expect(guild.id).toBe(1985);
   });
 
   test("GET /guild/access/:id/:address", async () => {
-    const userAccess = await clinet.guild.getUserAccess(
+    const userAccess = await client.guild.getUserAccess(
       1985,
       testWallet.address
     );
@@ -55,11 +61,122 @@ describe("Check client sdk function", () => {
   });
 
   test("GET /guild/member/:id/:address", async () => {
-    const userAccess = await clinet.guild.getUserCurrentAccess(
+    const userAccess = await client.guild.getUserCurrentAccess(
       1985,
       testWallet.address
     );
     expect(userAccess.find((x) => x.roleId === 1904)?.access).toBe(true);
     expect(userAccess.find((x) => x.roleId === 1899)?.access).toBe(false);
+  });
+
+  test("guild and role CRUD", async () => {
+    // create guild
+    const testGuildName = "Test guild";
+    const createGuildParams: CreateGuildParams = {
+      name: testGuildName,
+      imageUrl: "/guildLogos/2.svg",
+      description: "Guild created by the SDK's unit test.",
+      roles: [
+        {
+          name: "Test role",
+          logic: "AND",
+          requirements: [
+            {
+              type: "ALLOWLIST",
+              data: { addresses: [testWallet.address] },
+            },
+          ],
+        },
+      ],
+    };
+
+    const createGuildReponse = await client.guild.create(
+      createGuildParams,
+      testWallet
+    );
+    expect(createGuildReponse.name).toBe(testGuildName);
+
+    // check if created
+    const createdGuild = await client.guild.get(createGuildReponse.id);
+    expect(createdGuild.name).toBe(testGuildName);
+    expect(createdGuild.roles.length).toBe(1);
+
+    // update guild
+    const updatedTestGuildName = "Test guild for SDK";
+    const updateGuildParams: UpdateGuildParams = {
+      name: updatedTestGuildName,
+    };
+    const updateGuildResponse = await client.guild.update(
+      createGuildReponse.id,
+      updateGuildParams,
+      testWallet
+    );
+    expect(updateGuildResponse.name).toBe(updatedTestGuildName);
+
+    // check if updated
+    const updatedGuild = await client.guild.get(updateGuildResponse.id);
+    expect(updatedGuild.name).toBe(updatedTestGuildName);
+
+    // create role
+    const newRoleName = "New role";
+    const createRoleParams: CreateRoleParams = {
+      guildId: createGuildReponse.id,
+      name: newRoleName,
+      logic: "AND",
+      requirements: [
+        {
+          type: "FREE",
+        },
+      ],
+    };
+    const createRoleReponse = await client.role.create(
+      createRoleParams,
+      testWallet
+    );
+    expect(createRoleReponse.name).toBe(newRoleName);
+
+    // check if created
+    const createdRole = await client.role.get(createRoleReponse.id);
+    expect(createdRole.name).toBe(newRoleName);
+    expect(createdRole.logic).toBe("AND");
+
+    // update role
+    const updatedRoleName = "New role (updated)";
+    const updateRoleParams: UpdateRoleParams = {
+      name: updatedRoleName,
+      logic: "OR",
+      requirements: createRoleParams.requirements,
+    };
+
+    // check if updated
+    const updateRoleResponse = await client.role.update(
+      createdRole.id,
+      updateRoleParams,
+      testWallet
+    );
+    expect(updateRoleResponse.name).toBe(updatedRoleName);
+    expect(updateRoleResponse.logic).toBe("OR");
+
+    // delete role
+    const deleteRoleResponse = await client.role.delete(
+      createRoleReponse.id,
+      testWallet
+    );
+    expect(deleteRoleResponse.success).toBe(true);
+
+    // check if deleted
+    const deletedRole = await client.role.get(createRoleReponse.id);
+    expect(deletedRole).toBe("");
+
+    // delete
+    const deleteGuildResponse = await client.guild.delete(
+      createGuildReponse.id,
+      testWallet
+    );
+    expect(deleteGuildResponse.success).toBe(true);
+
+    // check if deleted
+    const deletedGuild = await client.guild.get(createGuildReponse.id);
+    expect(deletedGuild).toBe("");
   });
 });
