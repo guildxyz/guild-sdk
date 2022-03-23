@@ -2,7 +2,7 @@
 <h1> Guild SDK for TypeScript | WIP </h1>
 <a href="https://www.npmjs.com/package/@guildxyz/sdk"><img src="https://img.shields.io/npm/v/prisma.svg?style=flat" /></a>
   <a href="https://github.com/agoraxyz/guild-sdk/blob/main/CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" /></a>
-  <img src="https://img.shields.io/badge/license-MIT-blue" />
+  <a><img src="https://img.shields.io/badge/license-MIT-blue" /></a>
   <br/>
   <a href="https://guild.xyz">Application</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
