@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ethers } from "ethers";
-import prepareRequest from "./auth";
+import { prepareRequest } from "./auth";
 import { API_BASE_URL } from "./common";
 import {
   ApiError,
@@ -208,8 +208,4 @@ const role = {
   },
 };
 
-export default {
-  user,
-  guild,
-  role,
-};
+export { user, guild, role };

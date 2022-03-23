@@ -1,9 +1,9 @@
 {
     "name": "@guildxyz/sdk",
-    "version": "1.0.1",
+    "version": "1.0.4",
     "description": "SDK for Guild.xyz Public API ",
-    "main": "./build/src/client.js",
-    "types": "./build/src/client.d.ts",
+    "main": "./build/src/main.js",
+    "types": "./build/src/main.d.ts",
     "repository": {
         "type": "git",
         "url": "https://github.com/agoraxyz/guild-sdk.git"

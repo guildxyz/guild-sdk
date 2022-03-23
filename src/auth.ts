@@ -35,4 +35,5 @@ const prepareRequest = async (wallet: ethers.Wallet, payload?: object) => {
   return stringify(body);
 };
 
-export default prepareRequest;
+// eslint-disable-next-line import/prefer-default-export
+export { prepareRequest };
