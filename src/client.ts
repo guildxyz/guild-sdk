@@ -151,7 +151,7 @@ const role = {
     params: CreateRoleParams,
     wallet: ethers.Wallet
   ): Promise<CreateRoleResponse> {
-    const body = prepareRequest(wallet, params);
+    const body = await prepareRequest(wallet, params);
     try {
       const res = await axios.post(`${API_BASE_URL}/role`, body, { headers });
       return res.data;
@@ -169,7 +169,7 @@ const role = {
     params: UpdateGuildParams,
     wallet: ethers.Wallet
   ): Promise<UpdateRoleResponse> {
-    const body = prepareRequest(wallet, params);
+    const body = await prepareRequest(wallet, params);
     try {
       const res = await axios.patch(`${API_BASE_URL}/role/${id}`, body, {
         headers,
@@ -185,7 +185,7 @@ const role = {
   },
 
   async delete(id: number, wallet: ethers.Wallet): Promise<DeleteRoleResponse> {
-    const body = prepareRequest(wallet);
+    const body = await prepareRequest(wallet);
     try {
       const res = await axios.delete(`${API_BASE_URL}/role/${id}`, {
         data: body,
