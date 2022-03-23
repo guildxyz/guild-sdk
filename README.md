@@ -4,7 +4,16 @@
   <a href="https://github.com/agoraxyz/guild-sdk/blob/main/CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" /></a>
   <img src="https://img.shields.io/badge/license-MIT-blue" />
   <br/>
-[Application](https://guild.xyz) • [Twitter](https://twitter.com/guildxyz) • [Docs](https://docs.guild.xyz/guild/) • [Community Roadmap](https://roadmap.guild.xyz/) • [Github](https://github.com/agoraxyz)
+  <a href="https://guild.xyz">Application</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+    <a href="https://twitter.com/guildxyz">Twitter</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+    <a href="https://docs.guild.xyz/guild/">Docs</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+    <a href="https://roadmap.guild.xyz/">Community Roadmap</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+    <a href="https://github.com/agoraxyz">Github</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
 </div>
   
   
