@@ -57,6 +57,3 @@ const wallet = auth.createRandomWallet();
 console.log(auth.createRandomMnemonic());
 // letter sphere minimum tissue armed thumb wolf catalog theory mass arctic notice
 ```
-
-## Authentication flowchart
-![Authflow](https://user-images.githubusercontent.com/34040149/156470827-af06aa9a-ffc0-4b18-906b-eb5ebc62c37e.png)
