@@ -1,8 +1,18 @@
-# Authentication module for Guild.xyz Public API | WIP
+<div align="center">
+<h1> Guild SDK for TypeScript | WIP </h1>
+<a href="https://www.npmjs.com/package/@guildxyz/sdk"><img src="https://img.shields.io/npm/v/prisma.svg?style=flat" /></a>
+  <a href="https://github.com/agoraxyz/guild-sdk/blob/main/CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" /></a>
+  <img src="https://img.shields.io/badge/license-MIT-blue" />
+  <br/>
+[Application](https://guild.xyz) • [Twitter](https://twitter.com/guildxyz) • [Docs](https://docs.guild.xyz/guild/) • [Community Roadmap](https://roadmap.guild.xyz/) • [Github](https://github.com/agoraxyz)
+</div>
+  
+  
+  
+## Summary
+The Guild SDK library is a Typescript library for interacting with the Guild API. This document explains how to authenticate, manage your Guilds easily through the SDK. Developed and maintained by the @agoraxyz team.
 
-
-
-## Background
+## Authentication Overview
 One of the most common problems with digital signature-based authentication systems is the replay attack. We have developed a new authentication method against this vulnerability, which both ensures the integrity of the request independent of TLS encapsulation (HTTPS) and protects against replay based attacks. This ensures protection from the signature service (Wallet client) all the way to the API.
 
 ## Example
