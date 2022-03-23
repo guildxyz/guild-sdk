@@ -25,7 +25,8 @@
   "scripts": {
     "test": "jest",
     "build": "npx tsc",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "prepack": "npm run build"
   },
   "dependencies": {
     "axios": "^0.26.1",
