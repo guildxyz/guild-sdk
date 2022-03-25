@@ -105,8 +105,8 @@ guild.create(
           },
           {
             type: "ERC721",
-            address: "0x734AA2dac868218D2A5F9757f16f6f881265441C",
             chain: "ETHEREUM",
+            address: "0x734AA2dac868218D2A5F9757f16f6f881265441C",
             data: {
               amount: 1,
             },
