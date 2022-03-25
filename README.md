@@ -13,7 +13,6 @@
     <a href="https://roadmap.guild.xyz/">Community Roadmap</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
     <a href="https://github.com/agoraxyz">Github</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
 </div>
   
   
