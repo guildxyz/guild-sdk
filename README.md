@@ -21,6 +21,18 @@
 ## Summary
 The Guild SDK library is a Typescript library for interacting with the Guild API. This document explains how to authenticate, manage your Guilds easily through the SDK. Developed and maintained by the @agoraxyz team.
 
+#### Node.js
+To install Snapshot.js on Node.js, open your terminal and run:
+```
+npm i @guildxyz/sdk
+```
+
+#### Browser
+You can create an index.html file and include our SDK with:
+```html
+<script src="https://cdn.jsdelivr.net/npm/@guildxyz/sdk"></script>
+```
+
 ## Authentication Overview
 One of the most common problems with digital signature-based authentication systems is the replay attack. We have developed a new authentication method against this vulnerability, which both ensures the integrity of the request independent of TLS encapsulation (HTTPS) and protects against replay based attacks. This ensures protection from the signature service (Wallet client) all the way to the API.
 
