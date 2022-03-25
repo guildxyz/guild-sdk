@@ -2,3 +2,5 @@ others/
 node_modules/
 .vscode
 .env*
+src/
+tests/

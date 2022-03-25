@@ -22,26 +22,119 @@
 The Guild SDK library is a Typescript library for interacting with the Guild API. This document explains how to authenticate, manage your Guilds easily through the SDK. Developed and maintained by the @agoraxyz team.
 
 #### Node.js
+
 To install Snapshot.js on Node.js, open your terminal and run:
+
 ```
 npm i @guildxyz/sdk
 ```
 
+#### Importing the package and specific types
+
+```
+import { guild, role, user } from "@guildxyz/sdk";
+```
+
+```
+import {
+  Chain,
+  Requirement,
+  GetMembershipsResponse,
+  JoinResponse,
+  RequestWithAuth,
+  GetAllGuildsResponse,
+  GetGuildByIdResponse,
+  GetUserAccessResponse,
+  CreateGuildParams,
+  UpdateGuildParams,
+  CreateGuildResponse,
+  DeleteGuildResponse,
+  GetRoleResponse,
+  CreateRoleParams,
+  UpdateRoleParams,
+  CreateRoleResponse,
+  UpdateRoleResponse,
+  DeleteRoleResponse,
+  ApiError
+  } from "@guildxyz/sdk";
+```
+
 #### Browser
+
 You can create an index.html file and include our SDK with:
+
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@guildxyz/sdk"></script>
 ```
 
-## Create Guild
-```javascript
+#### Create Guild Example
 
+```javascript
+import { guild } from "@guildxyz/sdk";
+import { ethers } from "ethers";
+
+guild.create(
+  {
+    name: "My New Guild",
+    description: "Cool stuff",
+    theme: [{ mode: "DARK", color: "#000000" }],
+    roles: [
+      {
+        name: "My New Role",
+        logic: "AND",
+        requirements: [
+          {
+            type: "ALLOWLIST",
+            data: {
+              addresses: [
+                "0x000000000000000000000000000000000000dEaD",
+                "0x000000000000000000000000000000000000dead",
+              ],
+            },
+          },
+        ],
+      },
+    ],
+  },
+  ethers.Wallet.createRandom() // You have to insert your own wallet here
+);
+```
+
+#### Create Role
+
+```javascript
+role.create(
+  {
+    guildId: 1, // Insert your Guild ID here
+    name: "My second Role",
+    logic: "OR",
+    requirements: [
+      {
+        type: "ERC20",
+        chain: "ETHEREUM",
+        address: "0xf76d80200226ac250665139b9e435617e4ba55f9",
+        data: { amount: 1 },
+      },
+      {
+        type: "ERC721",
+        address: "0x734AA2dac868218D2A5F9757f16f6f881265441C",
+        chain: "ETHEREUM",
+        data: {
+          amount: 1,
+        },
+      },
+    ],
+  },
+  ethers.Wallet.createRandom()
+);
 ```
 
 ## Authentication Overview
+
 One of the most common problems with digital signature-based authentication systems is the replay attack. We have developed a new authentication method against this vulnerability, which both ensures the integrity of the request independent of TLS encapsulation (HTTPS) and protects against replay based attacks. This ensures protection from the signature service (Wallet client) all the way to the API.
 
 ## Example
+
 ```javascript
 const guildAuth = require("@agoraxyz/guildauth");
 
@@ -49,7 +142,9 @@ const guildAuth = require("@agoraxyz/guildauth");
 const auth = new guildAuth();
 
 //Or you can initialize with mnemonic
-const auth = new guildAuth("neglect twenty arena spatial thunder mixed citizen over awful glad rally stomach");
+const auth = new guildAuth(
+  "neglect twenty arena spatial thunder mixed citizen over awful glad rally stomach"
+);
 
 //Get current address
 console.log(auth.getAddress());
@@ -64,7 +159,7 @@ console.log(await auth.prepareRequest());
 // {"payload":{},"validation":{"address":"0xea66400591bf2485907749f71615128238f7ef0a","addressSignedMessage":"0xddc0d710043a232b430a3678d76367489b8f6c329e27e81795e75efb4744289034fdc4f7284e37b791609b0e1d76bf9a1837db2a3adf158e31a37ac6c91656511c","nonce":"0x26bb7d4c941aec37b239dbf6850e149faace8df740809c8f989c270f2a543c51","random":"wrETMso/e9YiMloSSeEusgMuoaVirTuIPfkzYGkDv7w=","timestamp":"1646265565126"}}
 
 //Prepare request with payload
-console.log(await auth.prepareRequest({ guildId: 1234}));
+console.log(await auth.prepareRequest({ guildId: 1234 }));
 // {"payload":{"guildId":1234},"validation":{"address":"0xea66400591bf2485907749f71615128238f7ef0a","addressSignedMessage":"0x544855fc7c34b2411d74b45395ae59e87b6be10c15598a12446f3b0b0daf25f501ad8532a6420f9c8288724df2e03c14068786260a2eaaa9938e31318034fe1b1b","hash":"0xd24a3714283ef2c42428e247e76d4afe6bb6f4c73b10131978b877bc78238aa9","nonce":"0x3c3b72ba441b2740682d8974d96df2f61f3b9d49235d97ff6d5fd50373b2429c","random":"vrCxwqgt0ml9bF9z3Pxg9j9te1v0VU/9Yx9oFkfm84k=","timestamp":"1646267441728"}}
 
 //Generate random wallet (https://docs.ethers.io/v5/api/signer/#Wallet-createRandom)
