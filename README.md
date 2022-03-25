@@ -37,27 +37,7 @@ import { guild, role, user } from "@guildxyz/sdk";
 ```
 
 ```typescript
-import {
-  Chain,
-  Requirement,
-  GetMembershipsResponse,
-  JoinResponse,
-  RequestWithAuth,
-  GetAllGuildsResponse,
-  GetGuildByIdResponse,
-  GetUserAccessResponse,
-  CreateGuildParams,
-  UpdateGuildParams,
-  CreateGuildResponse,
-  DeleteGuildResponse,
-  GetRoleResponse,
-  CreateRoleParams,
-  UpdateRoleParams,
-  CreateRoleResponse,
-  UpdateRoleResponse,
-  DeleteRoleResponse,
-  ApiError,
-} from "@guildxyz/sdk";
+guild.create()
 ```
 
 #### Browser
@@ -68,7 +48,7 @@ You can create an index.html file and include our SDK with:
 <script src="https://cdn.jsdelivr.net/npm/@guildxyz/sdk"></script>
 ```
 
-#### Create Guild
+#### Quick Start flow from Create Guild to Access Check and Join
 
 ```typescript
 import { guild } from "@guildxyz/sdk";
@@ -77,8 +57,9 @@ import { ethers } from "ethers";
 await guild.create(
   {
     name: "My New Guild",
-    description: "Cool stuff",
-    theme: [{ mode: "DARK", color: "#000000" }],
+    description: "Cool stuff",                                                      // Optional
+    imageUrl: "",                                                                   // Optional
+    theme: [{ mode: "DARK", color: "#000000" }],                                    // Optional
     roles: [
       {
         name: "My First Role",
@@ -88,8 +69,8 @@ await guild.create(
             type: "ALLOWLIST",
             data: {
               addresses: [
-                "0x000000000000000000000000000000000000dEaD",
-                "0x000000000000000000000000000000000000dead",
+                "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be",
+                "0x1b64230Ad5092A4ABeecE1a50Dc7e9e0F0280304",
               ],
             },
           },
@@ -103,14 +84,16 @@ await guild.create(
             type: "ERC20",
             chain: "ETHEREUM",
             address: "0xf76d80200226ac250665139b9e435617e4ba55f9",
-            data: { amount: 1 },
+            data: { 
+              amount: 1 
+          },
           },
           {
             type: "ERC721",
             chain: "ETHEREUM",
             address: "0x734AA2dac868218D2A5F9757f16f6f881265441C",
             data: {
-              amount: 1,
+              amount: 1
             },
           },
         ],
