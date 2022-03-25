@@ -5,7 +5,7 @@
   <a><img src="https://img.shields.io/badge/license-MIT-blue" /></a>
   <br/>
   <a href="https://guild.xyz">Application</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>ę
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
     <a href="https://twitter.com/guildxyz">Twitter</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
     <a href="https://docs.guild.xyz/guild/">Docs</a>
@@ -23,7 +23,7 @@ The Guild SDK library is a Typescript library for interacting with the Guild API
 
 #### Node.js
 
-To install Snapshot.js on Node.js, open your terminal and run:
+To install our SDK on Node.js, open your terminal and run:
 
 ```
 npm i @guildxyz/sdk
@@ -67,7 +67,7 @@ You can create an index.html file and include our SDK with:
 <script src="https://cdn.jsdelivr.net/npm/@guildxyz/sdk"></script>
 ```
 
-#### Create Guild Example
+#### Create Guild
 
 ```typescript
 import { guild } from "@guildxyz/sdk";
@@ -80,7 +80,7 @@ guild.create(
     theme: [{ mode: "DARK", color: "#000000" }],
     roles: [
       {
-        name: "My New Role",
+        name: "My First Role",
         logic: "AND",
         requirements: [
           {
@@ -94,38 +94,29 @@ guild.create(
           },
         ],
       },
+      {
+        name: "My Second Role",
+        logic: "OR",
+        requirements: [
+          {
+            type: "ERC20",
+            chain: "ETHEREUM",
+            address: "0xf76d80200226ac250665139b9e435617e4ba55f9",
+            data: { amount: 1 },
+          },
+          {
+            type: "ERC721",
+            address: "0x734AA2dac868218D2A5F9757f16f6f881265441C",
+            chain: "ETHEREUM",
+            data: {
+              amount: 1,
+            },
+          },
+        ],
+      },
     ],
   },
   ethers.Wallet.createRandom() // You have to insert your own wallet here
-);
-```
-
-#### Create Role
-
-```typescript
-role.create(
-  {
-    guildId: 1, // Insert your Guild ID here
-    name: "My second Role",
-    logic: "OR",
-    requirements: [
-      {
-        type: "ERC20",
-        chain: "ETHEREUM",
-        address: "0xf76d80200226ac250665139b9e435617e4ba55f9",
-        data: { amount: 1 },
-      },
-      {
-        type: "ERC721",
-        address: "0x734AA2dac868218D2A5F9757f16f6f881265441C",
-        chain: "ETHEREUM",
-        data: {
-          amount: 1,
-        },
-      },
-    ],
-  },
-  ethers.Wallet.createRandom()
 );
 ```
 
