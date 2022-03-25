@@ -31,11 +31,11 @@ npm i @guildxyz/sdk
 
 #### Importing the package and specific types
 
-```
+```typescript
 import { guild, role, user } from "@guildxyz/sdk";
 ```
 
-```
+```typescript
 import {
   Chain,
   Requirement,
@@ -69,7 +69,7 @@ You can create an index.html file and include our SDK with:
 
 #### Create Guild Example
 
-```javascript
+```typescript
 import { guild } from "@guildxyz/sdk";
 import { ethers } from "ethers";
 
@@ -102,7 +102,7 @@ guild.create(
 
 #### Create Role
 
-```javascript
+```typescript
 role.create(
   {
     guildId: 1, // Insert your Guild ID here
