@@ -30,9 +30,9 @@ type GetAllGuildsResponse = {
 }[];
 
 type Theme = {
-  mode: string;
+  mode: "DARK" | "LIGHT";
   color?: any;
-  backgroundImage: string;
+  backgroundImage?: string;
   backgroundCss?: any;
 };
 
