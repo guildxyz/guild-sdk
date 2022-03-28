@@ -34,10 +34,23 @@ npm i @guildxyz/sdk
 
 ```typescript
 import { guild, role, user } from "@guildxyz/sdk";
-```
 
-```typescript
-guild.create()
+const guild = await guild.get(1);                               // Get Guild by ID (detailed)
+const guild = await guild.get("sismo-dao");                     // Get Guild by url name (detailed)
+const guilds = await guild.getAll();                            // Get All Guilds basic information
+const userAccesses = await guild.getUserAccess(
+  1,
+  "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be"
+);                                                              // Access checking for an address for a specific Guild
+const userMemberships = await guild.getUserCurrentAccess(
+  1,
+  "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be"
+);                                                              // User current memberships - already joined for a Guild
+const guild = await guild.create(guildParams, wallet);          // Creating a guild with specific params - check the example below
+const guild = await guild.update(1, guildParams, wallet);       // Updating a guild with the given params
+const guild = await guild.delete(1, wallet);                    // Removing a guild by ID
+
+
 ```
 
 #### Browser
@@ -57,9 +70,9 @@ import { ethers } from "ethers";
 await guild.create(
   {
     name: "My New Guild",
-    description: "Cool stuff",                                                      // Optional
-    imageUrl: "",                                                                   // Optional
-    theme: [{ mode: "DARK", color: "#000000" }],                                    // Optional
+    description: "Cool stuff", // Optional
+    imageUrl: "", // Optional
+    theme: [{ mode: "DARK", color: "#000000" }], // Optional
     roles: [
       {
         name: "My First Role",
@@ -84,16 +97,16 @@ await guild.create(
             type: "ERC20",
             chain: "ETHEREUM",
             address: "0xf76d80200226ac250665139b9e435617e4ba55f9",
-            data: { 
-              amount: 1 
-          },
+            data: {
+              amount: 1,
+            },
           },
           {
             type: "ERC721",
             chain: "ETHEREUM",
             address: "0x734AA2dac868218D2A5F9757f16f6f881265441C",
             data: {
-              amount: 1
+              amount: 1,
             },
           },
         ],
