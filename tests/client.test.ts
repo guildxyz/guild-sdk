@@ -61,7 +61,7 @@ describe("Check client sdk function", () => {
   });
 
   test("GET /guild/member/:id/:address", async () => {
-    const userAccess = await client.guild.getUserCurrentAccess(
+    const userAccess = await client.guild.getUserMemberships(
       1985,
       testWallet.address
     );

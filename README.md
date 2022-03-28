@@ -39,10 +39,10 @@ await guild.get(1);                                                         // G
 await guild.get("sismo-dao");                                               // Get Guild by url name (detailed)
 await guild.getAll();                                                       // Get All Guilds basic information
 await guild.getUserAccess(1, "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be"); // Access checking for an address for a specific Guild
-await guild.getUserCurrentAccess(
+await guild.getUserMemberships(
   1,
   "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be"
-);                                                                          // User current memberships - already joined for a Guild
+);                                                                          // User current memberships for the given Guild
 await guild.create(guildParams, wallet);                                    // Create a guild with specific params - check the example below
 await guild.update(1, guildParams, wallet);                                 // Update a guild with the given params
 await guild.delete(1, wallet);                                              // Remove a guild by ID

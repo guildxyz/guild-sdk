@@ -79,7 +79,7 @@ const guild = {
     return res.data;
   },
 
-  async getUserCurrentAccess(
+  async getUserMemberships(
     guildId: number,
     address: string
   ): Promise<GetUserAccessResponse> {
