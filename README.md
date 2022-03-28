@@ -35,22 +35,27 @@ npm i @guildxyz/sdk
 ```typescript
 import { guild, role, user } from "@guildxyz/sdk";
 
-const guild = await guild.get(1);                               // Get Guild by ID (detailed)
-const guild = await guild.get("sismo-dao");                     // Get Guild by url name (detailed)
-const guilds = await guild.getAll();                            // Get All Guilds basic information
-const userAccesses = await guild.getUserAccess(
+await guild.get(1);                                                         // Get Guild by ID (detailed)
+await guild.get("sismo-dao");                                               // Get Guild by url name (detailed)
+await guild.getAll();                                                       // Get All Guilds basic information
+await guild.getUserAccess(1, "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be"); // Access checking for an address for a specific Guild
+await guild.getUserCurrentAccess(
   1,
   "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be"
-);                                                              // Access checking for an address for a specific Guild
-const userMemberships = await guild.getUserCurrentAccess(
-  1,
-  "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be"
-);                                                              // User current memberships - already joined for a Guild
-const guild = await guild.create(guildParams, wallet);          // Creating a guild with specific params - check the example below
-const guild = await guild.update(1, guildParams, wallet);       // Updating a guild with the given params
-const guild = await guild.delete(1, wallet);                    // Removing a guild by ID
+);                                                                          // User current memberships - already joined for a Guild
+await guild.create(guildParams, wallet);                                    // Create a guild with specific params - check the example below
+await guild.update(1, guildParams, wallet);                                 // Update a guild with the given params
+await guild.delete(1, wallet);                                              // Remove a guild by ID
 
 
+await role.get(1);                                                          // Get Role by ID
+await role.create(roleParams, wallet);                                      // Create a role for an existing Guild
+await role.update(1, wallet);                                               // Update a role with the given params
+await role.delete(1, wallet);                                               // Remove a role by ID
+
+
+await user.join(1, wallet);                                                 // Enables to join a user to the accessible roles in a Guild
+await user.getMemberships("0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be");    // Returns every Guild and Role of a given user
 ```
 
 #### Browser
