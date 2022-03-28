@@ -35,27 +35,22 @@ npm i @guildxyz/sdk
 ```typescript
 import { guild, role, user } from "@guildxyz/sdk";
 
-await guild.get(1);                                                         // Get Guild by ID (detailed)
-await guild.get("sismo-dao");                                               // Get Guild by url name (detailed)
-await guild.getAll();                                                       // Get All Guilds basic information
+await guild.get(1); // Get Guild by ID (detailed)
+await guild.get("sismo-dao"); // Get Guild by url name (detailed)
+await guild.getAll(); // Get All Guilds basic information
 await guild.getUserAccess(1, "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be"); // Access checking for an address for a specific Guild
-await guild.getUserMemberships(
-  1,
-  "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be"
-);                                                                          // User current memberships for the given Guild
-await guild.create(guildParams, wallet);                                    // Create a guild with specific params - check the example below
-await guild.update(1, guildParams, wallet);                                 // Update a guild with the given params
-await guild.delete(1, wallet);                                              // Remove a guild by ID
+await guild.getUserMemberships(1, "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be"); // User current memberships for the given Guild
+await guild.create(guildParams, wallet); // Create a guild with specific params - check the example below
+await guild.update(1, guildParams, wallet); // Update a guild with the given params
+await guild.delete(1, wallet); // Remove a guild by ID
 
+await role.get(1); // Get Role by ID
+await role.create(roleParams, wallet); // Create a role for an existing Guild
+await role.update(1, wallet); // Update a role with the given params
+await role.delete(1, wallet); // Remove a role by ID
 
-await role.get(1);                                                          // Get Role by ID
-await role.create(roleParams, wallet);                                      // Create a role for an existing Guild
-await role.update(1, wallet);                                               // Update a role with the given params
-await role.delete(1, wallet);                                               // Remove a role by ID
-
-
-await user.join(1, wallet);                                                 // Enables to join a user to the accessible roles in a Guild
-await user.getMemberships("0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be");    // Returns every Guild and Role of a given user
+await user.join(1, wallet); // Enables to join a user to the accessible roles in a Guild
+await user.getMemberships("0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be"); // Returns every Guild and Role of a given user
 ```
 
 #### Browser
@@ -72,12 +67,14 @@ You can create an index.html file and include our SDK with:
 import { guild } from "@guildxyz/sdk";
 import { ethers } from "ethers";
 
-await guild.create(
+
+// Creating a Guild
+const myGuild: CreateGuildResponse = await guild.create(
   {
     name: "My New Guild",
-    description: "Cool stuff", // Optional
-    imageUrl: "", // Optional
-    theme: [{ mode: "DARK", color: "#000000" }], // Optional
+    description: "Cool stuff",                                            // Optional
+    imageUrl: "",                                                         // Optional
+    theme: [{ mode: "DARK", color: "#000000" }],                          // Optional
     roles: [
       {
         name: "My First Role",
@@ -120,6 +117,18 @@ await guild.create(
   },
   ethers.Wallet.createRandom() // You have to insert your own wallet here
 );
+
+
+
+// Access checking for 0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be
+const userAccesses: GetUserAccessResponse[] = await guild.getUserAccess(myGuild.id, "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be");
+
+
+// Joining to a Guild if the access check includes a Role, which accessible by the given address
+if(userAccesses.some(uA => uA.access);){
+    await user.join(myGuild.id, wallet);
+    // If the Guild has no platform, the join successfully happens, if the given address is eligible
+}
 ```
 
 ## Authentication Overview
