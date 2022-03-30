@@ -64,7 +64,7 @@ You can create an index.html file and include our SDK with:
 #### Quick Start flow from Create Guild to Access Check and Join
 
 ```typescript
-import { guild } from "@guildxyz/sdk";
+import { guild, CreateGuildResponse, GetUserAccessResponse } from "@guildxyz/sdk";
 import { ethers } from "ethers";
 
 
