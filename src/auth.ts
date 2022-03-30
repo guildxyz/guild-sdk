@@ -1,30 +1,36 @@
 import { randomBytes } from "crypto";
-import { ethers } from "ethers";
+import { isAddress, keccak256, toUtf8Bytes } from "ethers/lib/utils";
 import stringify from "fast-json-stable-stringify";
-import { RequestWithAuth } from "./types";
+import { PreparedBody, SignerFunction } from "./types";
 
-const prepareRequest = async (wallet: ethers.Wallet, payload?: object) => {
-  let hash: string;
-  let hashText: string;
-  if (payload !== undefined) {
-    hash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(stringify(payload)));
-    hashText = `Hash: ${hash}\n`;
-  } else {
-    hashText = "";
-  }
+const prepareBodyWithSign = async (
+  signerAddress: string,
+  sign: SignerFunction,
+  payload?: object
+): Promise<string> => {
+  if (!isAddress(signerAddress))
+    throw new Error(`Invalid address: ${signerAddress} !`);
 
   const random = randomBytes(32).toString("base64");
-  const nonce = ethers.utils.keccak256(
-    ethers.utils.toUtf8Bytes(`${wallet.address.toLowerCase()}${random}`)
+  const nonce = keccak256(
+    toUtf8Bytes(`${signerAddress.toLowerCase()}${random}`)
   );
+
+  const hash =
+    Object.keys(payload || {})?.length > 0
+      ? keccak256(toUtf8Bytes(stringify(payload)))
+      : "";
   const timestamp = new Date().getTime().toString();
-  const addressSignedMessage = await wallet.signMessage(
-    `Please sign this message to verify your request!\nNonce: ${nonce}\nRandom: ${random}\n${hashText}Timestamp: ${timestamp}`
-  );
-  const body: RequestWithAuth<object> = {
+
+  const signableMessage = `Please sign this message to verify your request!\nNonce: ${nonce}\nRandom: ${random}\n${
+    hash ? `Hash: ${hash}\n` : ""
+  }Timestamp: ${timestamp}`;
+
+  const addressSignedMessage: string = await sign(signableMessage);
+  const body: PreparedBody = {
     payload: payload || {},
     validation: {
-      address: wallet.address.toLowerCase(),
+      address: signerAddress.toLowerCase(),
       addressSignedMessage,
       nonce,
       random,
@@ -32,8 +38,9 @@ const prepareRequest = async (wallet: ethers.Wallet, payload?: object) => {
       timestamp,
     },
   };
+
   return stringify(body);
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export { prepareRequest };
+export { prepareBodyWithSign };
