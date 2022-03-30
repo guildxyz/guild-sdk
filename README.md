@@ -46,8 +46,12 @@ const ethersSign = (address: string | Bytes) =>
 
 // Web3React signing method example
 import { useWeb3React } from "@web3-react/core";
+// Account equals with the signer's address
+const { account, library } = useWeb3React();
 const web3ReactSign = (address: string | Bytes) =>
-  useWeb3React().library.getSigner(account.toLowerCase()).signMessage(address);
+  library.getSigner(account.toLowerCase()).signMessage(address);
+
+// The walletAddress here is equals always with the signer's address
 
 await guild.get(1); // Get Guild by ID (detailed)
 await guild.get("sismo-dao"); // Get Guild by url name (detailed)
