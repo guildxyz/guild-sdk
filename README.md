@@ -35,21 +35,35 @@ npm i @guildxyz/sdk
 ```typescript
 import { guild, role, user } from "@guildxyz/sdk";
 
+// To simplify the authentication, we implemented the whole flow, you just have to provide a signing function from your library (like ethers or web3react). Check the examples below.
+
+// ethers.js signing method example
+import { ethers } from "ethers";
+const ethersWallet =
+  ethers.Wallet.createRandom() || ethers.Wallet.fromMnemonic("");
+const ethersSign = (address: string | Bytes) =>
+  ethersWallet.signMessage(address);
+
+// Web3React signing method example
+import { useWeb3React } from "@web3-react/core";
+const web3ReactSign = (address: string | Bytes) =>
+  useWeb3React().library.getSigner(account.toLowerCase()).signMessage(address);
+
 await guild.get(1); // Get Guild by ID (detailed)
 await guild.get("sismo-dao"); // Get Guild by url name (detailed)
 await guild.getAll(); // Get All Guilds basic information
 await guild.getUserAccess(1, "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be"); // Access checking for an address for a specific Guild
 await guild.getUserMemberships(1, "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be"); // User current memberships for the given Guild
-await guild.create(guildParams, wallet); // Create a guild with specific params - check the example below
-await guild.update(1, guildParams, wallet); // Update a guild with the given params
-await guild.delete(1, wallet); // Remove a guild by ID
+await guild.create(walletAddress, signerFunction, createGuildParams); // Create a guild with specific params - check the example below
+await guild.update(1, walletAddress, signerFunction, updateGuildParams); // Update a guild with the given params
+await guild.delete(1, walletAddress, signerFunction); // Remove a guild by ID
 
 await role.get(1); // Get Role by ID
-await role.create(roleParams, wallet); // Create a role for an existing Guild
-await role.update(1, wallet); // Update a role with the given params
-await role.delete(1, wallet); // Remove a role by ID
+await role.create(walletAddress, signerFunction, createRoleParams); // Create a role for an existing Guild
+await role.update(1, walletAddress, signerFunction, updateRoleParams); // Update a role with the given params
+await role.delete(1, walletAddress, signerFunction); // Remove a role by ID
 
-await user.join(1, wallet); // Enables to join a user to the accessible roles in a Guild
+await user.join(1, walletAddress, signerFunction); // Enables to join a user to the accessible roles in a Guild
 await user.getMemberships("0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be"); // Returns every Guild and Role of a given user
 ```
 
@@ -68,8 +82,15 @@ import { guild, CreateGuildResponse, GetUserAccessResponse } from "@guildxyz/sdk
 import { ethers } from "ethers";
 
 
+// Creating a random wallet for the example
+const wallet = ethers.Wallet.createRandom();
+// Wrapping the signer function from ethers.js
+const sign = (address: string | Bytes) => ethersWallet.signMessage(address);
+
 // Creating a Guild
 const myGuild: CreateGuildResponse = await guild.create(
+  wallet.address,   // You have to insert your own wallet here
+  sign,
   {
     name: "My New Guild",
     description: "Cool stuff",                                            // Optional
@@ -114,8 +135,7 @@ const myGuild: CreateGuildResponse = await guild.create(
         ],
       },
     ],
-  },
-  ethers.Wallet.createRandom() // You have to insert your own wallet here
+  }
 );
 
 
@@ -126,7 +146,7 @@ const userAccesses: GetUserAccessResponse[] = await guild.getUserAccess(myGuild.
 
 // Joining to a Guild if the access check includes a Role, which accessible by the given address
 if(userAccesses.some(uA => uA.access);){
-    await user.join(myGuild.id, wallet);
+    await user.join(myGuild.id, wallet.address, sign);
     // If the Guild has no platform, the join successfully happens, if the given address is eligible
 }
 ```
@@ -135,20 +155,23 @@ if(userAccesses.some(uA => uA.access);){
 
 One of the most common problems with digital signature-based authentication systems is the replay attack. We have developed a new authentication method against this vulnerability, which both ensures the integrity of the request independent of TLS encapsulation (HTTPS) and protects against replay based attacks. This ensures protection from the signature service (Wallet client) all the way to the API.
 
-## Example for Authentication only
+## Example for Authentication only with ethers.js
 
 ```typescript
-import { prepareRequest } from "@guildxyz/sdk";
+import { prepareBodyWithSign } from "@guildxyz/sdk";
 import { ethers } from "ethers";
 
 const wallet = ethers.Wallet.createRandom(); // You have to insert your own wallet here
+const sign = (address: string | Bytes) => ethersWallet.signMessage(address);
 
-//Prepare request without payload
-await prepareRequest(wallet);
+//Prepare body for request without payload
+const bodyWithoutPayload = await prepareBodyWithSign(wallet.address, sign);
 
 // {"payload":{},"validation":{"address":"0xea66400591bf2485907749f71615128238f7ef0a","addressSignedMessage":"0xddc0d710043a232b430a3678d76367489b8f6c329e27e81795e75efb4744289034fdc4f7284e37b791609b0e1d76bf9a1837db2a3adf158e31a37ac6c91656511c","nonce":"0x26bb7d4c941aec37b239dbf6850e149faace8df740809c8f989c270f2a543c51","random":"wrETMso/e9YiMloSSeEusgMuoaVirTuIPfkzYGkDv7w=","timestamp":"1646265565126"}}
 
-//Prepare request with payload
-await auth.prepareRequest({ guildId: 1234 });
+//Prepare body for request with payload
+const bodyWithPayload = await prepareBodyWithSign(wallet.address, sign, {
+  guildId: 1234,
+});
 // {"payload":{"guildId":1234},"validation":{"address":"0xea66400591bf2485907749f71615128238f7ef0a","addressSignedMessage":"0x544855fc7c34b2411d74b45395ae59e87b6be10c15598a12446f3b0b0daf25f501ad8532a6420f9c8288724df2e03c14068786260a2eaaa9938e31318034fe1b1b","hash":"0xd24a3714283ef2c42428e247e76d4afe6bb6f4c73b10131978b877bc78238aa9","nonce":"0x3c3b72ba441b2740682d8974d96df2f61f3b9d49235d97ff6d5fd50373b2429c","random":"vrCxwqgt0ml9bF9z3Pxg9j9te1v0VU/9Yx9oFkfm84k=","timestamp":"1646267441728"}}
 ```
