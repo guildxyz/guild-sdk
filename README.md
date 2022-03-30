@@ -41,34 +41,34 @@ import { guild, role, user } from "@guildxyz/sdk";
 import { ethers } from "ethers";
 const ethersWallet =
   ethers.Wallet.createRandom() || ethers.Wallet.fromMnemonic("");
-const ethersSign = (address: string | Bytes) =>
+const walletAddress = ethersWallet.address;
+const signerFunction = (address: string | Bytes) =>
   ethersWallet.signMessage(address);
 
 // Web3React signing method example
 import { useWeb3React } from "@web3-react/core";
-// Account equals with the signer's address
-const { account, library } = useWeb3React();
-const web3ReactSign = (address: string | Bytes) =>
+const { account: walletAddress, library } = useWeb3React();
+const signerFunction = (address: string | Bytes) =>
   library.getSigner(account.toLowerCase()).signMessage(address);
 
 // The walletAddress here is equals always with the signer's address
 
-await guild.get(1); // Get Guild by ID (detailed)
-await guild.get("sismo-dao"); // Get Guild by url name (detailed)
+await guild.get(guildId); // Get Guild by ID (detailed)
+await guild.get(urlName); // Get Guild by url name (detailed) - for example "our-guild"
 await guild.getAll(); // Get All Guilds basic information
-await guild.getUserAccess(1, "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be"); // Access checking for an address for a specific Guild
-await guild.getUserMemberships(1, "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be"); // User current memberships for the given Guild
+await guild.getUserAccess(guildId, userAddress); // Access checking for an address for a specific Guild
+await guild.getUserMemberships(guildId, userAddress); // User current memberships for the given Guild
 await guild.create(walletAddress, signerFunction, createGuildParams); // Create a guild with specific params - check the example below
-await guild.update(1, walletAddress, signerFunction, updateGuildParams); // Update a guild with the given params
-await guild.delete(1, walletAddress, signerFunction); // Remove a guild by ID
+await guild.update(guildId, walletAddress, signerFunction, updateGuildParams); // Update a guild with the given params
+await guild.delete(guildId, walletAddress, signerFunction); // Remove a guild by ID
 
-await role.get(1); // Get Role by ID
+await role.get(roleId); // Get Role by ID
 await role.create(walletAddress, signerFunction, createRoleParams); // Create a role for an existing Guild
-await role.update(1, walletAddress, signerFunction, updateRoleParams); // Update a role with the given params
-await role.delete(1, walletAddress, signerFunction); // Remove a role by ID
+await role.update(roleId, walletAddress, signerFunction, updateRoleParams); // Update a role with the given params
+await role.delete(roleId, walletAddress, signerFunction); // Remove a role by ID
 
-await user.join(1, walletAddress, signerFunction); // Enables to join a user to the accessible roles in a Guild
-await user.getMemberships("0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be"); // Returns every Guild and Role of a given user
+await user.join(guildId, walletAddress, signerFunction); // Enables to join a user to the accessible roles in a Guild
+await user.getMemberships(userAddress); // Returns every Guild and Role of a given user
 ```
 
 #### Browser
@@ -82,9 +82,12 @@ You can create an index.html file and include our SDK with:
 #### Quick Start flow from Create Guild to Access Check and Join
 
 ```typescript
-import { guild, CreateGuildResponse, GetUserAccessResponse } from "@guildxyz/sdk";
+import {
+  guild,
+  CreateGuildResponse,
+  GetUserAccessResponse,
+} from "@guildxyz/sdk";
 import { ethers } from "ethers";
-
 
 // Creating a random wallet for the example
 const wallet = ethers.Wallet.createRandom();
@@ -93,13 +96,13 @@ const sign = (address: string | Bytes) => ethersWallet.signMessage(address);
 
 // Creating a Guild
 const myGuild: CreateGuildResponse = await guild.create(
-  wallet.address,   // You have to insert your own wallet here
+  wallet.address, // You have to insert your own wallet here
   sign,
   {
     name: "My New Guild",
-    description: "Cool stuff",                                            // Optional
-    imageUrl: "",                                                         // Optional
-    theme: [{ mode: "DARK", color: "#000000" }],                          // Optional
+    description: "Cool stuff", // Optional
+    imageUrl: "", // Optional
+    theme: [{ mode: "DARK", color: "#000000" }], // Optional
     roles: [
       {
         name: "My First Role",
@@ -142,17 +145,8 @@ const myGuild: CreateGuildResponse = await guild.create(
   }
 );
 
-
-
-// Access checking for 0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be
-const userAccesses: GetUserAccessResponse[] = await guild.getUserAccess(myGuild.id, "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be");
-
-
-// Joining to a Guild if the access check includes a Role, which accessible by the given address
-if(userAccesses.some(uA => uA.access);){
-    await user.join(myGuild.id, wallet.address, sign);
-    // If the Guild has no platform, the join successfully happens, if the given address is eligible
-}
+// Joining to a Guild if any role is accessible by the given address
+await user.join(myGuild.id, wallet.address, sign);
 ```
 
 ## Authentication Overview
