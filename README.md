@@ -79,14 +79,10 @@ You can create an index.html file and include our SDK with:
 <script src="https://cdn.jsdelivr.net/npm/@guildxyz/sdk"></script>
 ```
 
-#### Quick Start flow from Create Guild to Access Check and Join
+#### Quick Start flow from Create Guild to Join
 
 ```typescript
-import {
-  guild,
-  CreateGuildResponse,
-  GetUserAccessResponse,
-} from "@guildxyz/sdk";
+import { guild } from "@guildxyz/sdk";
 import { ethers } from "ethers";
 
 // Creating a random wallet for the example
@@ -96,7 +92,7 @@ const sign = (signableMessage: string | Bytes) =>
   ethersWallet.signMessage(signableMessage);
 
 // Creating a Guild
-const myGuild: CreateGuildResponse = await guild.create(
+const myGuild = await guild.create(
   wallet.address, // You have to insert your own wallet here
   sign,
   {
