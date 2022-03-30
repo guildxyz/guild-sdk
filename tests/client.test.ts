@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { Bytes, ethers } from "ethers";
 import * as client from "../src/client";
 import {
   CreateGuildParams,
@@ -7,7 +7,8 @@ import {
   UpdateRoleParams,
 } from "../src/types";
 
-const testWallet = ethers.Wallet.fromMnemonic(process.env.TEST_WALLET_MNEMONIC);
+const testWallet = ethers.Wallet.createRandom();
+const sign = (address: string | Bytes) => testWallet.signMessage(address);
 
 describe("Check client sdk function", () => {
   test("GET /user/membership/:address - interacted with guild", async () => {
@@ -25,7 +26,7 @@ describe("Check client sdk function", () => {
   });
 
   test("POST /user/join", async () => {
-    const joinResponse = await client.user.join(2158, testWallet);
+    const joinResponse = await client.user.join(2158, testWallet.address, sign);
     expect(joinResponse.alreadyJoined).toBe(false);
     expect(joinResponse.inviteLink).toMatch(/^https:\/\/discord.gg\/.+$/);
   });
@@ -91,8 +92,9 @@ describe("Check client sdk function", () => {
     };
 
     const createGuildReponse = await client.guild.create(
-      createGuildParams,
-      testWallet
+      testWallet.address,
+      sign,
+      createGuildParams
     );
     expect(createGuildReponse.name).toBe(testGuildName);
 
@@ -106,10 +108,12 @@ describe("Check client sdk function", () => {
     const updateGuildParams: UpdateGuildParams = {
       name: updatedTestGuildName,
     };
+
     const updateGuildResponse = await client.guild.update(
       createGuildReponse.id,
-      updateGuildParams,
-      testWallet
+      testWallet.address,
+      sign,
+      updateGuildParams
     );
     expect(updateGuildResponse.name).toBe(updatedTestGuildName);
 
@@ -130,8 +134,9 @@ describe("Check client sdk function", () => {
       ],
     };
     const createRoleReponse = await client.role.create(
-      createRoleParams,
-      testWallet
+      testWallet.address,
+      sign,
+      createRoleParams
     );
     expect(createRoleReponse.name).toBe(newRoleName);
 
@@ -151,8 +156,9 @@ describe("Check client sdk function", () => {
     // check if updated
     const updateRoleResponse = await client.role.update(
       createdRole.id,
-      updateRoleParams,
-      testWallet
+      testWallet.address,
+      sign,
+      updateRoleParams
     );
     expect(updateRoleResponse.name).toBe(updatedRoleName);
     expect(updateRoleResponse.logic).toBe("OR");
@@ -160,7 +166,8 @@ describe("Check client sdk function", () => {
     // delete role
     const deleteRoleResponse = await client.role.delete(
       createRoleReponse.id,
-      testWallet
+      testWallet.address,
+      sign
     );
     expect(deleteRoleResponse.success).toBe(true);
 
@@ -171,7 +178,8 @@ describe("Check client sdk function", () => {
     // delete
     const deleteGuildResponse = await client.guild.delete(
       createGuildReponse.id,
-      testWallet
+      testWallet.address,
+      sign
     );
     expect(deleteGuildResponse.success).toBe(true);
 
