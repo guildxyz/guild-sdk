@@ -25,7 +25,7 @@ type PreparedBody = {
 };
 
 // eslint-disable-next-line no-unused-vars
-type SignerFunction = (message: string | Bytes) => Promise<string>;
+type SignerFunction = (signableMessage: string | Bytes) => Promise<string>;
 
 type GetAllGuildsResponse = {
   id: number;

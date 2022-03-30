@@ -42,14 +42,14 @@ import { ethers } from "ethers";
 const ethersWallet =
   ethers.Wallet.createRandom() || ethers.Wallet.fromMnemonic("");
 const walletAddress = ethersWallet.address;
-const signerFunction = (address: string | Bytes) =>
-  ethersWallet.signMessage(address);
+const signerFunction = (signableMessage: string | Bytes) =>
+  ethersWallet.signMessage(signableMessage);
 
 // Web3React signing method example
 import { useWeb3React } from "@web3-react/core";
 const { account: walletAddress, library } = useWeb3React();
-const signerFunction = (address: string | Bytes) =>
-  library.getSigner(account.toLowerCase()).signMessage(address);
+const signerFunction = (signableMessage: string | Bytes) =>
+  library.getSigner(account).signMessage(signableMessage);
 
 // The walletAddress here is equals always with the signer's address
 
@@ -92,7 +92,8 @@ import { ethers } from "ethers";
 // Creating a random wallet for the example
 const wallet = ethers.Wallet.createRandom();
 // Wrapping the signer function from ethers.js
-const sign = (address: string | Bytes) => ethersWallet.signMessage(address);
+const sign = (signableMessage: string | Bytes) =>
+  ethersWallet.signMessage(signableMessage);
 
 // Creating a Guild
 const myGuild: CreateGuildResponse = await guild.create(
@@ -160,7 +161,8 @@ import { prepareBodyWithSign } from "@guildxyz/sdk";
 import { ethers } from "ethers";
 
 const wallet = ethers.Wallet.createRandom(); // You have to insert your own wallet here
-const sign = (address: string | Bytes) => ethersWallet.signMessage(address);
+const sign = (signableMessage: string | Bytes) =>
+  ethersWallet.signMessage(signableMessage);
 
 //Prepare body for request without payload
 const bodyWithoutPayload = await prepareBodyWithSign(wallet.address, sign);

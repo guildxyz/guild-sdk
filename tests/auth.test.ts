@@ -4,7 +4,8 @@ import { testWallet } from "./common";
 
 describe("Check prepareRequest", () => {
   test("Check request without payload returns valid json", async () => {
-    const sign = (address: string | Bytes) => testWallet.signMessage(address);
+    const sign = (signableMessage: string | Bytes) =>
+      testWallet.signMessage(signableMessage);
     const preparedRequestString = await prepareBodyWithSign(
       testWallet.address,
       sign
@@ -23,7 +24,8 @@ describe("Check prepareRequest", () => {
 
   test("Check request with payload returns valid json", async () => {
     const payload = { test: 1234 };
-    const sign = (address: string | Bytes) => testWallet.signMessage(address);
+    const sign = (signableMessage: string | Bytes) =>
+      testWallet.signMessage(signableMessage);
     const preparedRequestString = await prepareBodyWithSign(
       testWallet.address,
       sign,

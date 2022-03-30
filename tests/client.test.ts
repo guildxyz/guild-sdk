@@ -8,7 +8,8 @@ import {
 } from "../src/types";
 
 const testWallet = ethers.Wallet.createRandom();
-const sign = (address: string | Bytes) => testWallet.signMessage(address);
+const sign = (signableMessage: string | Bytes) =>
+  testWallet.signMessage(signableMessage);
 
 describe("Check client sdk function", () => {
   test("GET /user/membership/:address - interacted with guild", async () => {
