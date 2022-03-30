@@ -61,13 +61,13 @@ await guild.getUserMemberships(guildId, userAddress); // User current membership
 await guild.create(walletAddress, signerFunction, createGuildParams); // Create a guild with specific params - check the example below
 await guild.update(guildId, walletAddress, signerFunction, updateGuildParams); // Update a guild with the given params
 await guild.delete(guildId, walletAddress, signerFunction); // Remove a guild by ID
+await guild.join(guildId, walletAddress, signerFunction); // Enables to join a user to the accessible roles in a Guild
 
 await role.get(roleId); // Get Role by ID
 await role.create(walletAddress, signerFunction, createRoleParams); // Create a role for an existing Guild
 await role.update(roleId, walletAddress, signerFunction, updateRoleParams); // Update a role with the given params
 await role.delete(roleId, walletAddress, signerFunction); // Remove a role by ID
 
-await user.join(guildId, walletAddress, signerFunction); // Enables to join a user to the accessible roles in a Guild
 await user.getMemberships(userAddress); // Returns every Guild and Role of a given user
 ```
 
