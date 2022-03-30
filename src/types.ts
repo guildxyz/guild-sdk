@@ -1,3 +1,5 @@
+import { Bytes } from "ethers/lib/utils";
+
 type GetMembershipsResponse = {
   guildId: number;
   roleids: number[];
@@ -8,17 +10,22 @@ type JoinResponse = {
   inviteLink?: string;
 };
 
-type RequestWithAuth<T> = {
-  payload: T;
-  validation: {
-    address: string;
-    addressSignedMessage: string;
-    nonce: string;
-    random: string;
-    hash: string;
-    timestamp: string;
-  };
+type Validation = {
+  addressSignedMessage: string;
+  address: string;
+  nonce: string;
+  random: string;
+  hash: string;
+  timestamp: string;
 };
+
+type PreparedBody = {
+  payload: object;
+  validation: Validation;
+};
+
+// eslint-disable-next-line no-unused-vars
+type SignerFunction = (message: string | Bytes) => Promise<string>;
 
 type GetAllGuildsResponse = {
   id: number;
@@ -267,7 +274,9 @@ export {
   Requirement,
   GetMembershipsResponse,
   JoinResponse,
-  RequestWithAuth,
+  Validation,
+  PreparedBody,
+  SignerFunction,
   GetAllGuildsResponse,
   GetGuildByIdResponse,
   GetUserAccessResponse,
