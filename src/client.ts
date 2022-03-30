@@ -38,26 +38,6 @@ const user = {
       }
     }
   },
-
-  async join(
-    guildId: number,
-    signerAddress: string,
-    sign: SignerFunction
-  ): Promise<JoinResponse> {
-    try {
-      const body = prepareBodyWithSign(signerAddress, sign, { guildId });
-      const res = await axios.post(`${API_BASE_URL}/user/join/`, body, {
-        headers,
-      });
-      return res.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response.data.errors) {
-        throw new ApiError(error.response.data.errors);
-      } else {
-        throw error;
-      }
-    }
-  },
 };
 
 const guild = {
@@ -143,6 +123,26 @@ const guild = {
     try {
       const res = await axios.delete(`${API_BASE_URL}/guild/${id}`, {
         data: body,
+        headers,
+      });
+      return res.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response.data.errors) {
+        throw new ApiError(error.response.data.errors);
+      } else {
+        throw error;
+      }
+    }
+  },
+  
+  async join(
+    guildId: number,
+    signerAddress: string,
+    sign: SignerFunction
+  ): Promise<JoinResponse> {
+    try {
+      const body = prepareBodyWithSign(signerAddress, sign, { guildId });
+      const res = await axios.post(`${API_BASE_URL}/user/join/`, body, {
         headers,
       });
       return res.data;
