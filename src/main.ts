@@ -1,3 +1,3 @@
 export * from "./client";
 export * from "./types";
-export { prepareRequest } from "./auth";
+export { prepareBodyWithSign } from "./auth";

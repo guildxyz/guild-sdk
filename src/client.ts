@@ -1,6 +1,5 @@
 import axios from "axios";
-import { ethers } from "ethers";
-import { prepareRequest } from "./auth";
+import { prepareBodyWithSign } from "./auth";
 import { API_BASE_URL } from "./common";
 import {
   ApiError,
@@ -16,7 +15,9 @@ import {
   GetRoleResponse,
   GetUserAccessResponse,
   JoinResponse,
+  SignerFunction,
   UpdateGuildParams,
+  UpdateRoleParams,
   UpdateRoleResponse,
 } from "./types";
 
@@ -38,9 +39,13 @@ const user = {
     }
   },
 
-  async join(guildId: number, wallet: ethers.Wallet): Promise<JoinResponse> {
+  async join(
+    guildId: number,
+    signerAddress: string,
+    sign: SignerFunction
+  ): Promise<JoinResponse> {
     try {
-      const body = await prepareRequest(wallet, { guildId });
+      const body = prepareBodyWithSign(signerAddress, sign, { guildId });
       const res = await axios.post(`${API_BASE_URL}/user/join/`, body, {
         headers,
       });
@@ -90,10 +95,11 @@ const guild = {
   },
 
   async create(
-    params: CreateGuildParams,
-    wallet: ethers.Wallet
+    signerAddress: string,
+    sign: SignerFunction,
+    params: CreateGuildParams
   ): Promise<CreateGuildResponse> {
-    const body = await prepareRequest(wallet, params);
+    const body = prepareBodyWithSign(signerAddress, sign, params);
     try {
       const res = await axios.post(`${API_BASE_URL}/guild`, body, { headers });
       return res.data;
@@ -107,8 +113,13 @@ const guild = {
   },
 
   // TODO id string (urlName) ?
-  async update(id: number, params: UpdateGuildParams, wallet: ethers.Wallet) {
-    const body = await prepareRequest(wallet, params);
+  async update(
+    id: number,
+    signerAddress: string,
+    sign: SignerFunction,
+    params: UpdateGuildParams
+  ) {
+    const body = prepareBodyWithSign(signerAddress, sign, params);
     try {
       const res = await axios.patch(`${API_BASE_URL}/guild/${id}`, body, {
         headers,
@@ -125,9 +136,10 @@ const guild = {
 
   async delete(
     id: number,
-    wallet: ethers.Wallet
+    signerAddress: string,
+    sign: SignerFunction
   ): Promise<DeleteGuildResponse> {
-    const body = await prepareRequest(wallet);
+    const body = prepareBodyWithSign(signerAddress, sign);
     try {
       const res = await axios.delete(`${API_BASE_URL}/guild/${id}`, {
         data: body,
@@ -154,10 +166,11 @@ const role = {
   },
 
   async create(
-    params: CreateRoleParams,
-    wallet: ethers.Wallet
+    signerAddress: string,
+    sign: SignerFunction,
+    params: CreateRoleParams
   ): Promise<CreateRoleResponse> {
-    const body = await prepareRequest(wallet, params);
+    const body = prepareBodyWithSign(signerAddress, sign, params);
     try {
       const res = await axios.post(`${API_BASE_URL}/role`, body, { headers });
       return res.data;
@@ -172,10 +185,11 @@ const role = {
 
   async update(
     id: number,
-    params: UpdateGuildParams,
-    wallet: ethers.Wallet
+    signerAddress: string,
+    sign: SignerFunction,
+    params: UpdateRoleParams
   ): Promise<UpdateRoleResponse> {
-    const body = await prepareRequest(wallet, params);
+    const body = prepareBodyWithSign(signerAddress, sign, params);
     try {
       const res = await axios.patch(`${API_BASE_URL}/role/${id}`, body, {
         headers,
@@ -190,8 +204,12 @@ const role = {
     }
   },
 
-  async delete(id: number, wallet: ethers.Wallet): Promise<DeleteRoleResponse> {
-    const body = await prepareRequest(wallet);
+  async delete(
+    id: number,
+    signerAddress: string,
+    sign: SignerFunction
+  ): Promise<DeleteRoleResponse> {
+    const body = prepareBodyWithSign(signerAddress, sign);
     try {
       const res = await axios.delete(`${API_BASE_URL}/role/${id}`, {
         data: body,
