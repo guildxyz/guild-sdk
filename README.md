@@ -20,7 +20,18 @@
   
   
 ## Summary
-The Guild SDK library is a Typescript library for interacting with the Guild API. This document explains how to authenticate, manage your Guilds easily through the SDK. Developed and maintained by the @agoraxyz team.
+
+The Guild SDK library is a Typescript library for interacting with the Guild API. This document explains how to authenticate, manage your Guilds easily and automate token-gated access in any application with this SDK.
+
+Guild.xyz is the membership layer protocol for web3 communities, making community management easy and interoperable between platforms.
+
+Check out our API documentation for more information about guilds, roles and what is possible: https://docs.guild.xyz/guild/guild-api-alpha
+
+
+Developed and maintained by the @agoraxyz team. 
+Twitter: https://twitter.com/agora_xyz
+Webpage: https://agora.xyz
+GitHub: https://github.com/agoraxyz
 
 #### Node.js
 
