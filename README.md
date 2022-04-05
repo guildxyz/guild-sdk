@@ -100,7 +100,7 @@ import { ethers } from "ethers";
 const wallet = ethers.Wallet.createRandom();
 // Wrapping the signer function from ethers.js
 const sign = (signableMessage: string | Bytes) =>
-  ethersWallet.signMessage(signableMessage);
+  wallet.signMessage(signableMessage);
 
 // Creating a Guild
 const myGuild = await guild.create(
