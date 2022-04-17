@@ -39,7 +39,7 @@ const prepareBodyWithSign = async (
     },
   };
 
-  return stringify(body);
+  return body;
 };
 
 // eslint-disable-next-line import/prefer-default-export
