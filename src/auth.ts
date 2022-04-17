@@ -7,7 +7,7 @@ const prepareBodyWithSign = async (
   signerAddress: string,
   sign: SignerFunction,
   payload?: object
-): Promise<string> => {
+): Promise<PreparedBody> => {
   if (!isAddress(signerAddress))
     throw new Error(`Invalid address: ${signerAddress} !`);
 
