@@ -79,7 +79,7 @@ const guild = {
     sign: SignerFunction,
     params: CreateGuildParams
   ): Promise<CreateGuildResponse> {
-    const body = prepareBodyWithSign(signerAddress, sign, params);
+    const body = await prepareBodyWithSign(signerAddress, sign, params);
     try {
       const res = await axios.post(`${API_BASE_URL}/guild`, body, { headers });
       return res.data;
@@ -99,7 +99,7 @@ const guild = {
     sign: SignerFunction,
     params: UpdateGuildParams
   ) {
-    const body = prepareBodyWithSign(signerAddress, sign, params);
+    const body = await prepareBodyWithSign(signerAddress, sign, params);
     try {
       const res = await axios.patch(`${API_BASE_URL}/guild/${id}`, body, {
         headers,
@@ -119,7 +119,7 @@ const guild = {
     signerAddress: string,
     sign: SignerFunction
   ): Promise<DeleteGuildResponse> {
-    const body = prepareBodyWithSign(signerAddress, sign);
+    const body = await prepareBodyWithSign(signerAddress, sign);
     try {
       const res = await axios.delete(`${API_BASE_URL}/guild/${id}`, {
         data: body,
@@ -141,7 +141,7 @@ const guild = {
     sign: SignerFunction
   ): Promise<JoinResponse> {
     try {
-      const body = prepareBodyWithSign(signerAddress, sign, { guildId });
+      const body = await prepareBodyWithSign(signerAddress, sign, { guildId });
       const res = await axios.post(`${API_BASE_URL}/user/join/`, body, {
         headers,
       });
@@ -170,7 +170,7 @@ const role = {
     sign: SignerFunction,
     params: CreateRoleParams
   ): Promise<CreateRoleResponse> {
-    const body = prepareBodyWithSign(signerAddress, sign, params);
+    const body = await prepareBodyWithSign(signerAddress, sign, params);
     try {
       const res = await axios.post(`${API_BASE_URL}/role`, body, { headers });
       return res.data;
@@ -189,7 +189,7 @@ const role = {
     sign: SignerFunction,
     params: UpdateRoleParams
   ): Promise<UpdateRoleResponse> {
-    const body = prepareBodyWithSign(signerAddress, sign, params);
+    const body = await prepareBodyWithSign(signerAddress, sign, params);
     try {
       const res = await axios.patch(`${API_BASE_URL}/role/${id}`, body, {
         headers,
@@ -209,7 +209,7 @@ const role = {
     signerAddress: string,
     sign: SignerFunction
   ): Promise<DeleteRoleResponse> {
-    const body = prepareBodyWithSign(signerAddress, sign);
+    const body = await prepareBodyWithSign(signerAddress, sign);
     try {
       const res = await axios.delete(`${API_BASE_URL}/role/${id}`, {
         data: body,
