@@ -27,7 +27,7 @@ type PreparedBody = {
 // eslint-disable-next-line no-unused-vars
 type SignerFunction = (signableMessage: string | Bytes) => Promise<string>;
 
-type GetAllGuildsResponse = {
+type GetGuildsResponse = {
   id: number;
   name: string;
   imageUrl: string;
@@ -277,7 +277,7 @@ export {
   Validation,
   PreparedBody,
   SignerFunction,
-  GetAllGuildsResponse,
+  GetGuildsResponse,
   GetGuildByIdResponse,
   GetUserAccessResponse,
   CreateGuildParams,

@@ -9,7 +9,7 @@ import {
   CreateRoleResponse,
   DeleteGuildResponse,
   DeleteRoleResponse,
-  GetAllGuildsResponse,
+  GetGuildsResponse,
   GetGuildByIdResponse,
   GetMembershipsResponse,
   GetRoleResponse,
@@ -41,8 +41,13 @@ const user = {
 };
 
 const guild = {
-  async getAll(): Promise<GetAllGuildsResponse> {
+  async getAll(): Promise<GetGuildsResponse> {
     const res = await axios.get(`${API_BASE_URL}/guild`);
+    return res.data;
+  },
+
+  async getByAddress(address: string, include: "all" | "admin" = "all"): Promise<GetGuildsResponse> {
+    const res = await axios.get(`${API_BASE_URL}/guild/address/${address}?include=${include}`);
     return res.data;
   },
 
