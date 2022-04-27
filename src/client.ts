@@ -19,6 +19,8 @@ import {
   UpdateGuildParams,
   UpdateRoleParams,
   UpdateRoleResponse,
+  GuildIncludeType,
+  GuildSortType,
 } from "./types";
 
 const headers = { "Content-Type": "application/json" };
@@ -41,12 +43,12 @@ const user = {
 };
 
 const guild = {
-  async getAll(): Promise<GetGuildsResponse> {
-    const res = await axios.get(`${API_BASE_URL}/guild`);
+  async getAll(sort: GuildSortType = "members"): Promise<GetGuildsResponse> {
+    const res = await axios.get(`${API_BASE_URL}/guild?order=${sort}`);
     return res.data;
   },
 
-  async getByAddress(address: string, include: "all" | "admin" = "all"): Promise<GetGuildsResponse> {
+  async getByAddress(address: string, include: GuildIncludeType = "all"): Promise<GetGuildsResponse> {
     const res = await axios.get(`${API_BASE_URL}/guild/address/${address}?include=${include}`);
     return res.data;
   },

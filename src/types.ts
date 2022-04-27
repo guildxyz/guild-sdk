@@ -27,6 +27,10 @@ type PreparedBody = {
 // eslint-disable-next-line no-unused-vars
 type SignerFunction = (signableMessage: string | Bytes) => Promise<string>;
 
+type GuildSortType = "members" | "name" | "oldest" | "newest";
+
+type GuildIncludeType = "all" | "admin";
+
 type GetGuildsResponse = {
   id: number;
   name: string;
@@ -277,6 +281,8 @@ export {
   Validation,
   PreparedBody,
   SignerFunction,
+  GuildSortType,
+  GuildIncludeType,
   GetGuildsResponse,
   GetGuildByIdResponse,
   GetUserAccessResponse,
