@@ -29,6 +29,8 @@ type SignerFunction = (signableMessage: string | Bytes) => Promise<string>;
 
 type GuildSortType = "members" | "name" | "oldest" | "newest";
 
+type GuildsQueryType = { sort?: GuildSortType, search?: string }
+
 type GuildIncludeType = "all" | "admin";
 
 type GetGuildsResponse = {
@@ -282,6 +284,7 @@ export {
   PreparedBody,
   SignerFunction,
   GuildSortType,
+  GuildsQueryType,
   GuildIncludeType,
   GetGuildsResponse,
   GetGuildByIdResponse,
