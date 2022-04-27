@@ -236,7 +236,12 @@ type DeleteGuildResponse = {
   success: boolean;
 };
 
-type CreateRoleParams = Role & { guildId: number };
+type PlatformInfo = {
+  platform?: "TELEGRAM" | "DISCORD",
+  platformId?: string
+}
+
+type CreateRoleParams = Role & PlatformInfo & { guildId: number };
 
 type UpdateRoleParams = {
   name: string;
