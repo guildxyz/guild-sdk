@@ -45,6 +45,11 @@ describe("Check client sdk function", () => {
     expect(ourGuild.urlName).toBe("our-guild");
   });
 
+  test("GET /guild/:address", async () => {
+    const guilds = await client.guild.getByAddress("0x0000000000000000000000000000000000000000", "admin");
+    expect(guilds).toStrictEqual([]);
+  });
+
   test("GET /guild/:id - ID (number)", async () => {
     const guild = await client.guild.get(1985);
     expect(guild.name).toBe("Our Guild");
