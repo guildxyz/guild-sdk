@@ -5,10 +5,40 @@ type GetMembershipsResponse = {
   roleids: number[];
 }[];
 
+// TODO
 type JoinResponse = {
   alreadyJoined: boolean;
   inviteLink?: string;
 };
+
+type GuildPlatformData = {
+  guildName: string,
+  platformSpecificGuildId: string,
+  roles: {
+    name: string,
+    platformSpecificRoleId: string,
+    [key: string]: string,
+  }
+}
+
+type PlatformJoinResponse = GuildPlatformData
+
+type PlatformStatusResponse = GuildPlatformData[]
+
+type PlatformGetUserAccessesReponse = GuildPlatformData[]
+
+type PlatformGetUserMembershipsReponse = GuildPlatformData
+
+type PlatformGetMembershipsResponse = GuildPlatformData[]
+
+type PlatformConnectResponse = {
+  alreadyConnected: boolean,
+  connectLink: string
+}
+
+type PlatformLeaveResponse = {
+  success: boolean
+}
 
 type Validation = {
   addressSignedMessage: string;
@@ -78,11 +108,11 @@ type GetGuildByIdResponse = {
   imageUrl: string;
   showMembers: boolean;
   theme: Theme;
-  platforms: {
-    id: number;
-    platformId: string;
-    type: string;
-    platformName: string;
+  guildPlatforms: {
+    id: number,
+    name: string,
+    patformSpecificGuildId: string;
+    data: object;
   }[];
   roles: {
     id: number;
@@ -113,12 +143,10 @@ type GetGuildByIdResponse = {
         };
       };
     }[];
-    platforms: {
-      roleId: number;
-      platformId: number;
-      inviteChannel: string;
-      discordRoleId: string;
-    }[];
+    platforms: ({
+      id: number;
+      patformSpecificRoleId: string;
+    } & { [key: string]: string; })[];
     members: string[];
     memberCount: number;
   }[];
@@ -136,73 +164,73 @@ type GetUserAccessResponse = {
 type Requirement =
   | { type: "FREE" }
   | {
-      type: "COIN";
-      chain: Chain;
-      data: {
-        amount: number;
-      };
-    }
+    type: "COIN";
+    chain: Chain;
+    data: {
+      amount: number;
+    };
+  }
   | {
-      type: "ERC20";
-      chain: Chain;
-      address: string;
-      data: {
-        amount: number;
-      };
-    }
+    type: "ERC20";
+    chain: Chain;
+    address: string;
+    data: {
+      amount: number;
+    };
+  }
   | {
-      type: "ERC721" | "ERC1155";
-      chain: Chain;
-      address: string;
-      data: {
-        id?: number;
-        amount: number;
-        attribute?:
-          | {
-              trait_type: string;
-              value: string;
-            }
-          | {
-              trait_type: string;
-              interval: { min: number; max: number };
-            };
-      };
-    }
-  | {
-      type: "POAP";
-      data: {
-        id: string;
-      };
-    }
-  | {
-      type: "MIRROR";
-      chain: Chain;
-      address: string;
-      data: {
-        id: number;
-      };
-    }
-  | {
-      type: "SNAPSHOT";
-      chain: Chain;
-      data: {
-        startegy: object;
-      };
-    }
-  | {
-      type: "JUICEBOX";
-      chain: Chain;
-      data: {
-        id: number;
-        amount: number;
-      };
-    }
-  | {
-      type: "ALLOWLIST";
-      data: {
-        addresses: string[];
+    type: "ERC721" | "ERC1155";
+    chain: Chain;
+    address: string;
+    data: {
+      id?: number;
+      amount: number;
+      attribute?:
+      | {
+        trait_type: string;
+        value: string;
+      }
+      | {
+        trait_type: string;
+        interval: { min: number; max: number };
       };
     };
+  }
+  | {
+    type: "POAP";
+    data: {
+      id: string;
+    };
+  }
+  | {
+    type: "MIRROR";
+    chain: Chain;
+    address: string;
+    data: {
+      id: number;
+    };
+  }
+  | {
+    type: "SNAPSHOT";
+    chain: Chain;
+    data: {
+      startegy: object;
+    };
+  }
+  | {
+    type: "JUICEBOX";
+    chain: Chain;
+    data: {
+      id: number;
+      amount: number;
+    };
+  }
+  | {
+    type: "ALLOWLIST";
+    data: {
+      addresses: string[];
+    };
+  };
 
 type Role = {
   name: string;
@@ -308,4 +336,11 @@ export {
   UpdateRoleResponse,
   DeleteRoleResponse,
   ApiError,
+  PlatformJoinResponse,
+  PlatformLeaveResponse,
+  PlatformStatusResponse,
+  PlatformGetUserAccessesReponse,
+  PlatformConnectResponse,
+  PlatformGetUserMembershipsReponse,
+  PlatformGetMembershipsResponse
 };

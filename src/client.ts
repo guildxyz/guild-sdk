@@ -1,6 +1,6 @@
 import axios from "axios";
 import { prepareBodyWithSign } from "./auth";
-import { API_BASE_URL } from "./common";
+import { API_BASE_URL, headers } from "./common";
 import {
   ApiError,
   CreateGuildParams,
@@ -22,8 +22,6 @@ import {
   GuildsQueryType,
   GuildsByAddressQueryType,
 } from "./types";
-
-const headers = { "Content-Type": "application/json" };
 
 const user = {
   async getMemberships(
@@ -152,7 +150,7 @@ const guild = {
       }
     }
   },
-  
+
   async join(
     guildId: number,
     signerAddress: string,
