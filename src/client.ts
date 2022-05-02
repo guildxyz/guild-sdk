@@ -19,9 +19,8 @@ import {
   UpdateGuildParams,
   UpdateRoleParams,
   UpdateRoleResponse,
-  GuildIncludeType,
-  GuildSortType,
   GuildsQueryType,
+  GuildsByAddressQueryType,
 } from "./types";
 
 const headers = { "Content-Type": "application/json" };
@@ -44,17 +43,24 @@ const user = {
 };
 
 const guild = {
-  async getAll(sort: GuildSortType = "members", search: string = ""): Promise<GetGuildsResponse> {
-    const query: GuildsQueryType = { sort }
-    if (search?.length) query.search = search
-    const searchParams = new URLSearchParams(query).toString()
+  async getAll(query: GuildsQueryType = {}): Promise<GetGuildsResponse> {
+    const queryParams: GuildsQueryType = {}
+    if (query.order) queryParams.order = query.order
+    if (query.search) queryParams.search = query.search
+    const searchParams = new URLSearchParams(queryParams).toString()
 
     const res = await axios.get(`${API_BASE_URL}/guild?${searchParams}`);
     return res.data;
   },
 
-  async getByAddress(address: string, include: GuildIncludeType = "all"): Promise<GetGuildsResponse> {
-    const res = await axios.get(`${API_BASE_URL}/guild/address/${address}?include=${include}`);
+  async getByAddress(address: string, query: GuildsByAddressQueryType = {}): Promise<GetGuildsResponse> {
+    const queryParams: GuildsByAddressQueryType = {}
+    if (query.order) queryParams.order = query.order
+    if (query.search) queryParams.search = query.search
+    queryParams.include = query.include ?? "all"
+    const searchParams = new URLSearchParams(queryParams).toString()
+
+    const res = await axios.get(`${API_BASE_URL}/guild/address/${address}?${searchParams}`);
     return res.data;
   },
 
