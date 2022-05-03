@@ -4,6 +4,8 @@ import * as client from "./client";
 import {
   ApiError,
   PlatformConnectResponse,
+  PlatformGetAllGuilds,
+  PlatformGetGuild,
   PlatformGetMembershipsResponse,
   PlatformGetUserMembershipsReponse,
   PlatformJoinResponse,
@@ -21,14 +23,14 @@ class Platform {
   guild = {
     ...client.guild,
 
-    async getAllOfPlatform() {
+    async getAllOfPlatform(): Promise<PlatformGetAllGuilds> {
       const res = await axios.get(
         `${API_BASE_URL}/platform/guild/${Platform.name}`
       );
       return res.data;
     },
 
-    async get(platformSpecificGuildId: string) {
+    async get(platformSpecificGuildId: string): Promise<PlatformGetGuild> {
       const res = await axios.get(
         `${API_BASE_URL}/platform/guild/${Platform.name}/${platformSpecificGuildId}`
       );
@@ -170,7 +172,7 @@ class Platform {
     ): Promise<PlatformGetMembershipsResponse> {
       try {
         const res = await axios.get(
-          `${API_BASE_URL}/platform/user/membership/${platformUserId}`
+          `${API_BASE_URL}/platform/user/membership/${Platform.name}/${platformUserId}`
         );
         return res.data;
       } catch (error) {

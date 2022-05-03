@@ -12,33 +12,37 @@ type JoinResponse = {
 };
 
 type GuildPlatformData = {
-  guildName: string,
-  platformSpecificGuildId: string,
+  guildName: string;
+  platformSpecificGuildId: string;
   roles: {
-    name: string,
-    platformSpecificRoleId: string,
-    [key: string]: string,
-  }
-}
+    name: string;
+    platformSpecificRoleId: string;
+    [key: string]: string;
+  }[];
+};
 
-type PlatformJoinResponse = GuildPlatformData
+type PlatformGetAllGuilds = GuildPlatformData[];
 
-type PlatformStatusResponse = GuildPlatformData[]
+type PlatformGetGuild = GuildPlatformData;
 
-type PlatformGetUserAccessesReponse = GuildPlatformData[]
+type PlatformJoinResponse = GuildPlatformData;
 
-type PlatformGetUserMembershipsReponse = GuildPlatformData
+type PlatformStatusResponse = GuildPlatformData[];
 
-type PlatformGetMembershipsResponse = GuildPlatformData[]
+type PlatformGetUserAccessesReponse = GuildPlatformData[];
+
+type PlatformGetUserMembershipsReponse = GuildPlatformData;
+
+type PlatformGetMembershipsResponse = GuildPlatformData[];
 
 type PlatformConnectResponse = {
-  alreadyConnected: boolean,
-  connectLink: string
-}
+  alreadyConnected: boolean;
+  connectLink: string;
+};
 
 type PlatformLeaveResponse = {
-  success: boolean
-}
+  success: boolean;
+};
 
 type Validation = {
   addressSignedMessage: string;
@@ -59,11 +63,13 @@ type SignerFunction = (signableMessage: string | Bytes) => Promise<string>;
 
 type GuildOrderType = "members" | "name" | "oldest" | "newest";
 
-type GuildsQueryType = { order?: GuildOrderType, search?: string }
+type GuildsQueryType = { order?: GuildOrderType; search?: string };
 
 type GuildIncludeType = "all" | "admin";
 
-type GuildsByAddressQueryType = GuildsQueryType & { include?: GuildIncludeType }
+type GuildsByAddressQueryType = GuildsQueryType & {
+  include?: GuildIncludeType;
+};
 
 type GetGuildsResponse = {
   id: number;
@@ -109,8 +115,8 @@ type GetGuildByIdResponse = {
   showMembers: boolean;
   theme: Theme;
   guildPlatforms: {
-    id: number,
-    name: string,
+    id: number;
+    name: string;
     patformSpecificGuildId: string;
     data: object;
   }[];
@@ -146,7 +152,7 @@ type GetGuildByIdResponse = {
     platforms: ({
       id: number;
       patformSpecificRoleId: string;
-    } & { [key: string]: string; })[];
+    } & { [key: string]: string })[];
     members: string[];
     memberCount: number;
   }[];
@@ -164,73 +170,73 @@ type GetUserAccessResponse = {
 type Requirement =
   | { type: "FREE" }
   | {
-    type: "COIN";
-    chain: Chain;
-    data: {
-      amount: number;
-    };
-  }
+      type: "COIN";
+      chain: Chain;
+      data: {
+        amount: number;
+      };
+    }
   | {
-    type: "ERC20";
-    chain: Chain;
-    address: string;
-    data: {
-      amount: number;
-    };
-  }
+      type: "ERC20";
+      chain: Chain;
+      address: string;
+      data: {
+        amount: number;
+      };
+    }
   | {
-    type: "ERC721" | "ERC1155";
-    chain: Chain;
-    address: string;
-    data: {
-      id?: number;
-      amount: number;
-      attribute?:
-      | {
-        trait_type: string;
-        value: string;
-      }
-      | {
-        trait_type: string;
-        interval: { min: number; max: number };
+      type: "ERC721" | "ERC1155";
+      chain: Chain;
+      address: string;
+      data: {
+        id?: number;
+        amount: number;
+        attribute?:
+          | {
+              trait_type: string;
+              value: string;
+            }
+          | {
+              trait_type: string;
+              interval: { min: number; max: number };
+            };
+      };
+    }
+  | {
+      type: "POAP";
+      data: {
+        id: string;
+      };
+    }
+  | {
+      type: "MIRROR";
+      chain: Chain;
+      address: string;
+      data: {
+        id: number;
+      };
+    }
+  | {
+      type: "SNAPSHOT";
+      chain: Chain;
+      data: {
+        startegy: object;
+      };
+    }
+  | {
+      type: "JUICEBOX";
+      chain: Chain;
+      data: {
+        id: number;
+        amount: number;
+      };
+    }
+  | {
+      type: "ALLOWLIST";
+      data: {
+        addresses: string[];
       };
     };
-  }
-  | {
-    type: "POAP";
-    data: {
-      id: string;
-    };
-  }
-  | {
-    type: "MIRROR";
-    chain: Chain;
-    address: string;
-    data: {
-      id: number;
-    };
-  }
-  | {
-    type: "SNAPSHOT";
-    chain: Chain;
-    data: {
-      startegy: object;
-    };
-  }
-  | {
-    type: "JUICEBOX";
-    chain: Chain;
-    data: {
-      id: number;
-      amount: number;
-    };
-  }
-  | {
-    type: "ALLOWLIST";
-    data: {
-      addresses: string[];
-    };
-  };
 
 type Role = {
   name: string;
@@ -273,9 +279,9 @@ type DeleteGuildResponse = {
 };
 
 type PlatformInfo = {
-  platform?: "TELEGRAM" | "DISCORD",
-  platformId?: string
-}
+  platform?: "TELEGRAM" | "DISCORD";
+  platformId?: string;
+};
 
 type CreateRoleParams = Role & PlatformInfo & { guildId: number };
 
@@ -336,11 +342,13 @@ export {
   UpdateRoleResponse,
   DeleteRoleResponse,
   ApiError,
+  PlatformGetAllGuilds,
+  PlatformGetGuild,
   PlatformJoinResponse,
   PlatformLeaveResponse,
   PlatformStatusResponse,
   PlatformGetUserAccessesReponse,
   PlatformConnectResponse,
   PlatformGetUserMembershipsReponse,
-  PlatformGetMembershipsResponse
+  PlatformGetMembershipsResponse,
 };
