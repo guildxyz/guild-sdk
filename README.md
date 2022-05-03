@@ -27,8 +27,7 @@ Guild.xyz is the membership layer protocol for web3 communities, making communit
 
 Check out our API documentation for more information about guilds, roles and what is possible: https://docs.guild.xyz/guild/guild-api-alpha
 
-
-Developed and maintained by the @agoraxyz team. 
+Developed and maintained by the @agoraxyz team.
 Twitter: https://twitter.com/agora_xyz
 Webpage: https://agora.xyz
 GitHub: https://github.com/agoraxyz
@@ -181,4 +180,30 @@ const bodyWithPayload = await prepareBodyWithSign(wallet.address, sign, {
   guildId: 1234,
 });
 // {"payload":{"guildId":1234},"validation":{"address":"0xea66400591bf2485907749f71615128238f7ef0a","addressSignedMessage":"0x544855fc7c34b2411d74b45395ae59e87b6be10c15598a12446f3b0b0daf25f501ad8532a6420f9c8288724df2e03c14068786260a2eaaa9938e31318034fe1b1b","hash":"0xd24a3714283ef2c42428e247e76d4afe6bb6f4c73b10131978b877bc78238aa9","nonce":"0x3c3b72ba441b2740682d8974d96df2f61f3b9d49235d97ff6d5fd50373b2429c","random":"vrCxwqgt0ml9bF9z3Pxg9j9te1v0VU/9Yx9oFkfm84k=","timestamp":"1646267441728"}}
+```
+
+## Platform specific API
+
+```typescript
+import { Platform } from "@guildxyz/sdk";
+
+const platform = new Platform(platformName);
+
+await platform.guild.get(platformSpecificGuildId);
+await platform.guild.getAllOfPlatform();
+await platform.guild.getUserAccess(platformSpecificGuildId, platformUserId);
+await platform.guild.getUserMemberships(
+  platformSpecificGuildId,
+  platformSpecificGuildId
+);
+
+await platform.user.connect(platformUserId);
+await platform.user.join(platformSpecificGuildId, platformUserId);
+await platform.user.leave(platformSpecificGuildId, platformUserId);
+await platform.user.status(platformSpecificGuildId, platformUserId);
+await platform.user.getMemberships(platformUserId);
+
+// The non platform specific endpoints are also available at this instance. Eg.:
+await platform.guild.create(walletAddress, signerFunction, createGuildParams);
+await platform.role.get(roleId);
 ```
