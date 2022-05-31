@@ -3,9 +3,9 @@ import { API_BASE_URL, headers } from "./common";
 import * as client from "./client";
 import {
   ApiError,
+  GetGuildResponse,
   PlatformConnectResponse,
   PlatformGetAllGuilds,
-  PlatformGetGuild,
   PlatformGetMembershipsResponse,
   PlatformGetUserMembershipsReponse,
   PlatformJoinResponse,
@@ -30,7 +30,7 @@ class Platform {
       return res.data;
     },
 
-    async get(platformGuildId: string): Promise<PlatformGetGuild> {
+    async get(platformGuildId: string): Promise<GetGuildResponse> {
       const res = await axios.get(
         `${API_BASE_URL}/platform/guild/${Platform.name}/${platformGuildId}`
       );

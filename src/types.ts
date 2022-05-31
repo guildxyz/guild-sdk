@@ -162,6 +162,8 @@ type GetGuildByIdResponse = {
   };
 };
 
+type GetGuildResponse = GetGuildByIdResponse;
+
 type GetUserAccessResponse = {
   roleId: number;
   access: boolean;
@@ -329,6 +331,7 @@ export {
   GuildIncludeType,
   GuildsByAddressQueryType,
   GetGuildsResponse,
+  GetGuildResponse,
   GetGuildByIdResponse,
   GetUserAccessResponse,
   CreateGuildParams,
