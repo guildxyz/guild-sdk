@@ -13,10 +13,10 @@ type JoinResponse = {
 
 type GuildPlatformData = {
   guildName: string;
-  platformSpecificGuildId: string;
+  platformGuildId: string;
   roles: {
     name: string;
-    platformSpecificRoleId: string;
+    platformRoleId: string;
     [key: string]: string;
   }[];
 };
@@ -117,7 +117,7 @@ type GetGuildByIdResponse = {
   guildPlatforms: {
     id: number;
     name: string;
-    patformSpecificGuildId: string;
+    patformGuildId: string;
     data: object;
   }[];
   roles: {
@@ -151,7 +151,7 @@ type GetGuildByIdResponse = {
     }[];
     platforms: ({
       id: number;
-      patformSpecificRoleId: string;
+      patformRoleId: string;
     } & { [key: string]: string })[];
     members: string[];
     memberCount: number;
@@ -170,73 +170,73 @@ type GetUserAccessResponse = {
 type Requirement =
   | { type: "FREE" }
   | {
-      type: "COIN";
-      chain: Chain;
-      data: {
-        amount: number;
-      };
-    }
+    type: "COIN";
+    chain: Chain;
+    data: {
+      amount: number;
+    };
+  }
   | {
-      type: "ERC20";
-      chain: Chain;
-      address: string;
-      data: {
-        amount: number;
-      };
-    }
+    type: "ERC20";
+    chain: Chain;
+    address: string;
+    data: {
+      amount: number;
+    };
+  }
   | {
-      type: "ERC721" | "ERC1155";
-      chain: Chain;
-      address: string;
-      data: {
-        id?: number;
-        amount: number;
-        attribute?:
-          | {
-              trait_type: string;
-              value: string;
-            }
-          | {
-              trait_type: string;
-              interval: { min: number; max: number };
-            };
-      };
-    }
-  | {
-      type: "POAP";
-      data: {
-        id: string;
-      };
-    }
-  | {
-      type: "MIRROR";
-      chain: Chain;
-      address: string;
-      data: {
-        id: number;
-      };
-    }
-  | {
-      type: "SNAPSHOT";
-      chain: Chain;
-      data: {
-        startegy: object;
-      };
-    }
-  | {
-      type: "JUICEBOX";
-      chain: Chain;
-      data: {
-        id: number;
-        amount: number;
-      };
-    }
-  | {
-      type: "ALLOWLIST";
-      data: {
-        addresses: string[];
+    type: "ERC721" | "ERC1155";
+    chain: Chain;
+    address: string;
+    data: {
+      id?: number;
+      amount: number;
+      attribute?:
+      | {
+        trait_type: string;
+        value: string;
+      }
+      | {
+        trait_type: string;
+        interval: { min: number; max: number };
       };
     };
+  }
+  | {
+    type: "POAP";
+    data: {
+      id: string;
+    };
+  }
+  | {
+    type: "MIRROR";
+    chain: Chain;
+    address: string;
+    data: {
+      id: number;
+    };
+  }
+  | {
+    type: "SNAPSHOT";
+    chain: Chain;
+    data: {
+      startegy: object;
+    };
+  }
+  | {
+    type: "JUICEBOX";
+    chain: Chain;
+    data: {
+      id: number;
+      amount: number;
+    };
+  }
+  | {
+    type: "ALLOWLIST";
+    data: {
+      addresses: string[];
+    };
+  };
 
 type Role = {
   name: string;

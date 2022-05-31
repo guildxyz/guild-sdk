@@ -189,21 +189,18 @@ import { Platform } from "@guildxyz/sdk";
 
 const platform = new Platform(platformName);
 
-await platform.guild.get(platformSpecificGuildId);
+await platform.guild.get(platformGuildId);
 await platform.guild.getAllOfPlatform();
-await platform.guild.getUserAccess(platformSpecificGuildId, platformUserId);
-await platform.guild.getUserMemberships(
-  platformSpecificGuildId,
-  platformSpecificGuildId
-);
+await platform.guild.getUserAccess(platformGuildId, platformUserId);
+await platform.guild.getUserMemberships(platformGuildId, platformGuildId);
 
 await platform.user.connect(platformUserId);
-await platform.user.join(platformSpecificGuildId, platformUserId);
-await platform.user.leave(platformSpecificGuildId, platformUserId);
-await platform.user.status(platformSpecificGuildId, platformUserId);
+await platform.user.join(platformGuildId, platformUserId);
+await platform.user.leave(platformGuildId, platformUserId);
+await platform.user.status(platformGuildId, platformUserId);
 await platform.user.getMemberships(platformUserId);
 
-// The non platform specific endpoints are also available at this instance. Eg.:
+// The non platform  endpoints are also available at this instance. Eg.:
 await platform.guild.create(walletAddress, signerFunction, createGuildParams);
 await platform.role.get(roleId);
 ```

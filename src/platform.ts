@@ -30,9 +30,9 @@ class Platform {
       return res.data;
     },
 
-    async get(platformSpecificGuildId: string): Promise<PlatformGetGuild> {
+    async get(platformGuildId: string): Promise<PlatformGetGuild> {
       const res = await axios.get(
-        `${API_BASE_URL}/platform/guild/${Platform.name}/${platformSpecificGuildId}`
+        `${API_BASE_URL}/platform/guild/${Platform.name}/${platformGuildId}`
       );
       if (res.status === 204) {
         return null;
@@ -41,21 +41,21 @@ class Platform {
     },
 
     async getUserAccess(
-      platformSpecificGuildId: string,
+      platformGuildId: string,
       platformUserId: string
     ): Promise<PlatformStatusResponse> {
       const res = await axios.get(
-        `${API_BASE_URL}/platform/guild/accesses/${Platform.name}/${platformSpecificGuildId}/${platformUserId}`
+        `${API_BASE_URL}/platform/guild/accesses/${Platform.name}/${platformGuildId}/${platformUserId}`
       );
       return res.data;
     },
 
     async getUserMemberships(
-      platformSpecificGuildId: string,
+      platformGuildId: string,
       platformUserId: string
     ): Promise<PlatformGetUserMembershipsReponse> {
       const res = await axios.get(
-        `${API_BASE_URL}/platform/guild/member/${Platform.name}/${platformSpecificGuildId}/${platformUserId}`
+        `${API_BASE_URL}/platform/guild/member/${Platform.name}/${platformGuildId}/${platformUserId}`
       );
       return res.data;
     },
@@ -87,13 +87,13 @@ class Platform {
     },
 
     async join(
-      platformSpecificGuildId: string,
+      platformGuildId: string,
       platformUserId: string
     ): Promise<PlatformJoinResponse> {
       try {
         const body = {
           platformName: Platform.name,
-          platformSpecificGuildId,
+          platformGuildId,
           platformUserId,
         };
         const res = await axios.post(
@@ -114,13 +114,13 @@ class Platform {
     },
 
     async leave(
-      platformSpecificGuildId: string,
+      platformGuildId: string,
       platformUserId: string
     ): Promise<PlatformLeaveResponse> {
       try {
         const body = {
           platformName: Platform.name,
-          platformSpecificGuildId,
+          platformGuildId,
           platformUserId,
         };
         const res = await axios.post(
@@ -141,13 +141,13 @@ class Platform {
     },
 
     async status(
-      platformSpecificGuildId: string,
+      platformGuildId: string,
       platformUserId: string
     ): Promise<PlatformStatusResponse> {
       try {
         const body = {
           platformName: Platform.name,
-          platformSpecificGuildId,
+          platformGuildId,
           platformUserId,
         };
         const res = await axios.post(
