@@ -200,7 +200,7 @@ await platform.user.leave(platformGuildId, platformUserId);
 await platform.user.status(platformGuildId, platformUserId);
 await platform.user.getMemberships(platformUserId);
 
-// The non platform  endpoints are also available at this instance. Eg.:
+// The non platform specific endpoints are also available at this instance. Eg.:
 await platform.guild.create(walletAddress, signerFunction, createGuildParams);
 await platform.role.get(roleId);
 ```

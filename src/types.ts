@@ -342,6 +342,7 @@ export {
   UpdateRoleResponse,
   DeleteRoleResponse,
   ApiError,
+  GuildPlatformData,
   PlatformGetAllGuilds,
   PlatformGetGuild,
   PlatformJoinResponse,
