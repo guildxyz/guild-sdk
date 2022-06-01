@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import axios from "axios";
 import { API_BASE_URL, headers } from "./common";
 import * as client from "./client";
@@ -23,16 +24,16 @@ class Platform {
   guild = {
     ...client.guild,
 
-    async getAllOfPlatform(): Promise<PlatformGetAllGuilds> {
+    getAllOfPlatform: async (): Promise<PlatformGetAllGuilds> => {
       const res = await axios.get(
-        `${API_BASE_URL}/platform/guild/${Platform.name}`
+        `${API_BASE_URL}/platform/guild/${this.name}`
       );
       return res.data;
     },
 
-    async get(platformGuildId: string): Promise<GetGuildResponse> {
+    get: async (platformGuildId: string): Promise<GetGuildResponse> => {
       const res = await axios.get(
-        `${API_BASE_URL}/platform/guild/${Platform.name}/${platformGuildId}`
+        `${API_BASE_URL}/platform/guild/${this.name}/${platformGuildId}`
       );
       if (res.status === 204) {
         return null;
@@ -40,22 +41,22 @@ class Platform {
       return res.data;
     },
 
-    async getUserAccess(
+    getUserAccess: async (
       platformGuildId: string,
       platformUserId: string
-    ): Promise<PlatformStatusResponse> {
+    ): Promise<PlatformStatusResponse> => {
       const res = await axios.get(
-        `${API_BASE_URL}/platform/guild/accesses/${Platform.name}/${platformGuildId}/${platformUserId}`
+        `${API_BASE_URL}/platform/guild/accesses/${this.name}/${platformGuildId}/${platformUserId}`
       );
       return res.data;
     },
 
-    async getUserMemberships(
+    getUserMemberships: async (
       platformGuildId: string,
       platformUserId: string
-    ): Promise<PlatformGetUserMembershipsReponse> {
+    ): Promise<PlatformGetUserMembershipsReponse> => {
       const res = await axios.get(
-        `${API_BASE_URL}/platform/guild/member/${Platform.name}/${platformGuildId}/${platformUserId}`
+        `${API_BASE_URL}/platform/guild/member/${this.name}/${platformGuildId}/${platformUserId}`
       );
       return res.data;
     },
@@ -64,7 +65,9 @@ class Platform {
   user = {
     ...client.user,
 
-    async connect(platformUserId: string): Promise<PlatformConnectResponse> {
+    connect: async (
+      platformUserId: string
+    ): Promise<PlatformConnectResponse> => {
       try {
         const body = {
           platformUserId,
@@ -86,13 +89,13 @@ class Platform {
       }
     },
 
-    async join(
+    join: async (
       platformGuildId: string,
       platformUserId: string
-    ): Promise<PlatformJoinResponse> {
+    ): Promise<PlatformJoinResponse> => {
       try {
         const body = {
-          platformName: Platform.name,
+          platformName: this.name,
           platformGuildId,
           platformUserId,
         };
@@ -113,13 +116,13 @@ class Platform {
       }
     },
 
-    async leave(
+    leave: async (
       platformGuildId: string,
       platformUserId: string
-    ): Promise<PlatformLeaveResponse> {
+    ): Promise<PlatformLeaveResponse> => {
       try {
         const body = {
-          platformName: Platform.name,
+          platformName: this.name,
           platformGuildId,
           platformUserId,
         };
@@ -140,13 +143,13 @@ class Platform {
       }
     },
 
-    async status(
+    status: async (
       platformGuildId: string,
       platformUserId: string
-    ): Promise<PlatformStatusResponse> {
+    ): Promise<PlatformStatusResponse> => {
       try {
         const body = {
-          platformName: Platform.name,
+          platformName: this.name,
           platformGuildId,
           platformUserId,
         };
@@ -167,12 +170,12 @@ class Platform {
       }
     },
 
-    async getMemberships(
+    getMemberships: async (
       platformUserId: string
-    ): Promise<PlatformGetMembershipsResponse> {
+    ): Promise<PlatformGetMembershipsResponse> => {
       try {
         const res = await axios.get(
-          `${API_BASE_URL}/platform/user/membership/${Platform.name}/${platformUserId}`
+          `${API_BASE_URL}/platform/user/membership/${this.name}/${platformUserId}`
         );
         return res.data;
       } catch (error) {
