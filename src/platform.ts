@@ -14,8 +14,6 @@ import {
   PlatformStatusResponse,
 } from "./types";
 
-const { apiBaseUrl: API_BASE_URL, headers } = globals;
-
 class Platform {
   readonly platformName: string;
 
@@ -28,14 +26,14 @@ class Platform {
 
     getAllOfPlatform: async (): Promise<PlatformGetAllGuilds> => {
       const res = await axios.get(
-        `${API_BASE_URL}/platform/guild/${this.platformName}`
+        `${globals.apiBaseUrl}/platform/guild/${this.platformName}`
       );
       return res.data;
     },
 
     get: async (platformGuildId: string): Promise<GetGuildResponse> => {
       const res = await axios.get(
-        `${API_BASE_URL}/platform/guild/${this.platformName}/${platformGuildId}`
+        `${globals.apiBaseUrl}/platform/guild/${this.platformName}/${platformGuildId}`
       );
       if (res.status === 204) {
         return null;
@@ -48,7 +46,7 @@ class Platform {
       platformUserId: string
     ): Promise<PlatformStatusResponse> => {
       const res = await axios.get(
-        `${API_BASE_URL}/platform/guild/accesses/${this.platformName}/${platformGuildId}/${platformUserId}`
+        `${globals.apiBaseUrl}/platform/guild/accesses/${this.platformName}/${platformGuildId}/${platformUserId}`
       );
       return res.data;
     },
@@ -58,7 +56,7 @@ class Platform {
       platformUserId: string
     ): Promise<PlatformGetUserMembershipsReponse> => {
       const res = await axios.get(
-        `${API_BASE_URL}/platform/guild/member/${this.platformName}/${platformGuildId}/${platformUserId}`
+        `${globals.apiBaseUrl}/platform/guild/member/${this.platformName}/${platformGuildId}/${platformUserId}`
       );
       return res.data;
     },
@@ -75,10 +73,10 @@ class Platform {
           platformUserId,
         };
         const res = await axios.post(
-          `${API_BASE_URL}/platform/user/connect`,
+          `${globals.apiBaseUrl}/platform/user/connect`,
           body,
           {
-            headers,
+            headers: globals.headers,
           }
         );
         return res.data;
@@ -102,10 +100,10 @@ class Platform {
           platformUserId,
         };
         const res = await axios.post(
-          `${API_BASE_URL}/platform/user/join`,
+          `${globals.apiBaseUrl}/platform/user/join`,
           body,
           {
-            headers,
+            headers: globals.headers,
           }
         );
         return res.data;
@@ -129,10 +127,10 @@ class Platform {
           platformUserId,
         };
         const res = await axios.post(
-          `${API_BASE_URL}/platform/user/leave`,
+          `${globals.apiBaseUrl}/platform/user/leave`,
           body,
           {
-            headers,
+            headers: globals.headers,
           }
         );
         return res.data;
@@ -156,10 +154,10 @@ class Platform {
           platformUserId,
         };
         const res = await axios.post(
-          `${API_BASE_URL}/platform/user/status`,
+          `${globals.apiBaseUrl}/platform/user/status`,
           body,
           {
-            headers,
+            headers: globals.headers,
           }
         );
         return res.data;
@@ -177,7 +175,7 @@ class Platform {
     ): Promise<PlatformGetMembershipsResponse> => {
       try {
         const res = await axios.get(
-          `${API_BASE_URL}/platform/user/membership/${this.platformName}/${platformUserId}`
+          `${globals.apiBaseUrl}/platform/user/membership/${this.platformName}/${platformUserId}`
         );
         return res.data;
       } catch (error) {
