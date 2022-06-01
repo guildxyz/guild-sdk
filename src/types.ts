@@ -105,7 +105,7 @@ type Chain =
 
 type Logic = "AND" | "OR" | "NAND" | "NOR";
 
-type GetGuildByIdResponse = {
+type GetGuildResponse = {
   id: number;
   ownerId: number;
   name: string;
@@ -118,7 +118,7 @@ type GetGuildByIdResponse = {
     id: number;
     name: string;
     patformGuildId: string;
-    data: object;
+    data: any;
   }[];
   roles: {
     id: number;
@@ -162,7 +162,7 @@ type GetGuildByIdResponse = {
   };
 };
 
-type GetGuildResponse = GetGuildByIdResponse;
+type GetGuildByIdResponse = GetGuildResponse;
 
 type GetUserAccessResponse = {
   roleId: number;
