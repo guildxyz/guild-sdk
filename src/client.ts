@@ -1,6 +1,6 @@
 import axios from "axios";
 import { prepareBodyWithSign } from "./auth";
-import { API_BASE_URL, headers } from "./common";
+import { globals } from "./common";
 import {
   ApiError,
   CreateGuildParams,
@@ -23,6 +23,8 @@ import {
   GuildsByAddressQueryType,
 } from "./types";
 
+const { apiBaseUrl: API_BASE_URL, headers } = globals;
+
 const user = {
   async getMemberships(
     address: string
@@ -42,23 +44,28 @@ const user = {
 
 const guild = {
   async getAll(query: GuildsQueryType = {}): Promise<GetGuildsResponse> {
-    const queryParams: GuildsQueryType = {}
-    if (query.order) queryParams.order = query.order
-    if (query.search) queryParams.search = query.search
-    const searchParams = new URLSearchParams(queryParams).toString()
+    const queryParams: GuildsQueryType = {};
+    if (query.order) queryParams.order = query.order;
+    if (query.search) queryParams.search = query.search;
+    const searchParams = new URLSearchParams(queryParams).toString();
 
     const res = await axios.get(`${API_BASE_URL}/guild?${searchParams}`);
     return res.data;
   },
 
-  async getByAddress(address: string, query: GuildsByAddressQueryType = {}): Promise<GetGuildsResponse> {
-    const queryParams: GuildsByAddressQueryType = {}
-    if (query.order) queryParams.order = query.order
-    if (query.search) queryParams.search = query.search
-    queryParams.include = query.include ?? "all"
-    const searchParams = new URLSearchParams(queryParams).toString()
+  async getByAddress(
+    address: string,
+    query: GuildsByAddressQueryType = {}
+  ): Promise<GetGuildsResponse> {
+    const queryParams: GuildsByAddressQueryType = {};
+    if (query.order) queryParams.order = query.order;
+    if (query.search) queryParams.search = query.search;
+    queryParams.include = query.include ?? "all";
+    const searchParams = new URLSearchParams(queryParams).toString();
 
-    const res = await axios.get(`${API_BASE_URL}/guild/address/${address}?${searchParams}`);
+    const res = await axios.get(
+      `${API_BASE_URL}/guild/address/${address}?${searchParams}`
+    );
     return res.data;
   },
 

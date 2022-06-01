@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import axios from "axios";
-import { API_BASE_URL, headers } from "./common";
+import { globals } from "./common";
 import * as client from "./client";
 import {
   ApiError,
@@ -13,6 +13,8 @@ import {
   PlatformLeaveResponse,
   PlatformStatusResponse,
 } from "./types";
+
+const { apiBaseUrl: API_BASE_URL, headers } = globals;
 
 class Platform {
   readonly platformName: string;

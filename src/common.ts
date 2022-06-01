@@ -1,5 +1,10 @@
-const API_BASE_URL = "https://api.guild.xyz/v1";
+const globals = {
+  apiBaseUrl: "https://api.guild.xyz/v1",
+  headers: { "Content-Type": "application/json" },
+};
 
-const headers = { "Content-Type": "application/json" };
+const setApiBaseUrl = (apiBaseUrl: string) => {
+  globals.apiBaseUrl = apiBaseUrl;
+};
 
-export { API_BASE_URL, headers };
+export { globals, setApiBaseUrl };
