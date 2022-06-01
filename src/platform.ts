@@ -15,10 +15,10 @@ import {
 } from "./types";
 
 class Platform {
-  readonly name: string;
+  readonly platformName: string;
 
-  constructor(name: string) {
-    this.name = name;
+  constructor(platformName: string) {
+    this.platformName = platformName;
   }
 
   guild = {
@@ -26,14 +26,14 @@ class Platform {
 
     getAllOfPlatform: async (): Promise<PlatformGetAllGuilds> => {
       const res = await axios.get(
-        `${API_BASE_URL}/platform/guild/${this.name}`
+        `${API_BASE_URL}/platform/guild/${this.platformName}`
       );
       return res.data;
     },
 
     get: async (platformGuildId: string): Promise<GetGuildResponse> => {
       const res = await axios.get(
-        `${API_BASE_URL}/platform/guild/${this.name}/${platformGuildId}`
+        `${API_BASE_URL}/platform/guild/${this.platformName}/${platformGuildId}`
       );
       if (res.status === 204) {
         return null;
@@ -46,7 +46,7 @@ class Platform {
       platformUserId: string
     ): Promise<PlatformStatusResponse> => {
       const res = await axios.get(
-        `${API_BASE_URL}/platform/guild/accesses/${this.name}/${platformGuildId}/${platformUserId}`
+        `${API_BASE_URL}/platform/guild/accesses/${this.platformName}/${platformGuildId}/${platformUserId}`
       );
       return res.data;
     },
@@ -56,7 +56,7 @@ class Platform {
       platformUserId: string
     ): Promise<PlatformGetUserMembershipsReponse> => {
       const res = await axios.get(
-        `${API_BASE_URL}/platform/guild/member/${this.name}/${platformGuildId}/${platformUserId}`
+        `${API_BASE_URL}/platform/guild/member/${this.platformName}/${platformGuildId}/${platformUserId}`
       );
       return res.data;
     },
@@ -95,7 +95,7 @@ class Platform {
     ): Promise<PlatformJoinResponse> => {
       try {
         const body = {
-          platformName: this.name,
+          platformName: this.platformName,
           platformGuildId,
           platformUserId,
         };
@@ -122,7 +122,7 @@ class Platform {
     ): Promise<PlatformLeaveResponse> => {
       try {
         const body = {
-          platformName: this.name,
+          platformName: this.platformName,
           platformGuildId,
           platformUserId,
         };
@@ -149,7 +149,7 @@ class Platform {
     ): Promise<PlatformStatusResponse> => {
       try {
         const body = {
-          platformName: this.name,
+          platformName: this.platformName,
           platformGuildId,
           platformUserId,
         };
@@ -175,7 +175,7 @@ class Platform {
     ): Promise<PlatformGetMembershipsResponse> => {
       try {
         const res = await axios.get(
-          `${API_BASE_URL}/platform/user/membership/${this.name}/${platformUserId}`
+          `${API_BASE_URL}/platform/user/membership/${this.platformName}/${platformUserId}`
         );
         return res.data;
       } catch (error) {
