@@ -117,9 +117,8 @@ const guild = {
     }
   },
 
-  // TODO id string (urlName) ?
   async update(
-    id: number,
+    id: number | string,
     signerAddress: string,
     sign: SignerFunction,
     params: UpdateGuildParams

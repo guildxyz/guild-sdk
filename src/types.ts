@@ -25,20 +25,22 @@ type PlatformGetAllGuilds = GuildPlatformData[];
 
 type PlatformGetGuild = GuildPlatformData;
 
-type PlatformJoinResponse = GuildPlatformData;
+type PlatformJoinResponse =
+  | (GuildPlatformData & { inviteLink?: never })
+  | {
+      guildName?: never;
+      platformGuildId?: never;
+      roles?: never;
+      inviteLink: string;
+    };
 
 type PlatformStatusResponse = GuildPlatformData[];
 
-type PlatformGetUserAccessesReponse = GuildPlatformData[];
+type PlatformGetUserAccessesReponse = GuildPlatformData;
 
 type PlatformGetUserMembershipsReponse = GuildPlatformData;
 
 type PlatformGetMembershipsResponse = GuildPlatformData[];
-
-type PlatformConnectResponse = {
-  alreadyConnected: boolean;
-  connectLink: string;
-};
 
 type PlatformLeaveResponse = {
   success: boolean;
@@ -107,18 +109,24 @@ type Logic = "AND" | "OR" | "NAND" | "NOR";
 
 type GetGuildResponse = {
   id: number;
-  ownerId: number;
   name: string;
   urlName: string;
   description: string;
   imageUrl: string;
   showMembers: boolean;
+  hideFromExplorer: boolean;
+  createdAt: string;
   theme: Theme;
+  admins: {
+    id: number;
+    address: string;
+    isOwner: boolean;
+  }[];
   guildPlatforms: {
     id: number;
     name: string;
     platformGuildId: string;
-    data: any;
+    platformGuildData: any;
   }[];
   roles: {
     id: number;
@@ -149,17 +157,14 @@ type GetGuildResponse = {
         };
       };
     }[];
-    platforms: ({
+    rolePlatforms: ({
       id: number;
       patformRoleId: string;
+      platformRoleData: { [key: string]: string };
     } & { [key: string]: string })[];
     members: string[];
     memberCount: number;
   }[];
-  owner: {
-    id: number;
-    address: string;
-  };
 };
 
 type GetGuildByIdResponse = GetGuildResponse;
@@ -352,7 +357,6 @@ export {
   PlatformLeaveResponse,
   PlatformStatusResponse,
   PlatformGetUserAccessesReponse,
-  PlatformConnectResponse,
   PlatformGetUserMembershipsReponse,
   PlatformGetMembershipsResponse,
 };

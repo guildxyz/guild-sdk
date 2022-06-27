@@ -15,7 +15,7 @@ describe("Check client sdk function", () => {
   test("GET /user/membership/:address - interacted with guild", async () => {
     const membership = await client.user.getMemberships(testWallet.address);
     expect(
-      membership.some((x) => x.guildId === 1985 && x.roleids.includes(1904))
+      membership?.some((x) => x.guildId === 1985 && x.roleids.includes(1904))
     ).toBe(true);
   });
 
@@ -41,12 +41,14 @@ describe("Check client sdk function", () => {
     expect(guilds.length).toBeGreaterThan(100);
 
     const ourGuild = guilds.find((x) => x.id === 1985);
-    expect(ourGuild.name).toBe("Our Guild");
-    expect(ourGuild.urlName).toBe("our-guild");
+    expect(ourGuild?.name).toBe("Our Guild");
+    expect(ourGuild?.urlName).toBe("our-guild");
   });
 
   test("GET /guild/:address", async () => {
-    const guilds = await client.guild.getByAddress("0x0000000000000000000000000000000000000000", "admin");
+    const guilds = await client.guild.getByAddress(
+      "0x0000000000000000000000000000000000000000"
+    );
     expect(guilds).toStrictEqual([]);
   });
 
