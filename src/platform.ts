@@ -144,13 +144,11 @@ class Platform {
     },
 
     status: async (
-      platformGuildId: string,
       platformUserId: string
     ): Promise<PlatformStatusResponse> => {
       try {
         const body = {
           platformName: this.platformName,
-          platformGuildId,
           platformUserId,
         };
         const res = await axios.post(
