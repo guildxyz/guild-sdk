@@ -139,7 +139,7 @@ type Requirement =
       type: "COIN";
       chain: Chain;
       data: {
-        amount: number;
+        minAmount: number;
       };
     }
   | {
@@ -147,7 +147,7 @@ type Requirement =
       chain: Chain;
       address: string;
       data: {
-        amount: number;
+        minAmount: number;
       };
     }
   | {
@@ -156,7 +156,7 @@ type Requirement =
       address: string;
       data: {
         id?: number;
-        amount: number;
+        minAmount: number;
         attribute?:
           | {
               trait_type: string;
@@ -194,7 +194,7 @@ type Requirement =
       chain: Chain;
       data: {
         id: number;
-        amount: number;
+        minAmount: number;
       };
     }
   | {
