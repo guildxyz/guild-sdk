@@ -29,7 +29,7 @@ class Platform {
 
     get: async (platformGuildId: string): Promise<GetGuildResponse> => {
       const res = await axios.get(
-        `${globals.apiBaseUrl}/platform/guild/${this.platformName}/${platformGuildId}`
+        `${globals.apiBaseUrl}/platform/guild/${this.platformName}/${platformGuildId}`, { headers: globals.headers }
       );
       if (res.status === 204) {
         return null;
@@ -42,7 +42,7 @@ class Platform {
       platformUserId: string
     ): Promise<PlatformGetUserAccessesReponse> => {
       const res = await axios.get(
-        `${globals.apiBaseUrl}/platform/guild/accesses/${this.platformName}/${platformGuildId}/${platformUserId}`
+        `${globals.apiBaseUrl}/platform/guild/accesses/${this.platformName}/${platformGuildId}/${platformUserId}`, { headers: globals.headers }
       );
       return res.data;
     },

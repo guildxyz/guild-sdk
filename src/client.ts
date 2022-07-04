@@ -29,7 +29,7 @@ const user = {
   ): Promise<GetMembershipsResponse | null> {
     try {
       const res = await axios.get(
-        `${globals.apiBaseUrl}/user/membership/${address}`
+        `${globals.apiBaseUrl}/user/membership/${address}`, { headers: globals.headers }
       );
       return res.data;
     } catch (error) {
@@ -49,7 +49,7 @@ const guild = {
     if (query.search) queryParams.search = query.search;
     const searchParams = new URLSearchParams(queryParams).toString();
 
-    const res = await axios.get(`${globals.apiBaseUrl}/guild?${searchParams}`);
+    const res = await axios.get(`${globals.apiBaseUrl}/guild?${searchParams}`, { headers: globals.headers });
     return res.data;
   },
 
@@ -64,13 +64,14 @@ const guild = {
     const searchParams = new URLSearchParams(queryParams).toString();
 
     const res = await axios.get(
-      `${globals.apiBaseUrl}/guild/address/${address}?${searchParams}`
+      `${globals.apiBaseUrl}/guild/address/${address}?${searchParams}`, { headers: globals.headers }
     );
     return res.data;
   },
 
   async get(id: number | string): Promise<GetGuildByIdResponse> {
-    const res = await axios.get(`${globals.apiBaseUrl}/guild/${id}`);
+    const res = await axios.get(`${globals.apiBaseUrl}/guild/${id}`, { headers: globals.headers });
+    console.log(res.request);
     if (res.status === 204) {
       return null;
     }
@@ -82,7 +83,7 @@ const guild = {
     address: string
   ): Promise<GetUserAccessResponse> {
     const res = await axios.get(
-      `${globals.apiBaseUrl}/guild/access/${guildId}/${address}`
+      `${globals.apiBaseUrl}/guild/access/${guildId}/${address}`, { headers: globals.headers }
     );
     return res.data;
   },
@@ -92,7 +93,7 @@ const guild = {
     address: string
   ): Promise<GetUserAccessResponse> {
     const res = await axios.get(
-      `${globals.apiBaseUrl}/guild/member/${guildId}/${address}`
+      `${globals.apiBaseUrl}/guild/member/${guildId}/${address}`, { headers: globals.headers }
     );
     return res.data;
   },
@@ -182,7 +183,7 @@ const guild = {
 
 const role = {
   async get(id: number): Promise<GetRoleResponse> {
-    const res = await axios.get(`${globals.apiBaseUrl}/role/${id}`);
+    const res = await axios.get(`${globals.apiBaseUrl}/role/${id}`, { headers: globals.headers });
     if (res.status === 204) {
       return null;
     }
