@@ -71,7 +71,6 @@ const guild = {
 
   async get(id: number | string): Promise<GetGuildByIdResponse> {
     const res = await axios.get(`${globals.apiBaseUrl}/guild/${id}`, { headers: globals.headers });
-    console.log(res.request);
     if (res.status === 204) {
       return null;
     }

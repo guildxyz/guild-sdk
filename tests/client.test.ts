@@ -1,15 +1,20 @@
-import { Bytes, ethers } from "ethers";
+import { Bytes } from "ethers";
 import * as client from "../src/client";
+import { setApiBaseUrl } from "../src/common";
 import {
   CreateGuildParams,
   CreateRoleParams,
   UpdateGuildParams,
   UpdateRoleParams,
 } from "../src/types";
+import { testWallet } from "./common";
 
-const testWallet = ethers.Wallet.createRandom();
 const sign = (signableMessage: string | Bytes) =>
   testWallet.signMessage(signableMessage);
+
+beforeAll(() => {
+  setApiBaseUrl("http://localhost:8989/v1");
+});
 
 describe("Check client sdk function", () => {
   test("GET /user/membership/:address - interacted with guild", async () => {
@@ -28,7 +33,7 @@ describe("Check client sdk function", () => {
 
   test("POST /user/join", async () => {
     const joinResponse = await client.guild.join(
-      2158,
+      1985,
       testWallet.address,
       sign
     );
