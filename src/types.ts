@@ -94,7 +94,6 @@ type GetGuildsResponse = {
   imageUrl: string;
   urlName: string;
   roles: string[];
-  poaps: Poap[];
   memberCount: number;
 }[];
 
@@ -138,6 +137,7 @@ type GetGuildResponse = {
     address: string;
     isOwner: boolean;
   }[];
+  poaps: Poap[];
   guildPlatforms: {
     id: number;
     name: string;
