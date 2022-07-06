@@ -32,11 +32,7 @@ describe("Check client sdk function", () => {
   });
 
   test("POST /user/join", async () => {
-    const joinResponse = await client.guild.join(
-      1985,
-      testWallet.address,
-      sign
-    );
+    const joinResponse = await client.user.join(1985, testWallet.address, sign);
     expect(joinResponse.alreadyJoined).toBe(false);
     expect(joinResponse.inviteLink).toMatch(/^https:\/\/discord.gg\/.+$/);
   });

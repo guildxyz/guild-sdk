@@ -34,7 +34,9 @@ type PlatformJoinResponse =
       inviteLink: string;
     };
 
-type PlatformStatusResponse = (GuildPlatformData & { platformGuildName: string })[];
+type PlatformStatusResponse = (GuildPlatformData & {
+  platformGuildName: string;
+})[];
 
 type PlatformGetUserAccessesReponse = GuildPlatformData;
 
@@ -73,12 +75,26 @@ type GuildsByAddressQueryType = GuildsQueryType & {
   include?: GuildIncludeType;
 };
 
+type Poap = {
+  id: number;
+  poapIdentifier: number;
+  fancyId: string;
+  guildId: number;
+  vaultId?: number;
+  contract?: string;
+  chainId?: number;
+  activated: boolean;
+  createdAt: string;
+  expiryDate?: number;
+};
+
 type GetGuildsResponse = {
   id: number;
   name: string;
   imageUrl: string;
   urlName: string;
   roles: string[];
+  poaps: Poap[];
   memberCount: number;
 }[];
 
@@ -177,73 +193,73 @@ type GetUserAccessResponse = {
 type Requirement =
   | { type: "FREE" }
   | {
-    type: "COIN";
-    chain: Chain;
-    data: {
-      amount: number;
-    };
-  }
+      type: "COIN";
+      chain: Chain;
+      data: {
+        amount: number;
+      };
+    }
   | {
-    type: "ERC20";
-    chain: Chain;
-    address: string;
-    data: {
-      amount: number;
-    };
-  }
+      type: "ERC20";
+      chain: Chain;
+      address: string;
+      data: {
+        amount: number;
+      };
+    }
   | {
-    type: "ERC721" | "ERC1155";
-    chain: Chain;
-    address: string;
-    data: {
-      id?: number;
-      amount: number;
-      attribute?:
-      | {
-        trait_type: string;
-        value: string;
-      }
-      | {
-        trait_type: string;
-        interval: { min: number; max: number };
+      type: "ERC721" | "ERC1155";
+      chain: Chain;
+      address: string;
+      data: {
+        id?: number;
+        amount: number;
+        attribute?:
+          | {
+              trait_type: string;
+              value: string;
+            }
+          | {
+              trait_type: string;
+              interval: { min: number; max: number };
+            };
+      };
+    }
+  | {
+      type: "POAP";
+      data: {
+        id: string;
+      };
+    }
+  | {
+      type: "MIRROR";
+      chain: Chain;
+      address: string;
+      data: {
+        id: number;
+      };
+    }
+  | {
+      type: "SNAPSHOT";
+      chain: Chain;
+      data: {
+        startegy: object;
+      };
+    }
+  | {
+      type: "JUICEBOX";
+      chain: Chain;
+      data: {
+        id: number;
+        amount: number;
+      };
+    }
+  | {
+      type: "ALLOWLIST";
+      data: {
+        addresses: string[];
       };
     };
-  }
-  | {
-    type: "POAP";
-    data: {
-      id: string;
-    };
-  }
-  | {
-    type: "MIRROR";
-    chain: Chain;
-    address: string;
-    data: {
-      id: number;
-    };
-  }
-  | {
-    type: "SNAPSHOT";
-    chain: Chain;
-    data: {
-      startegy: object;
-    };
-  }
-  | {
-    type: "JUICEBOX";
-    chain: Chain;
-    data: {
-      id: number;
-      amount: number;
-    };
-  }
-  | {
-    type: "ALLOWLIST";
-    data: {
-      addresses: string[];
-    };
-  };
 
 type Role = {
   name: string;
