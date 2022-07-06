@@ -173,11 +173,12 @@ type GetGuildResponse = {
         };
       };
     }[];
-    rolePlatforms: ({
+    rolePlatforms: {
       id: number;
+      guildPlatformId: number;
       patformRoleId: string;
-      platformRoleData: { [key: string]: string };
-    } & { [key: string]: string })[];
+      platformRoleData?: { [key: string]: string };
+    }[];
     members: string[];
     memberCount: number;
   }[];
