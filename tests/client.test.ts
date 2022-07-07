@@ -31,10 +31,19 @@ describe("Check client sdk function", () => {
     expect(membership).toStrictEqual([]);
   });
 
-  test("POST /user/join", async () => {
+  test("POST /user/join - success: true, platform success: false", async () => {
     const joinResponse = await client.user.join(1985, testWallet.address, sign);
-    expect(joinResponse.alreadyJoined).toBe(false);
-    expect(joinResponse.inviteLink).toMatch(/^https:\/\/discord.gg\/.+$/);
+    expect(joinResponse.success).toBe(true);
+    expect(joinResponse.platformResults?.[0]?.success).toBe(false);
+    expect(joinResponse.platformResults?.[0]?.platformId).toBe(1);
+    expect(joinResponse.platformResults?.[0]?.platformName).toBe("DISCORD");
+    expect(joinResponse.platformResults?.[0]?.errorMsg).toBe("Missing Access");
+    expect(joinResponse.platformResults?.[0]?.invite).toBeFalsy();
+  });
+
+  test("POST /user/join - success: false", async () => {
+    const joinResponse = await client.user.join(2080, testWallet.address, sign);
+    expect(joinResponse.success).toBe(false);
   });
 
   test("GET /guild", async () => {
@@ -84,16 +93,37 @@ describe("Check client sdk function", () => {
   });
 
   test("guild and role CRUD", async () => {
+    try {
+      const guild = await client.guild.get("test-for-sdk");
+      if (guild) {
+        await client.guild.delete(guild.id, testWallet.address, sign);
+      }
+    } catch (error) {
+      // ignored
+    }
     // create guild
     const testGuildName = "Test guild";
     const createGuildParams: CreateGuildParams = {
       name: testGuildName,
+      urlName: "test-for-sdk",
       imageUrl: "/guildLogos/2.svg",
       description: "Guild created by the SDK's unit test.",
+      showMembers: true,
+      hideFromExplorer: false,
+      guildPlatforms: [
+        {
+          platformName: "DISCORD",
+          platformGuildId: "717317894954025012",
+        },
+      ],
       roles: [
         {
           name: "Test role",
+          description: "This is a test role",
           logic: "AND",
+          rolePlatforms: [
+            { guildPlatformIndex: 0, platformRoleId: "947846352082178118" },
+          ],
           requirements: [
             {
               type: "ALLOWLIST",
@@ -140,6 +170,12 @@ describe("Check client sdk function", () => {
       guildId: createGuildReponse.id,
       name: newRoleName,
       logic: "AND",
+      rolePlatforms: [
+        {
+          guildPlatformId: createdGuild.guildPlatforms[0].id,
+          platformRoleId: "964192805490663424",
+        },
+      ],
       requirements: [
         {
           type: "FREE",

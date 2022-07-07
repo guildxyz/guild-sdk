@@ -45,10 +45,17 @@ const user = {
   async join(
     guildId: number,
     signerAddress: string,
-    sign: SignerFunction
+    sign: SignerFunction,
+    platforms?: {
+      name: string;
+      authData: { [key: string]: string };
+    }[]
   ): Promise<JoinResponse> {
     try {
-      const body = await prepareBodyWithSign(signerAddress, sign, { guildId });
+      const body = await prepareBodyWithSign(signerAddress, sign, {
+        guildId,
+        platforms,
+      });
       const res = await axios.post(`${globals.apiBaseUrl}/user/join/`, body, {
         headers: globals.headers,
       });
@@ -169,9 +176,12 @@ const guild = {
   async delete(
     id: number,
     signerAddress: string,
-    sign: SignerFunction
+    sign: SignerFunction,
+    removePlatformAccess: boolean = false
   ): Promise<DeleteGuildResponse> {
-    const body = await prepareBodyWithSign(signerAddress, sign);
+    const body = await prepareBodyWithSign(signerAddress, sign, {
+      removePlatformAccess,
+    });
     try {
       const res = await axios.delete(`${globals.apiBaseUrl}/guild/${id}`, {
         data: body,
@@ -243,9 +253,12 @@ const role = {
   async delete(
     id: number,
     signerAddress: string,
-    sign: SignerFunction
+    sign: SignerFunction,
+    removePlatformAccess: boolean = false
   ): Promise<DeleteRoleResponse> {
-    const body = await prepareBodyWithSign(signerAddress, sign);
+    const body = await prepareBodyWithSign(signerAddress, sign, {
+      removePlatformAccess,
+    });
     try {
       const res = await axios.delete(`${globals.apiBaseUrl}/role/${id}`, {
         data: body,

@@ -5,10 +5,15 @@ type GetMembershipsResponse = {
   roleids: number[];
 }[];
 
-// TODO
 type JoinResponse = {
-  alreadyJoined: boolean;
-  inviteLink?: string;
+  success: boolean;
+  platformResults: {
+    success: boolean;
+    platformId: number;
+    platformName: string;
+    errorMsg?: string;
+    invite?: string;
+  }[];
 };
 
 type GuildPlatformData = {
@@ -93,6 +98,7 @@ type GetGuildsResponse = {
   name: string;
   imageUrl: string;
   urlName: string;
+  hideFromExplorer: boolean;
   roles: string[];
   memberCount: number;
 }[];
@@ -131,6 +137,7 @@ type GetGuildResponse = {
   showMembers: boolean;
   hideFromExplorer: boolean;
   createdAt: string;
+  onboardingComplete: true;
   theme: Theme;
   admins: {
     id: number;
@@ -140,9 +147,11 @@ type GetGuildResponse = {
   poaps: Poap[];
   guildPlatforms: {
     id: number;
-    name: string;
+    platformId: number;
     platformGuildId: string;
-    platformGuildData: any;
+    platformGuildData?: any;
+    platformGuildName?: string;
+    invite?: string;
   }[];
   roles: {
     id: number;
@@ -160,7 +169,8 @@ type GetGuildResponse = {
       symbol: string;
       data: {
         id?: string;
-        amount?: number;
+        minAmount?: number;
+        maxAmount?: number;
         strategy?: { name: string; params: any };
         addresses?: string[];
         attribute?: {
@@ -174,9 +184,8 @@ type GetGuildResponse = {
       };
     }[];
     rolePlatforms: {
-      id: number;
       guildPlatformId: number;
-      patformRoleId: string;
+      patformRoleId?: string;
       platformRoleData?: { [key: string]: string };
     }[];
     members: string[];
@@ -197,7 +206,8 @@ type Requirement =
       type: "COIN";
       chain: Chain;
       data: {
-        amount: number;
+        minAmount: number;
+        maxAmount: number;
       };
     }
   | {
@@ -205,7 +215,8 @@ type Requirement =
       chain: Chain;
       address: string;
       data: {
-        amount: number;
+        minAmount: number;
+        maxAmount: number;
       };
     }
   | {
@@ -214,7 +225,8 @@ type Requirement =
       address: string;
       data: {
         id?: number;
-        amount: number;
+        minAmount: number;
+        maxAmount: number;
         attribute?:
           | {
               trait_type: string;
@@ -252,7 +264,8 @@ type Requirement =
       chain: Chain;
       data: {
         id: number;
-        amount: number;
+        minAmount: number;
+        maxAmount: number;
       };
     }
   | {
@@ -262,30 +275,74 @@ type Requirement =
       };
     };
 
+type GuildPlatform = {
+  id: number;
+  platformName: string;
+  platformGuildId: string;
+  platformGuildData?: any;
+  platformGuildName?: string;
+  invite?: string;
+};
+
 type Role = {
+  id: number;
   name: string;
-  imageUrl?: string;
   description?: string;
+  imageUrl?: string;
+  createdAt: string;
   logic: Logic;
+  guildId: number;
   requirements: Requirement[];
+  rolePlatforms?: {
+    guildPlatformId: number;
+    platformRoleId?: string;
+    platformRoleData?: { [key: string]: string };
+    guildPlatform: GuildPlatform & {
+      platform: { id: number; name: string };
+    };
+  }[];
+  members: string[];
 };
 
 type CreateGuildParams = {
   name: string;
+  urlName?: string;
   imageUrl?: string;
   description?: string;
-  roles: Role[];
-  theme?: Theme[];
+  admins?: string[];
   showMembers?: boolean;
+  hideFromExplorer?: boolean;
+  theme?: Theme[];
+  guildPlatforms?: {
+    platformName: string;
+    platformGuildId: string;
+    platformGuildData?: any;
+  }[];
+  roles: {
+    name: string;
+    description?: string;
+    imageUrl?: string;
+    logic: Logic;
+    activationInterval?: number;
+    includeUnauthenticated?: boolean;
+    rolePlatforms?: {
+      guildPlatformIndex: number;
+      platformRoleId?: string;
+      platformRoleData?: { [key: string]: string };
+    }[];
+    requirements: Requirement[];
+  }[];
 };
 
 type UpdateGuildParams = {
   name?: string;
   imageUrl?: string;
   description?: string;
-  roles?: Role[];
   theme?: Theme[];
+  admins?: string[];
   showMembers?: boolean;
+  hideFromExplorer?: boolean;
+  onboardingComplete?: boolean;
 };
 
 type CreateGuildResponse = {
@@ -302,18 +359,45 @@ type DeleteGuildResponse = {
   success: boolean;
 };
 
-type PlatformInfo = {
-  platform?: "TELEGRAM" | "DISCORD";
-  platformId?: string;
-};
+type GuildPlatformResolvable =
+  | {
+      guildPlatformId: number;
+      guildPlatform?: never;
+    }
+  | {
+      guildPlatformId?: never;
+      guildPlatform: {
+        platformName: string;
+        platformGuildId: string;
+        platformGuildData?: any;
+      };
+    };
 
-type CreateRoleParams = Role & PlatformInfo & { guildId: number };
+type RolePlatformParam = {
+  platformRoleId?: string;
+  platformRoleData?: {
+    [key: string]: string;
+  };
+} & GuildPlatformResolvable;
+
+type CreateRoleParams = {
+  guildId: number;
+  name: string;
+  description?: string;
+  imageUrl?: string;
+  logic: Logic;
+  requirements: Requirement[];
+  rolePlatforms?: RolePlatformParam[];
+  activationInterval?: number;
+  includeUnauthenticated?: boolean;
+};
 
 type UpdateRoleParams = {
   name: string;
   imageUrl?: string;
   description?: string;
   logic: Logic;
+  rolePlatforms?: RolePlatformParam[];
   requirements: Requirement[];
 };
 
@@ -376,4 +460,5 @@ export {
   PlatformGetUserAccessesReponse,
   PlatformGetUserMembershipsReponse,
   PlatformGetMembershipsResponse,
+  GuildPlatform,
 };
