@@ -20,13 +20,6 @@ class Platform {
   guild = {
     ...client.guild,
 
-    // getAllOfPlatform: async (): Promise<PlatformGetAllGuilds> => {
-    //   const res = await axios.get(
-    //     `${globals.apiBaseUrl}/platform/guild/${this.platformName}`
-    //   );
-    //   return res.data;
-    // },
-
     get: async (platformGuildId: string): Promise<GetGuildResponse> => {
       const res = await axios.get(
         `${globals.apiBaseUrl}/platform/guild/${this.platformName}/${platformGuildId}`,
@@ -48,16 +41,6 @@ class Platform {
       );
       return res.data;
     },
-
-    // getUserMemberships: async (
-    //   platformGuildId: string,
-    //   platformUserId: string
-    // ): Promise<PlatformGetUserMembershipsReponse> => {
-    //   const res = await axios.get(
-    //     `${globals.apiBaseUrl}/platform/guild/member/${this.platformName}/${platformGuildId}/${platformUserId}`
-    //   );
-    //   return res.data;
-    // },
   };
 
   user = {
@@ -90,33 +73,6 @@ class Platform {
       }
     },
 
-    // leave: async (
-    //   platformGuildId: string,
-    //   platformUserId: string
-    // ): Promise<PlatformLeaveResponse> => {
-    //   try {
-    //     const body = {
-    //       platformName: this.platformName,
-    //       platformGuildId,
-    //       platformUserId,
-    //     };
-    //     const res = await axios.post(
-    //       `${globals.apiBaseUrl}/platform/user/leave`,
-    //       body,
-    //       {
-    //         headers: globals.headers,
-    //       }
-    //     );
-    //     return res.data;
-    //   } catch (error) {
-    //     if (axios.isAxiosError(error) && error.response.data.errors) {
-    //       throw new ApiError(error.response.data.errors);
-    //     } else {
-    //       throw error;
-    //     }
-    //   }
-    // },
-
     status: async (platformUserId: string): Promise<PlatformStatusResponse> => {
       try {
         const body = {
@@ -139,23 +95,6 @@ class Platform {
         }
       }
     },
-
-    //   getMemberships: async (
-    //     platformUserId: string
-    //   ): Promise<PlatformGetMembershipsResponse> => {
-    //     try {
-    //       const res = await axios.get(
-    //         `${globals.apiBaseUrl}/platform/user/membership/${this.platformName}/${platformUserId}`
-    //       );
-    //       return res.data;
-    //     } catch (error) {
-    //       if (axios.isAxiosError(error) && error.response.data.errors) {
-    //         throw new ApiError(error.response.data.errors);
-    //       } else {
-    //         throw error;
-    //       }
-    //     }
-    //   },
   };
 
   role = client.role;
