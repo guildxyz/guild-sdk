@@ -43,7 +43,7 @@ npm i @guildxyz/sdk
 #### Importing the package and specific types
 
 ```typescript
-import { guild, role, user, setP } from "@guildxyz/sdk";
+import { guild, role, user, setProjectName } from "@guildxyz/sdk";
 
 // To simplify the authentication, we implemented the whole flow, you just have to provide a signing function from your library (like ethers or web3react). Check the examples below.
 
