@@ -74,7 +74,7 @@ await guild.create(walletAddress, signerFunction, createGuildParams); // Create 
 await guild.update(guildId, walletAddress, signerFunction, updateGuildParams); // Update a guild with the given params
 await guild.delete(guildId, walletAddress, signerFunction, removePlatformAccess); // Remove a guild by ID
 
-await user.join(guildId, walletAddress, signerFunction, platforms); // Enables to join a user to the accessible roles in a Guild
+await user.join(guildId, walletAddress, signerFunction, platforms); // Enables to join a user to the accessible roles in a Guild. (The platforms parameter is optional, it is used for connecting platform accounts to a Guild user.)
 await user.getMemberships(userAddress); // Returns every Guild and Role of a given user
 
 await role.get(roleId); // Get Role by ID
@@ -108,9 +108,13 @@ const myGuild = await guild.create(
   sign,
   {
     name: "My New Guild",
-    description: "Cool stuff", // Optional
+    urlName: "my-new-guild-123",                 // Optinal
+    description: "Cool stuff",                   // Optional
+    admins: ["0x916b1aBC3C38852B338a22B08aF19DEe14113627"], // Optional
+    showMembers: true,                           // Optional
+    hideFromExplorer: false,                     // Optional
     theme: [{ mode: "DARK", color: "#000000" }], // Optional
-    guildPlatforms: [ // Optional (declaring the gated platforms)
+    guildPlatforms: [                            // Optional (declaring the gated platforms)
       {
         platformName: "DISCORD",
         platformGuildId: "717317894983225012",
@@ -174,6 +178,19 @@ const myGuild = await guild.create(
 // Joining to a Guild if any role is accessible by the given address
 await user.join(myGuild.id, wallet.address, sign);
 
+// Connect Discord account (if not yet connected) to Guild and join
+await user.join(myGuild.id, wallet.address, sign, [
+  {
+    name: "DISCORD",
+    authData: {
+      access_token: "123" // Discord access token retrieved from oauth
+    }
+  }
+]);
+// Note that the above shoud be used exactly once per user, 
+// when the user's platform account is not connected to their Guild account.
+// If it is already connected, the join will grant access for all the
+// user's connected platforms automatically.
 ```
 
 ### Modular / multi-platform architecture

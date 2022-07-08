@@ -353,7 +353,11 @@ type CreateGuildResponse = {
   imageUrl: string;
   createdAt: string;
   showMembers: boolean;
+  hideFromExplorer: boolean;
+  onboardingComplete: boolean;
 };
+
+type UpdateGuildResponse = CreateGuildResponse;
 
 type DeleteGuildResponse = {
   success: boolean;
@@ -443,6 +447,7 @@ export {
   CreateGuildParams,
   UpdateGuildParams,
   CreateGuildResponse,
+  UpdateGuildResponse,
   DeleteGuildResponse,
   GetRoleResponse,
   CreateRoleParams,

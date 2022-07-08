@@ -21,6 +21,7 @@ import {
   UpdateRoleResponse,
   GuildsQueryType,
   GuildsByAddressQueryType,
+  UpdateGuildResponse,
 } from "./types";
 
 const user = {
@@ -157,7 +158,7 @@ const guild = {
     signerAddress: string,
     sign: SignerFunction,
     params: UpdateGuildParams
-  ) {
+  ): Promise<UpdateGuildResponse> {
     const body = await prepareBodyWithSign(signerAddress, sign, params);
     try {
       const res = await axios.patch(`${globals.apiBaseUrl}/guild/${id}`, body, {
