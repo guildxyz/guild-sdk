@@ -33,7 +33,7 @@ const user = {
         `${globals.apiBaseUrl}/user/membership/${address}`,
         { headers: globals.headers }
       );
-      return res.data;
+      return res?.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response.data.errors) {
         throw new ApiError(error.response.data.errors);
@@ -60,7 +60,7 @@ const user = {
       const res = await axios.post(`${globals.apiBaseUrl}/user/join/`, body, {
         headers: globals.headers,
       });
-      return res.data;
+      return res?.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response.data.errors) {
         throw new ApiError(error.response.data.errors);
@@ -81,7 +81,7 @@ const guild = {
     const res = await axios.get(`${globals.apiBaseUrl}/guild?${searchParams}`, {
       headers: globals.headers,
     });
-    return res.data;
+    return res?.data;
   },
 
   async getByAddress(
@@ -98,7 +98,7 @@ const guild = {
       `${globals.apiBaseUrl}/guild/address/${address}?${searchParams}`,
       { headers: globals.headers }
     );
-    return res.data;
+    return res?.data;
   },
 
   async get(id: number | string): Promise<GetGuildByIdResponse> {
@@ -108,7 +108,7 @@ const guild = {
     if (res.status === 204) {
       return null;
     }
-    return res.data;
+    return res?.data;
   },
 
   async getUserAccess(
@@ -119,7 +119,7 @@ const guild = {
       `${globals.apiBaseUrl}/guild/access/${guildId}/${address}`,
       { headers: globals.headers }
     );
-    return res.data;
+    return res?.data;
   },
 
   async getUserMemberships(
@@ -130,7 +130,7 @@ const guild = {
       `${globals.apiBaseUrl}/guild/member/${guildId}/${address}`,
       { headers: globals.headers }
     );
-    return res.data;
+    return res?.data;
   },
 
   async create(
@@ -143,7 +143,7 @@ const guild = {
       const res = await axios.post(`${globals.apiBaseUrl}/guild`, body, {
         headers: globals.headers,
       });
-      return res.data;
+      return res?.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response.data.errors) {
         throw new ApiError(error.response.data.errors);
@@ -164,7 +164,7 @@ const guild = {
       const res = await axios.patch(`${globals.apiBaseUrl}/guild/${id}`, body, {
         headers: globals.headers,
       });
-      return res.data;
+      return res?.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response.data.errors) {
         throw new ApiError(error.response.data.errors);
@@ -188,7 +188,7 @@ const guild = {
         data: body,
         headers: globals.headers,
       });
-      return res.data;
+      return res?.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response.data.errors) {
         throw new ApiError(error.response.data.errors);
@@ -207,7 +207,7 @@ const role = {
     if (res.status === 204) {
       return null;
     }
-    return res.data;
+    return res?.data;
   },
 
   async create(
@@ -220,7 +220,7 @@ const role = {
       const res = await axios.post(`${globals.apiBaseUrl}/role`, body, {
         headers: globals.headers,
       });
-      return res.data;
+      return res?.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response.data.errors) {
         throw new ApiError(error.response.data.errors);
@@ -241,7 +241,7 @@ const role = {
       const res = await axios.patch(`${globals.apiBaseUrl}/role/${id}`, body, {
         headers: globals.headers,
       });
-      return res.data;
+      return res?.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response.data.errors) {
         throw new ApiError(error.response.data.errors);
@@ -265,7 +265,7 @@ const role = {
         data: body,
         headers: globals.headers,
       });
-      return res.data;
+      return res?.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response.data.errors) {
         throw new ApiError(error.response.data.errors);

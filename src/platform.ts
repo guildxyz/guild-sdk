@@ -63,7 +63,7 @@ class Platform {
             headers: globals.headers,
           }
         );
-        return res.data;
+        return res?.data;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response.data.errors) {
           throw new ApiError(error.response.data.errors);
@@ -86,7 +86,7 @@ class Platform {
             headers: globals.headers,
           }
         );
-        return res.data;
+        return res?.data;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response.data.errors) {
           throw new ApiError(error.response.data.errors);
