@@ -185,7 +185,7 @@ type GetGuildResponse = {
     }[];
     rolePlatforms: {
       guildPlatformId: number;
-      patformRoleId?: string;
+      platformRoleId?: string;
       platformRoleData?: { [key: string]: string };
     }[];
     members: string[];
