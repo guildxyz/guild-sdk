@@ -207,7 +207,7 @@ type Requirement =
       chain: Chain;
       data: {
         minAmount: number;
-        maxAmount: number;
+        maxAmount?: number;
       };
     }
   | {
@@ -216,7 +216,7 @@ type Requirement =
       address: string;
       data: {
         minAmount: number;
-        maxAmount: number;
+        maxAmount?: number;
       };
     }
   | {
@@ -226,7 +226,7 @@ type Requirement =
       data: {
         id?: number;
         minAmount: number;
-        maxAmount: number;
+        maxAmount?: number;
         attribute?:
           | {
               trait_type: string;
@@ -265,7 +265,7 @@ type Requirement =
       data: {
         id: number;
         minAmount: number;
-        maxAmount: number;
+        maxAmount?: number;
       };
     }
   | {
