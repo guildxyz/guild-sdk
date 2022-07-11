@@ -226,7 +226,7 @@ type Requirement =
       data: {
         id?: number;
         minAmount: number;
-        maxAmount: number;
+        maxAmount?: number;
         attribute?:
           | {
               trait_type: string;
