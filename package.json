@@ -1,6 +1,6 @@
 {
     "name": "@guildxyz/sdk",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "SDK for Guild.xyz Public API ",
     "main": "./build/src/main.js",
     "types": "./build/src/main.d.ts",
