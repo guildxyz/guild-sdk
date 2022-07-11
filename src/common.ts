@@ -1,4 +1,16 @@
-const API_BASE_URL = "https://api.guild.xyz/v1";
+import packageJson from "../package.json";
 
-// eslint-disable-next-line import/prefer-default-export
-export { API_BASE_URL };
+const globals = {
+  apiBaseUrl: "https://api.guild.xyz/v1",
+  headers: { "User-Agent": `@guildxyz/sdk:${packageJson?.version}`, "Project-Name": "", "Content-Type": "application/json" },
+};
+
+const setApiBaseUrl = (apiBaseUrl: string) => {
+  globals.apiBaseUrl = apiBaseUrl;
+};
+
+const setProjectName = (projectName: string) => {
+  globals.headers["Project-Name"] = projectName
+};
+
+export { globals, setApiBaseUrl, setProjectName };
