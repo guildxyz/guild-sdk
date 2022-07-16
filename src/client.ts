@@ -111,6 +111,9 @@ const guild = {
     return res?.data;
   },
 
+  /**
+   * @deprecated Will be removed soon, use `user.join()` instead.
+   */
   async getUserAccess(
     guildId: number,
     address: string
