@@ -1,33 +1,13 @@
 import axios from "axios";
-import { prepareBodyWithSign } from "./auth";
 import { globals } from "./common";
-import {
-  ApiError,
-  CreateGuildParams,
-  CreateGuildResponse,
-  CreateRoleParams,
-  CreateRoleResponse,
-  DeleteGuildResponse,
-  DeleteRoleResponse,
-  GetGuildsResponse,
-  GetGuildByIdResponse,
-  GetMembershipsResponse,
-  GetRoleResponse,
-  GetUserAccessResponse,
-  JoinResponse,
-  SignerFunction,
-  UpdateGuildParams,
-  UpdateRoleParams,
-  UpdateRoleResponse,
-  GuildsQueryType,
-  GuildsByAddressQueryType,
-  UpdateGuildResponse,
-} from "./types";
+
+// eslint-disable-next-line no-unused-vars
+const prepareBodyWithSign = (_: any, __: any, ___: any) => null
 
 const user = {
   async getMemberships(
     address: string
-  ): Promise<GetMembershipsResponse | null> {
+  ): Promise<any | null> {
     try {
       const res = await axios.get(
         `${globals.apiBaseUrl}/user/membership/${address}`,
@@ -35,8 +15,8 @@ const user = {
       );
       return res?.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response.data.errors) {
-        throw new ApiError(error.response.data.errors);
+      if (axios.isAxiosError(error) && error.response?.data.errors) {
+        throw new Error(error.response.data.errors);
       } else {
         throw error;
       }
@@ -46,12 +26,12 @@ const user = {
   async join(
     guildId: number,
     signerAddress: string,
-    sign: SignerFunction,
+    sign: any,
     platforms?: {
       name: string;
       authData: { [key: string]: string };
     }[]
-  ): Promise<JoinResponse> {
+  ): Promise<any> {
     try {
       const body = await prepareBodyWithSign(signerAddress, sign, {
         guildId,
@@ -62,8 +42,8 @@ const user = {
       });
       return res?.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response.data.errors) {
-        throw new ApiError(error.response.data.errors);
+      if (axios.isAxiosError(error) && error.response?.data.errors) {
+        throw new Error(error.response.data.errors);
       } else {
         throw error;
       }
@@ -72,8 +52,8 @@ const user = {
 };
 
 const guild = {
-  async getAll(query: GuildsQueryType = {}): Promise<GetGuildsResponse> {
-    const queryParams: GuildsQueryType = {};
+  async getAll(query: any = {}): Promise<any> {
+    const queryParams: any = {};
     if (query.order) queryParams.order = query.order;
     if (query.search) queryParams.search = query.search;
     const searchParams = new URLSearchParams(queryParams).toString();
@@ -84,24 +64,7 @@ const guild = {
     return res?.data;
   },
 
-  async getByAddress(
-    address: string,
-    query: GuildsByAddressQueryType = {}
-  ): Promise<GetGuildsResponse> {
-    const queryParams: GuildsByAddressQueryType = {};
-    if (query.order) queryParams.order = query.order;
-    if (query.search) queryParams.search = query.search;
-    queryParams.include = query.include ?? "all";
-    const searchParams = new URLSearchParams(queryParams).toString();
-
-    const res = await axios.get(
-      `${globals.apiBaseUrl}/guild/address/${address}?${searchParams}`,
-      { headers: globals.headers }
-    );
-    return res?.data;
-  },
-
-  async get(id: number | string): Promise<GetGuildByIdResponse> {
+  async get(id: number | string): Promise<any> {
     const res = await axios.get(`${globals.apiBaseUrl}/guild/${id}`, {
       headers: globals.headers,
     });
@@ -114,7 +77,7 @@ const guild = {
   async getUserAccess(
     guildId: number,
     address: string
-  ): Promise<GetUserAccessResponse> {
+  ): Promise<any> {
     const res = await axios.get(
       `${globals.apiBaseUrl}/guild/access/${guildId}/${address}`,
       { headers: globals.headers }
@@ -122,10 +85,11 @@ const guild = {
     return res?.data;
   },
 
+  // Ez access check?
   async getUserMemberships(
     guildId: number,
     address: string
-  ): Promise<GetUserAccessResponse> {
+  ): Promise<any> {
     const res = await axios.get(
       `${globals.apiBaseUrl}/guild/member/${guildId}/${address}`,
       { headers: globals.headers }
@@ -135,9 +99,9 @@ const guild = {
 
   async create(
     signerAddress: string,
-    sign: SignerFunction,
-    params: CreateGuildParams
-  ): Promise<CreateGuildResponse> {
+    sign: any,
+    params: any
+  ): Promise<any> {
     const body = await prepareBodyWithSign(signerAddress, sign, params);
     try {
       const res = await axios.post(`${globals.apiBaseUrl}/guild`, body, {
@@ -145,8 +109,8 @@ const guild = {
       });
       return res?.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response.data.errors) {
-        throw new ApiError(error.response.data.errors);
+      if (axios.isAxiosError(error) && error.response?.data.errors) {
+        throw new Error(error.response.data.errors);
       } else {
         throw error;
       }
@@ -156,9 +120,9 @@ const guild = {
   async update(
     id: number | string,
     signerAddress: string,
-    sign: SignerFunction,
-    params: UpdateGuildParams
-  ): Promise<UpdateGuildResponse> {
+    sign: any,
+    params: any
+  ): Promise<any> {
     const body = await prepareBodyWithSign(signerAddress, sign, params);
     try {
       const res = await axios.patch(`${globals.apiBaseUrl}/guild/${id}`, body, {
@@ -166,8 +130,8 @@ const guild = {
       });
       return res?.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response.data.errors) {
-        throw new ApiError(error.response.data.errors);
+      if (axios.isAxiosError(error) && error.response?.data.errors) {
+        throw new Error(error.response.data.errors);
       } else {
         throw error;
       }
@@ -177,9 +141,9 @@ const guild = {
   async delete(
     id: number,
     signerAddress: string,
-    sign: SignerFunction,
+    sign: any,
     removePlatformAccess: boolean = false
-  ): Promise<DeleteGuildResponse> {
+  ): Promise<any> {
     const body = await prepareBodyWithSign(signerAddress, sign, {
       removePlatformAccess,
     });
@@ -190,8 +154,8 @@ const guild = {
       });
       return res?.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response.data.errors) {
-        throw new ApiError(error.response.data.errors);
+      if (axios.isAxiosError(error) && error.response?.data.errors) {
+        throw new Error(error.response.data.errors);
       } else {
         throw error;
       }
@@ -200,7 +164,7 @@ const guild = {
 };
 
 const role = {
-  async get(id: number): Promise<GetRoleResponse> {
+  async get(id: number): Promise<any> {
     const res = await axios.get(`${globals.apiBaseUrl}/role/${id}`, {
       headers: globals.headers,
     });
@@ -212,9 +176,9 @@ const role = {
 
   async create(
     signerAddress: string,
-    sign: SignerFunction,
-    params: CreateRoleParams
-  ): Promise<CreateRoleResponse> {
+    sign: any,
+    params: any
+  ): Promise<any> {
     const body = await prepareBodyWithSign(signerAddress, sign, params);
     try {
       const res = await axios.post(`${globals.apiBaseUrl}/role`, body, {
@@ -222,8 +186,8 @@ const role = {
       });
       return res?.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response.data.errors) {
-        throw new ApiError(error.response.data.errors);
+      if (axios.isAxiosError(error) && error.response?.data.errors) {
+        throw new Error(error.response.data.errors);
       } else {
         throw error;
       }
@@ -233,9 +197,9 @@ const role = {
   async update(
     id: number,
     signerAddress: string,
-    sign: SignerFunction,
-    params: UpdateRoleParams
-  ): Promise<UpdateRoleResponse> {
+    sign: any,
+    params: any
+  ): Promise<any> {
     const body = await prepareBodyWithSign(signerAddress, sign, params);
     try {
       const res = await axios.patch(`${globals.apiBaseUrl}/role/${id}`, body, {
@@ -243,8 +207,8 @@ const role = {
       });
       return res?.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response.data.errors) {
-        throw new ApiError(error.response.data.errors);
+      if (axios.isAxiosError(error) && error.response?.data.errors) {
+        throw new Error(error.response.data.errors);
       } else {
         throw error;
       }
@@ -254,9 +218,9 @@ const role = {
   async delete(
     id: number,
     signerAddress: string,
-    sign: SignerFunction,
+    sign: any,
     removePlatformAccess: boolean = false
-  ): Promise<DeleteRoleResponse> {
+  ): Promise<any> {
     const body = await prepareBodyWithSign(signerAddress, sign, {
       removePlatformAccess,
     });
@@ -267,8 +231,8 @@ const role = {
       });
       return res?.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response.data.errors) {
-        throw new ApiError(error.response.data.errors);
+      if (axios.isAxiosError(error) && error.response?.data.errors) {
+        throw new Error(error.response.data.errors);
       } else {
         throw error;
       }

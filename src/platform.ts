@@ -2,13 +2,6 @@
 import axios from "axios";
 import { globals } from "./common";
 import * as client from "./client";
-import {
-  ApiError,
-  GetGuildResponse,
-  PlatformGetUserAccessesReponse,
-  PlatformJoinResponse,
-  PlatformStatusResponse,
-} from "./types";
 
 class Platform {
   readonly platformName: string;
@@ -20,7 +13,7 @@ class Platform {
   guild = {
     ...client.guild,
 
-    get: async (platformGuildId: string): Promise<GetGuildResponse> => {
+    get: async (platformGuildId: string): Promise<any> => {
       const res = await axios.get(
         `${globals.apiBaseUrl}/platform/guild/${this.platformName}/${platformGuildId}`,
         { headers: globals.headers }
@@ -34,7 +27,7 @@ class Platform {
     getUserAccess: async (
       platformGuildId: string,
       platformUserId: string
-    ): Promise<PlatformGetUserAccessesReponse> => {
+    ): Promise<any> => {
       const res = await axios.get(
         `${globals.apiBaseUrl}/platform/guild/access/${this.platformName}/${platformGuildId}/${platformUserId}`,
         { headers: globals.headers }
@@ -49,7 +42,7 @@ class Platform {
     join: async (
       platformGuildId: string,
       platformUserId: string
-    ): Promise<PlatformJoinResponse> => {
+    ): Promise<any> => {
       try {
         const body = {
           platformName: this.platformName,
@@ -65,15 +58,15 @@ class Platform {
         );
         return res?.data;
       } catch (error) {
-        if (axios.isAxiosError(error) && error.response.data.errors) {
-          throw new ApiError(error.response.data.errors);
+        if (axios.isAxiosError(error) && error.response?.data.errors) {
+          throw new Error(error.response.data.errors);
         } else {
           throw error;
         }
       }
     },
 
-    status: async (platformUserId: string): Promise<PlatformStatusResponse> => {
+    status: async (platformUserId: string): Promise<any> => {
       try {
         const body = {
           platformName: this.platformName,
@@ -88,8 +81,8 @@ class Platform {
         );
         return res?.data;
       } catch (error) {
-        if (axios.isAxiosError(error) && error.response.data.errors) {
-          throw new ApiError(error.response.data.errors);
+        if (axios.isAxiosError(error) && error.response?.data.errors) {
+          throw new Error(error.response.data.errors);
         } else {
           throw error;
         }
