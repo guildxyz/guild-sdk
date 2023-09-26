@@ -90,6 +90,38 @@ export const createSigner = {
 
       return { params, sig, payload: stringPayload };
     },
+
+  custom:
+    (
+      // eslint-disable-next-line no-unused-vars
+      sign: (message: string) => Promise<string>,
+      address: string,
+      {
+        msg = "Please sign this message",
+        chainIdOfSmartContractWallet,
+      }: { chainIdOfSmartContractWallet?: number } & SignerOptions = {}
+    ): SignerFunction =>
+    async (payload = {}, getMessage = recreateMessage) => {
+      const stringPayload = JSON.stringify(payload);
+
+      const params = schemas.AuthenticationParamsSchema.parse({
+        addr: address,
+        msg,
+        nonce: randomBytes(32).toString("base64"),
+        ts: `${Date.now()}`,
+        hash: keccak256(toUtf8Bytes(stringPayload)),
+        ...(typeof chainIdOfSmartContractWallet === "number"
+          ? {
+              chainId: chainIdOfSmartContractWallet.toString(),
+              method: consts.AuthMethod.EIP1271,
+            }
+          : { method: consts.AuthMethod.EOA }),
+      });
+
+      const sig = await sign(getMessage(params));
+
+      return { params, sig, payload: stringPayload };
+    },
 };
 
 type SchemasImportType = (typeof import("@guildxyz/types"))["schemas"];
