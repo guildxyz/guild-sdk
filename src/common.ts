@@ -1,10 +1,13 @@
 import packageJson from "../package.json";
 
+const BASE_USER_AGENT = `guild-sdk/${packageJson?.version}`;
+
 const globals = {
+  // apiBaseUrl: "http://localhost:8989/v2",
+  projectName: "",
   apiBaseUrl: "https://api.guild.xyz/v2",
   headers: {
-    "User-Agent": `@guildxyz/sdk:${packageJson?.version}`,
-    "Project-Name": "",
+    "User-Agent": BASE_USER_AGENT,
     "Content-Type": "application/json",
   },
 };
@@ -14,7 +17,7 @@ const setApiBaseUrl = (apiBaseUrl: string) => {
 };
 
 const setProjectName = (projectName: string) => {
-  globals.headers["Project-Name"] = projectName;
+  globals.headers["User-Agent"] = `${BASE_USER_AGENT} ${projectName}`;
 };
 
 export { globals, setApiBaseUrl, setProjectName };

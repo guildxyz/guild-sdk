@@ -6,17 +6,25 @@ class GuildAPICallFailed extends Error {
 
   message: string;
 
+  correlationId: string;
+
   statusCode: number;
 
-  constructor(endpoint: string, message: string, statusCode: number) {
+  constructor(
+    endpoint: string,
+    message: string,
+    statusCode: number,
+    correlationId: string
+  ) {
     super(
       `Guild API call failed on ${endpoint} with http code ${statusCode} with message: ${
         message ?? "Unexpected Error"
-      }`
+      }\nID: ${correlationId}`
     );
     this.endpoint = endpoint;
     this.message = message;
     this.statusCode = statusCode;
+    this.correlationId = correlationId;
   }
 }
 

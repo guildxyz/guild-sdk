@@ -1,22 +1,21 @@
-import { RequirementCreationPayloadSchema } from "@guildxyz/types/schemas";
 import { randomBytes } from "crypto";
 import { Wallet } from "ethers";
 import { describe, expect, test } from "vitest";
 import { GuildAPICallFailed, GuildSDKValidationError } from "../src/error";
-import { Signers, callGuildAPI } from "../src/utils";
+import { callGuildAPI, createSigner } from "../src/utils";
 
 const WALLET = new Wallet(randomBytes(32).toString("hex"));
 
 describe.concurrent("callGuildAPI", () => {
   test("It fails with validation error correctly", async () => {
-    const signer = Signers.EOA(WALLET);
+    const signer = createSigner.fromEthersWallet(WALLET);
 
     try {
       await callGuildAPI({
         url: `/guilds/0/roles/0/requirements`,
         method: "POST",
         body: {
-          schema: RequirementCreationPayloadSchema,
+          schema: "RequirementCreationPayloadSchema",
           data: {} as any, // Missing required "type" field
         },
         signer,
@@ -29,14 +28,14 @@ describe.concurrent("callGuildAPI", () => {
   });
 
   test("It handles API errors (guild doesn't exist)", async () => {
-    const signer = Signers.EOA(WALLET);
+    const signer = createSigner.fromEthersWallet(WALLET);
 
     try {
-      await callGuildAPI({
+      await callGuildAPI<number>({
         url: `/guilds/0/roles/0/requirements`,
         method: "POST",
         body: {
-          schema: RequirementCreationPayloadSchema,
+          schema: "RequirementCreationPayloadSchema",
           data: { type: "ALLOWLIST" },
         },
         signer,
