@@ -1,102 +1,71 @@
 "use client";
-import { guild } from "@guildxyz/sdk";
-import Image from "next/image";
-import { useEffect } from "react";
-import styles from "./page.module.css";
+import { createSigner, user } from "@guildxyz/sdk";
+import { useState } from "react";
+import { polygon } from "viem/chains";
+import { useAccount, useConnect, useDisconnect, useSignMessage } from "wagmi";
+import { InjectedConnector } from "wagmi/connectors/injected";
+import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
+import "../lib/guild";
 
 export default function Home() {
-  useEffect(() => {
-    guild.search({ search: "our", limit: 10, offset: 0 }).then(console.log);
-  }, []);
+  const { address } = useAccount();
+
+  const { connect: connectInjected } = useConnect({
+    connector: new InjectedConnector(),
+  });
+  const { connect: connectWalletConnect } = useConnect({
+    connector: new WalletConnectConnector({
+      options: { projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID },
+    }),
+  });
+  const { disconnect } = useDisconnect();
+  const { signMessageAsync } = useSignMessage();
+
+  const [isSmartContractWallet, setIsSmartContractWallet] = useState(false);
 
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
+    <>
+      {address ? (
         <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          Connected to {address}
+          <input
+            type="checkbox"
+            // value={isSmartContractWallet ? "true" : "false"}
+            checked={isSmartContractWallet}
+            onChange={(event) => {
+              setIsSmartContractWallet(event.target.checked);
+            }}
+          />
+          <button onClick={() => disconnect()}>Disconnect</button>
+          <button
+            onClick={() =>
+              user
+                .getProfile(
+                  address,
+                  createSigner.custom(
+                    (message) => signMessageAsync({ message }),
+                    address,
+                    {
+                      chainIdOfSmartContractWallet: isSmartContractWallet
+                        ? polygon.id
+                        : undefined,
+                    }
+                  )
+                )
+                .then(console.log)
+            }
           >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+            Call Guild API
+          </button>
         </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+      ) : (
+        <>
+          <button onClick={() => connectInjected()}>Connect Injected</button>
+          <button onClick={() => connectWalletConnect()}>
+            Connect WalletConnect
+          </button>
+        </>
+      )}
+    </>
   );
 }

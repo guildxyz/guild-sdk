@@ -13,7 +13,9 @@
     "@guildxyz/types": "file:../../../guild-backend/lib/types/dist",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "viem": "^1.12.2",
+    "wagmi": "^1.4.2"
   },
   "devDependencies": {
     "@types/node": "latest",
