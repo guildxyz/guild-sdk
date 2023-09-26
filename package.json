@@ -38,6 +38,7 @@
   "scripts": {
     "build": "tsup ./src/index.ts",
     "prepublishOnly": "npm run build",
+    "prepare": "npm run build",
     "test": "npx dotenv-cli -e .test.env -- npx vitest run"
   },
   "dependencies": {
