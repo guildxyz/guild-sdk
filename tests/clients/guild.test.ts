@@ -56,7 +56,7 @@ describe.concurrent("Guild client", () => {
     expect(firstGuildWithPagination.id).toEqual(firstGuild.id);
   });
 
-  it.skip("Can get guild members", async () => {
+  it("Can get guild members", async () => {
     const numberOfPublicRoles = 15; // TODO: Get from /guilds/1985/roles once client can do that
 
     const response = await guild.getMembers(1985);
@@ -64,7 +64,7 @@ describe.concurrent("Guild client", () => {
     expect(response).toHaveLength(numberOfPublicRoles);
   });
 
-  it.skip("Can get guild member access", async () => {
+  it("Can get guild member access", async () => {
     const numberOfPublicRoles = 15; // TODO: Get from /guilds/1985/roles once client can do that
 
     const response = await guild.getMemberAccess(1985, 2738981);
