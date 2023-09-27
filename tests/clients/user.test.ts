@@ -1,4 +1,4 @@
-import { webcrypto } from "crypto";
+import { randomBytes, webcrypto } from "crypto";
 import { Wallet } from "ethers";
 import { assert, describe, expect, it } from "vitest";
 import { user } from "../../src/client";
@@ -8,6 +8,11 @@ import { createSigner } from "../../src/utils";
 const TEST_WALLET_ADDRESS = new Wallet(process.env.PRIVATE_KEY!).address;
 const TEST_WALLET_SIGNER = createSigner.fromPrivateKey(
   process.env.PRIVATE_KEY!
+);
+
+const WALLET_OF_CREATED_USER = new Wallet(randomBytes(32).toString("hex"));
+const SIGNER_OF_CREATED_USER = createSigner.fromEthersWallet(
+  WALLET_OF_CREATED_USER
 );
 
 const getKeys = () =>
@@ -51,6 +56,20 @@ describe.concurrent("User client", () => {
   it("Can fetch memberships", async () => {
     const memberships = await user.getMemberships(TEST_WALLET_ADDRESS);
     expect(memberships.length).toBeGreaterThan(0);
+  });
+
+  describe("user crete - delete", () => {
+    it("can create a user", async () => {
+      const profile = await user.getProfile(
+        WALLET_OF_CREATED_USER.address,
+        SIGNER_OF_CREATED_USER
+      );
+      expect(profile.addresses).toHaveLength(1);
+    });
+
+    it("can delete user", async () => {
+      await user.delete(WALLET_OF_CREATED_USER.address, SIGNER_OF_CREATED_USER);
+    });
   });
 
   describe("Key verification flow", async () => {
