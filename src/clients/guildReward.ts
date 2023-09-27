@@ -1,9 +1,4 @@
-import {
-  AvailableTextsResponse,
-  GuildReward,
-  GuildRewardCreationPayload,
-  GuildRewardUpdatePayload,
-} from "@guildxyz/types";
+import { AvailableTextsResponse, GuildReward, Schemas } from "@guildxyz/types";
 import { SignerFunction, callGuildAPI } from "../utils";
 
 const guildReward = {
@@ -36,7 +31,7 @@ const guildReward = {
 
   create: (
     guildIdOrUrlName: string | number,
-    guildPlatformCreationParams: GuildRewardCreationPayload,
+    guildPlatformCreationParams: Schemas["GuildRewardCreation"],
     signer: SignerFunction
   ) =>
     callGuildAPI<GuildReward>({
@@ -52,7 +47,7 @@ const guildReward = {
   update: (
     guildIdOrUrlName: string | number,
     guildPlatformId: number,
-    guildPlatformUpdateParams: GuildRewardUpdatePayload,
+    guildPlatformUpdateParams: Schemas["GuildRewardUpdate"],
     signer: SignerFunction
   ) =>
     callGuildAPI<GuildReward>({

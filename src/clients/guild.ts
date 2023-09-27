@@ -1,10 +1,8 @@
 import {
   GetGuildMembersResponse,
   Guild,
-  GuildCreationPayload,
   GuildCreationResponse,
-  GuildSearchQueryParams,
-  GuildUpdatePayload,
+  Schemas,
 } from "@guildxyz/types";
 import { SignerFunction, callGuildAPI } from "../utils";
 import guildReward from "./guildReward";
@@ -28,7 +26,7 @@ const guild = {
       queryParamsSchema: "GuildGetManyQueryParamsSchema",
     }),
 
-  search: (params: GuildSearchQueryParams) =>
+  search: (params: Schemas["GuildSearchQueryParams"]) =>
     callGuildAPI<Guild[]>({
       url: `/guilds`,
       method: "GET",
@@ -50,7 +48,10 @@ const guild = {
       signer,
     }),
 
-  create: (guildCreationParams: GuildCreationPayload, signer: SignerFunction) =>
+  create: (
+    guildCreationParams: Schemas["GuildCreationPayload"],
+    signer: SignerFunction
+  ) =>
     callGuildAPI<GuildCreationResponse>({
       url: `/guilds`,
       method: "POST",
@@ -63,7 +64,7 @@ const guild = {
 
   update: (
     guildId: number,
-    guildUpdateParams: GuildUpdatePayload,
+    guildUpdateParams: Schemas["GuildUpdatePayload"],
     signer: SignerFunction
   ) =>
     callGuildAPI<Guild>({

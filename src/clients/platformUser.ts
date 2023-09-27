@@ -1,4 +1,4 @@
-import { PlatformUser, PlatformUserCreation } from "@guildxyz/types";
+import { PlatformUser, Schemas } from "@guildxyz/types";
 import { SignerFunction, callGuildAPI } from "../utils";
 
 const platformUser = {
@@ -22,7 +22,7 @@ const platformUser = {
 
   create: (
     userIdOrAddress: string | number,
-    platformUserCreationParams: PlatformUserCreation,
+    platformUserCreationParams: Schemas["PlatformUserCreation"],
     signer: SignerFunction
   ) =>
     callGuildAPI<PlatformUser>({

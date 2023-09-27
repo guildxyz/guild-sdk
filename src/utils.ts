@@ -1,12 +1,12 @@
-import { Authentication, consts, schemas } from "@guildxyz/types";
+import { consts, schemas, Schemas } from "@guildxyz/types";
 import assert from "assert";
 import { randomBytes, webcrypto } from "crypto";
-import { BytesLike, SigningKey, Wallet, keccak256, toUtf8Bytes } from "ethers";
+import { BytesLike, keccak256, SigningKey, toUtf8Bytes, Wallet } from "ethers";
 import type { z } from "zod";
 import { globals } from "./common";
 import { GuildAPICallFailed, GuildSDKValidationError } from "./error";
 
-export const recreateMessage = (params: Authentication["params"]) =>
+export const recreateMessage = (params: Schemas["Authentication"]["params"]) =>
   `${params.msg}\n\nAddress: ${params.addr}\nMethod: ${params.method}${
     params.method === consts.AuthMethod.EIP1271
       ? `\nChainId: ${params.chainId}`
@@ -19,9 +19,9 @@ export type SignerFunction = (
   // eslint-disable-next-line no-unused-vars
   payload?: any,
   // eslint-disable-next-line no-unused-vars
-  getMessage?: (params: Authentication["params"]) => string
+  getMessage?: (params: Schemas["Authentication"]["params"]) => string
 ) => Promise<{
-  params: Authentication["params"];
+  params: Schemas["Authentication"]["params"];
   sig: string;
   payload: string;
 }>;

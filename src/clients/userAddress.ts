@@ -1,4 +1,4 @@
-import { UserAddress, UserAddressUpdatePayload } from "@guildxyz/types";
+import { Schemas, UserAddress } from "@guildxyz/types";
 import { SignerFunction, callGuildAPI } from "../utils";
 
 const userAddress = {
@@ -49,7 +49,7 @@ const userAddress = {
   update: (
     userIdOrAddress: string | number,
     address: string,
-    addressUpdateParams: UserAddressUpdatePayload,
+    addressUpdateParams: Schemas["UserAddressUpdatePayload"],
     signer: SignerFunction
   ) =>
     callGuildAPI<UserAddress>({

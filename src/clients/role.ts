@@ -1,9 +1,4 @@
-import {
-  Role,
-  RoleCreationPayload,
-  RoleCreationResponse,
-  RoleUpdatePayload,
-} from "@guildxyz/types";
+import { Role, RoleCreationResponse, Schemas } from "@guildxyz/types";
 import { SignerFunction, callGuildAPI } from "../utils";
 import requirement from "./requirement";
 import rolePlatform from "./rolePlatform";
@@ -33,7 +28,7 @@ const role = {
 
   create: (
     guildIdOrUrlName: number | string,
-    roleCreationParams: RoleCreationPayload,
+    roleCreationParams: Schemas["RoleCreationPayload"],
     signer: SignerFunction
   ) =>
     callGuildAPI<RoleCreationResponse>({
@@ -49,7 +44,7 @@ const role = {
   update: (
     guildIdOrUrlName: number | string,
     roleId: number,
-    roleUpdateParams: RoleUpdatePayload,
+    roleUpdateParams: Schemas["RoleUpdatePayload"],
     signer: SignerFunction
   ) =>
     callGuildAPI<Role>({

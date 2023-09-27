@@ -1,8 +1,7 @@
 import {
   RolePlatformClaimResponse,
   RoleReward,
-  RoleRewardCreationPayload,
-  RoleRewardUpdatePayload,
+  Schemas,
 } from "@guildxyz/types";
 import { SignerFunction, callGuildAPI } from "../utils";
 
@@ -50,7 +49,7 @@ const rolePlatform = {
   create: (
     guildIdOrUrlName: string | number,
     roleId: number,
-    rolePlatformCreationParams: RoleRewardCreationPayload,
+    rolePlatformCreationParams: Schemas["RoleRewardCreationPayload"],
     signer: SignerFunction
   ) =>
     callGuildAPI<RoleReward>({
@@ -67,7 +66,7 @@ const rolePlatform = {
     guildIdOrUrlName: string | number,
     roleId: number,
     rolePlatformId: number,
-    rolePlatformUpdateParams: RoleRewardUpdatePayload,
+    rolePlatformUpdateParams: Schemas["RoleRewardUpdatePayload"],
     signer: SignerFunction
   ) =>
     callGuildAPI<RoleReward>({

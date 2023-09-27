@@ -64,7 +64,7 @@ const user = {
       url: `/users/${userIdOrAddress}/public-key`,
       method: "POST",
       body: {
-        schema: "VerifyKeyPayloadSchena",
+        schema: "VerifyKeyPayloadSchema",
         data: {
           pubKey,
           verificationParams: reCaptchaToken
