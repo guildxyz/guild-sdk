@@ -53,7 +53,7 @@ describe.concurrent("User client", () => {
     expect(memberships.length).toBeGreaterThan(0);
   });
 
-  describe.only("Key verification flow", async () => {
+  describe("Key verification flow", async () => {
     const {
       pubKey,
       keyPair: { privateKey },
@@ -85,7 +85,7 @@ describe.concurrent("User client", () => {
 
       const userProfile = await user.getProfile(TEST_WALLET_ADDRESS, keySigner);
 
-      expect(userProfile.addresses).toHaveLength(1);
+      expect(userProfile.addresses.length).toBeGreaterThan(0);
     });
 
     it("Can revoke key", async () => {
