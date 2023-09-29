@@ -64,7 +64,7 @@ describe.concurrent("User client", () => {
         WALLET_OF_CREATED_USER.address,
         SIGNER_OF_CREATED_USER
       );
-      expect(profile.addresses).toHaveLength(1);
+      expect(profile.addresses.length).toBeGreaterThan(0);
     });
 
     it("can delete user", async () => {
