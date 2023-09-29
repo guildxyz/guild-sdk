@@ -28,6 +28,23 @@ const platform = {
       method: "GET",
       signer,
     }),
+
+  withPlatformName: (platformName: PlatformName) => ({
+    getGuildByPlatform: (platformGuildId: string, signer?: SignerFunction) =>
+      platform.getGuildByPlatform(platformName, platformGuildId, signer),
+
+    getUserGuildAccessByPlatform: (
+      platformGuildId: string,
+      platformUserId: string,
+      signer?: SignerFunction
+    ) =>
+      platform.getUserGuildAccessByPlatform(
+        platformName,
+        platformGuildId,
+        platformUserId,
+        signer
+      ),
+  }),
 };
 
 export default platform;
