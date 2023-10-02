@@ -4,7 +4,7 @@ import assert from "assert";
 import { randomBytes, webcrypto } from "crypto";
 import { BytesLike, keccak256, SigningKey, toUtf8Bytes, Wallet } from "ethers";
 import type { z } from "zod";
-import { globals } from "./common";
+import { globals, KEY_HEADER_NAME, SERVICE_HEADER_NAME } from "./common";
 import { GuildAPICallFailed, GuildSDKValidationError } from "./error";
 
 export const recreateMessage = (params: Schemas["Authentication"]["params"]) =>
@@ -123,6 +123,18 @@ export const createSigner = {
 
       return { params, sig, payload: stringPayload };
     },
+  apiKeySigner: (): SignerFunction => async () => ({
+    params: {
+      addr: "",
+      method: "1",
+      msg: "",
+      nonce: "",
+      ts: "",
+      hash: "",
+    },
+    sig: "",
+    payload: "",
+  }),
 };
 
 type SchemasImportType = (typeof import("@guildxyz/types"))["schemas"];
@@ -192,9 +204,12 @@ export const callGuildAPI = async <ResponseType>(
     }
   }
 
-  const authentication = params.signer
-    ? await params.signer(parsedPayload)
-    : null;
+  const hasAPIKey =
+    !!globals.headers[KEY_HEADER_NAME] &&
+    !!globals.headers[SERVICE_HEADER_NAME];
+
+  const authentication =
+    params.signer && !hasAPIKey ? await params.signer(parsedPayload) : null;
 
   const response = await fetch(url, {
     method: params.method,
