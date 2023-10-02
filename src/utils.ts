@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { consts, schemas, Schemas } from "@guildxyz/types";
 import assert from "assert";
 import { randomBytes, webcrypto } from "crypto";
@@ -129,7 +130,7 @@ type SchemaNames = keyof SchemasImportType;
 type MappedSchemas = {
   [Schema in SchemaNames]: {
     schema: Schema;
-    data: z.infer<SchemasImportType[Schema]>;
+    data: z.input<SchemasImportType[Schema]>;
   };
 }[SchemaNames];
 
@@ -233,4 +234,40 @@ export const callGuildAPI = async <ResponseType>(
   }
 
   return responseBody;
+};
+
+export type OnPoll<Job> = (
+  job: Job | null,
+  promiseHandlers: {
+    resolve: (value: Job | PromiseLike<Job | null> | null) => void;
+    reject: (reason?: any) => void;
+  }
+) => void;
+
+export const awaitJob = <
+  Job extends { done?: boolean; error?: any; errorMsg?: any },
+>(
+  poll: () => Promise<Job | null>,
+  onPoll?: OnPoll<Job>,
+  pollIntervalMs = 1000
+) => {
+  let interval: ReturnType<typeof setInterval>;
+  return new Promise<Job | null>((resolve, reject) => {
+    interval = setInterval(() => {
+      poll().then((job) => {
+        onPoll?.(job, { resolve, reject });
+
+        if (!job) {
+          reject(job);
+          return; // Return is needed, so TS knows, that after this point job is not null
+        }
+        if (!job.done) return;
+
+        if (job.error ?? job.errorMsg) reject(job);
+        else resolve(job);
+      });
+    }, pollIntervalMs);
+  }).finally(() => {
+    clearInterval(interval);
+  });
 };
