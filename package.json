@@ -42,7 +42,7 @@
     "test": "npx dotenv-cli -e .test.env -- npx vitest run"
   },
   "dependencies": {
-    "@guildxyz/types": "^1.0.0",
+    "@guildxyz/types": "^1.1.0",
     "ethers": "^6.7.1",
     "fast-json-stable-stringify": "^2.1.0"
   },
