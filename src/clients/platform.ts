@@ -1,9 +1,10 @@
 import {
   GuildByPlatformResponse,
   PlatformName,
+  User,
   UserGuildAccessesByPlatformResponse,
 } from "@guildxyz/types";
-import { SignerFunction, callGuildAPI } from "../utils";
+import { SignerFunction, callGuildAPI, createSigner } from "../utils";
 
 const platform = {
   getGuildByPlatform: (
@@ -29,6 +30,16 @@ const platform = {
       signer,
     }),
 
+  getUserByPlatformUserId: (
+    platformName: PlatformName,
+    platformUserId: string
+  ) =>
+    callGuildAPI<User>({
+      url: `/platforms/${platformName}/users/${platformUserId}`,
+      method: "GET",
+      signer: createSigner.apiKeySigner(),
+    }),
+
   withPlatformName: (platformName: PlatformName) => ({
     getGuildByPlatform: (platformGuildId: string, signer?: SignerFunction) =>
       platform.getGuildByPlatform(platformName, platformGuildId, signer),
@@ -44,6 +55,9 @@ const platform = {
         platformUserId,
         signer
       ),
+
+    getUserByPlatformUserId: (platformUserId: string) =>
+      platform.getUserByPlatformUserId(platformName, platformUserId),
   }),
 };
 
