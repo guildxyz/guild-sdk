@@ -1,3 +1,8 @@
 export * from "./client";
-export { setApiBaseUrl, setProjectName } from "./common";
+export {
+  setApiBaseUrl,
+  setApiKey,
+  setProjectName,
+  setServiceName,
+} from "./common";
 export { createSigner } from "./utils";
