@@ -20,7 +20,7 @@ const role = {
     }),
 
   getAll: (guildIdOrUrlName: number | string, signer?: SignerFunction) =>
-    callGuildAPI<Role>({
+    callGuildAPI<Role[]>({
       url: `/guilds/${guildIdOrUrlName}/roles`,
       method: "GET",
       signer,

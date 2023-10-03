@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { actions, createSigner } from "../../../src";
+import { describe, expect, it, vi } from "vitest";
+import { createSigner, guild } from "../../../src";
 
 const GUILD_ID = 4486;
 const TEST_WALLET_SIGNER = createSigner.fromPrivateKey(
@@ -7,13 +7,11 @@ const TEST_WALLET_SIGNER = createSigner.fromPrivateKey(
 );
 
 describe("Join action", () => {
-  it("can start a join flow", async () => {
-    const result = await actions.join.start(GUILD_ID, TEST_WALLET_SIGNER);
-    expect(result.jobId).toBeTruthy();
-  });
+  it("can join", async () => {
+    const onPoll = vi.fn();
+    const result = await guild.join(GUILD_ID, TEST_WALLET_SIGNER, { onPoll });
 
-  it("can poll flow state", async () => {
-    const job = await actions.join.poll(GUILD_ID, TEST_WALLET_SIGNER);
-    expect(job?.guildId).toEqual(GUILD_ID);
+    expect(result!.done).toBeTruthy();
+    expect(onPoll).toHaveBeenCalled();
   });
 });

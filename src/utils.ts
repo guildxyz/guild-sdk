@@ -230,17 +230,34 @@ export type OnPoll<Job> = (
   }
 ) => void;
 
-export const awaitJob = <
+export type PollOptions<Job> = { onPoll?: OnPoll<Job>; intervalMs?: number };
+
+export const createAndAwaitJob = async <
   Job extends { done?: boolean; error?: any; errorMsg?: any },
 >(
-  poll: () => Promise<Job | null>,
-  onPoll?: OnPoll<Job>,
-  pollIntervalMs = 1000
+  url: string,
+  body: MappedSchemas,
+  queryParams: Record<string, any>,
+  signer: SignerFunction,
+  { onPoll, intervalMs = 1000 }: PollOptions<Job> = {}
 ) => {
+  await callGuildAPI<{ jobId: string }>({
+    url,
+    method: "POST",
+    body,
+    signer,
+  });
+
   let interval: ReturnType<typeof setInterval>;
+
   return new Promise<Job | null>((resolve, reject) => {
     interval = setInterval(() => {
-      poll().then((job) => {
+      callGuildAPI<Job[]>({
+        url,
+        method: "GET",
+        queryParams,
+        signer,
+      }).then(([job = null]) => {
         onPoll?.(job, { resolve, reject });
 
         if (!job) {
@@ -252,7 +269,7 @@ export const awaitJob = <
         if (job.error ?? job.errorMsg) reject(job);
         else resolve(job);
       });
-    }, pollIntervalMs);
+    }, intervalMs);
   }).finally(() => {
     clearInterval(interval);
   });

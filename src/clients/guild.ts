@@ -1,10 +1,17 @@
 import {
+  AccessCheckJob,
   GetGuildMembersResponse,
   Guild,
   GuildCreationResponse,
+  JoinJob,
   Schemas,
 } from "@guildxyz/types";
-import { SignerFunction, callGuildAPI } from "../utils";
+import {
+  PollOptions,
+  SignerFunction,
+  callGuildAPI,
+  createAndAwaitJob,
+} from "../utils";
 import guildReward from "./guildReward";
 import role from "./role";
 
@@ -83,6 +90,58 @@ const guild = {
       method: "DELETE",
       signer,
     }),
+
+  join: (
+    guildId: number,
+    signer: SignerFunction,
+    pollOptions?: PollOptions<JoinJob>
+  ) =>
+    createAndAwaitJob<JoinJob>(
+      "/actions/join",
+      {
+        schema: "JoinActionPayloadSchema",
+        data: { guildId },
+      },
+      { guildId },
+      signer,
+      pollOptions
+    ),
+
+  accessCheck: (
+    guildId: number,
+    signer: SignerFunction,
+    pollOptions?: PollOptions<AccessCheckJob>
+  ) =>
+    createAndAwaitJob<AccessCheckJob>(
+      "/actions/access-check",
+      {
+        schema: "JoinActionPayloadSchema",
+        data: { guildId },
+      },
+      { guildId },
+      signer,
+      pollOptions
+    ),
+
+  // statusUpdate: async (
+  //   guildId: number,
+  //   signer: SignerFunction,
+  //   pollOptions?: PollOptions<StatusUpdateJob>
+  // ) => {
+  //   const roles = await guild.role.getAll(guildId, signer);
+  //   return createAndAwaitJob<StatusUpdateJob>(
+  //     "/actions/status-update",
+  //     {
+  //       schema: "StatusUpdateActionPayloadSchema",
+  //       data: {
+  //         roleIds: (roles ?? []).map(({ id }) => id),
+  //       },
+  //     },
+  //     { guildId },
+  //     signer,
+  //     pollOptions
+  //   );
+  // },
 };
 
 export default guild;
