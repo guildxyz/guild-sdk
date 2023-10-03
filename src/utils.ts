@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { consts, schemas, Schemas } from "@guildxyz/types";
 import assert from "assert";
-import { randomBytes, webcrypto } from "crypto";
+import { randomBytes } from "crypto";
 import { BytesLike, keccak256, SigningKey, toUtf8Bytes, Wallet } from "ethers";
 import type { z } from "zod";
 import { globals, KEY_HEADER_NAME, SERVICE_HEADER_NAME } from "./common";
@@ -62,35 +62,6 @@ export const createSigner = {
       new Wallet(new SigningKey(privateKey)),
       options
     ),
-
-  fromWebcryptoEdcsaPrivateKey:
-    (
-      privateKey: webcrypto.CryptoKey,
-      address: string,
-      { msg = "Please sign this message" }: SignerOptions = {}
-    ): SignerFunction =>
-    async (payload = {}, getMessage = recreateMessage) => {
-      const stringPayload = JSON.stringify(payload);
-
-      const params = schemas.AuthenticationParamsSchema.parse({
-        method: consts.AuthMethod.KeyPair,
-        addr: address,
-        msg,
-        nonce: randomBytes(32).toString("base64"),
-        ts: `${Date.now()}`,
-        hash: keccak256(toUtf8Bytes(stringPayload)),
-      });
-
-      const sig = await webcrypto.subtle
-        .sign(
-          { name: "ECDSA", hash: "SHA-512" },
-          privateKey,
-          Buffer.from(getMessage(params).replace(/\n/g, ""))
-        )
-        .then((signature) => Buffer.from(signature).toString("hex"));
-
-      return { params, sig, payload: stringPayload };
-    },
 
   custom:
     (

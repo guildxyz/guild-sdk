@@ -54,38 +54,6 @@ const user = {
       method: "GET",
       signer,
     }),
-
-  verifyKey: (
-    userIdOrAddress: string | number,
-    { pubKey, reCaptchaToken }: { reCaptchaToken?: string; pubKey: string },
-    signer: SignerFunction
-  ) =>
-    callGuildAPI<UserProfile>({
-      url: `/users/${userIdOrAddress}/public-key`,
-      method: "POST",
-      body: {
-        schema: "VerifyKeyPayloadSchema",
-        data: {
-          pubKey,
-          verificationParams: reCaptchaToken
-            ? { reCaptcha: reCaptchaToken }
-            : undefined,
-        },
-      },
-      signer,
-    }),
-
-  /**
-   * Revokes the prevoiusly registered session key. Once it is revoked it can't be used to sign messages on behalf of the user.
-   * @param userIdOrAddress User ID or address of the user
-   * @param signer The key which is about to be revoked, can't be used. The user has to sign with it's own wallet
-   */
-  revokeKey: (userIdOrAddress: string | number, signer: SignerFunction) =>
-    callGuildAPI<void>({
-      url: `/users/${userIdOrAddress}/public-key`,
-      method: "DELETE",
-      signer,
-    }),
 };
 
 export default user;
