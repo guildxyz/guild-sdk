@@ -1,7 +1,14 @@
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { platform } from "../../src/client";
+import { setApiBaseUrl, setApiKey, setServiceName } from "../../src/common";
 
 const OUR_GUILD_DC_SERVER_ID = "886314998131982336";
+
+beforeAll(() => {
+  setApiKey(process.env.API_KEY!);
+  setServiceName(process.env.SERVICE_NAME!);
+  setApiBaseUrl("http://localhost:8989/v2");
+});
 
 describe("platform client", () => {
   it("Can get guild by platform data", async () => {
@@ -19,5 +26,11 @@ describe("platform client", () => {
       "604927885530234908"
     );
     expect(ourGuild.platformGuildId).toEqual(OUR_GUILD_DC_SERVER_ID);
+  });
+
+  it("Can get user by platform data", async () => {
+    const user = await platform.getUserByPlatformUserId("DISCORD", "test-id");
+
+    expect(user.id).toBeGreaterThan(0);
   });
 });
