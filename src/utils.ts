@@ -4,7 +4,7 @@ import assert from "assert";
 import { randomBytes } from "crypto";
 import { BytesLike, keccak256, SigningKey, toUtf8Bytes, Wallet } from "ethers";
 import type { z } from "zod";
-import { globals, KEY_HEADER_NAME, SERVICE_HEADER_NAME } from "./common";
+import { globals } from "./common";
 import { GuildAPICallFailed, GuildSDKValidationError } from "./error";
 
 export const recreateMessage = (params: Schemas["Authentication"]["params"]) =>
@@ -178,8 +178,8 @@ export const callGuildAPI = async <ResponseType>(
   }
 
   const hasAPIKey =
-    !!globals.headers[KEY_HEADER_NAME] &&
-    !!globals.headers[SERVICE_HEADER_NAME];
+    !!globals.headers[consts.AUTH_HEADER_NAME] &&
+    !!globals.headers[consts.SERVICE_HEADER_NAME];
 
   const authentication =
     params.signer && !hasAPIKey ? await params.signer(parsedPayload) : null;
