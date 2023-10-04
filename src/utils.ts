@@ -156,12 +156,14 @@ export const callGuildAPI = async <ResponseType>(
     .filter(([, value]) => !!value)
     .map(([key, value]) => [key, `${value}`]);
 
+  const baseUrl = params.url.startsWith("/v1/")
+    ? globals.apiBaseUrl.replace("/v2", "")
+    : globals.apiBaseUrl;
+
   const url =
     queryParamEntries.length > 0
-      ? `${globals.apiBaseUrl}${params.url}?${new URLSearchParams(
-          queryParamEntries
-        )}`
-      : `${globals.apiBaseUrl}${params.url}`;
+      ? `${baseUrl}${params.url}?${new URLSearchParams(queryParamEntries)}`
+      : `${baseUrl}${params.url}`;
 
   let parsedPayload = {};
   if (params.method !== "GET" && !!params.body?.schema && !!params.body?.data) {
@@ -210,7 +212,7 @@ export const callGuildAPI = async <ResponseType>(
 
   if (!response.ok) {
     throw new GuildAPICallFailed(
-      url.replace(globals.apiBaseUrl, ""),
+      url.replace(baseUrl, ""),
       responseBody?.errors?.[0]?.msg ??
         responseBody?.message ??
         "Unexpected Error",

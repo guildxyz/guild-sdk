@@ -1,17 +1,10 @@
 import {
-  AccessCheckJob,
   GetGuildMembersResponse,
   Guild,
   GuildCreationResponse,
-  JoinJob,
   Schemas,
 } from "@guildxyz/types";
-import {
-  PollOptions,
-  SignerFunction,
-  callGuildAPI,
-  createAndAwaitJob,
-} from "../utils";
+import { SignerFunction, callGuildAPI } from "../utils";
 import guildReward from "./guildReward";
 import role from "./role";
 
@@ -91,37 +84,69 @@ const guild = {
       signer,
     }),
 
-  join: (
-    guildId: number,
-    signer: SignerFunction,
-    pollOptions?: PollOptions<JoinJob>
-  ) =>
-    createAndAwaitJob<JoinJob>(
-      "/actions/join",
-      {
+  join: (guildId: number, signer: SignerFunction) =>
+    callGuildAPI<{ success: boolean; accessedRoleIds: number[] }>({
+      url: `/v1/user/join`,
+      method: "POST",
+      body: {
         schema: "JoinActionPayloadSchema",
-        data: { guildId },
+        data: {
+          guildId,
+        },
       },
-      { guildId },
       signer,
-      pollOptions
-    ),
+    }),
 
-  accessCheck: (
-    guildId: number,
-    signer: SignerFunction,
-    pollOptions?: PollOptions<AccessCheckJob>
-  ) =>
-    createAndAwaitJob<AccessCheckJob>(
-      "/actions/access-check",
-      {
-        schema: "JoinActionPayloadSchema",
-        data: { guildId },
-      },
-      { guildId },
+  // join: (
+  //   guildId: number,
+  //   signer: SignerFunction,
+  //   pollOptions?: PollOptions<JoinJob>
+  // ) =>
+  //   createAndAwaitJob<JoinJob>(
+  //     "/actions/join",
+  //     {
+  //       schema: "JoinActionPayloadSchema",
+  //       data: { guildId },
+  //     },
+  //     { guildId },
+  //     signer,
+  //     pollOptions
+  //   ),
+
+  accessCheck: (guildId: number, signer: SignerFunction) =>
+    callGuildAPI<
+      Array<{
+        roleId: number;
+        access: boolean | null;
+        requirements: Array<{ requirementId: number; access: boolean | null }>;
+        errors: Array<{
+          requirementId: number;
+          msg: string;
+          errorType: string;
+          subType: string;
+        }>;
+      }>
+    >({
+      url: `/v1/guild/access/${guildId}/0x0000000000000000000000000000000000000000`,
+      method: "GET",
       signer,
-      pollOptions
-    ),
+    }),
+
+  // accessCheck: (
+  //   guildId: number,
+  //   signer: SignerFunction,
+  //   pollOptions?: PollOptions<AccessCheckJob>
+  // ) =>
+  //   createAndAwaitJob<AccessCheckJob>(
+  //     "/actions/access-check",
+  //     {
+  //       schema: "JoinActionPayloadSchema",
+  //       data: { guildId },
+  //     },
+  //     { guildId },
+  //     signer,
+  //     pollOptions
+  //   ),
 
   // statusUpdate: async (
   //   guildId: number,

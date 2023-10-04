@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { createSigner, guild } from "../../../src";
 
 const GUILD_ID = 1984;
@@ -8,13 +8,18 @@ const TEST_WALLET_SIGNER = createSigner.fromPrivateKey(
 
 describe("Access check action", () => {
   it("can check access", async () => {
-    const onPoll = vi.fn();
+    // const onPoll = vi.fn();
 
-    const result = await guild.accessCheck(GUILD_ID, TEST_WALLET_SIGNER, {
-      onPoll,
-    });
+    const result = await guild.accessCheck(
+      GUILD_ID,
+      TEST_WALLET_SIGNER
+      //   {
+      //   onPoll,
+      // }
+    );
 
-    expect(result!.done).toBeTruthy();
-    expect(onPoll).toHaveBeenCalled();
+    // expect(result!.done).toBeTruthy();
+    expect(result.length).toBeGreaterThan(0);
+    // expect(onPoll).toHaveBeenCalled();
   });
 });
