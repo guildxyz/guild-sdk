@@ -525,65 +525,68 @@ Note that for example in Telegram's case `platformRoleId` is not required; only 
 ### Multiple telegram groups guild example
 
 ```typescript
-const myGuild = await guild.create(wallet.address, sign, {
-  name: "My Telegram Guild",
-  guildPlatforms: [
-    {
-      platformName: "TELEGRAM", // Telegram group 0
-      platformGuildId: "-1001190870894",
-    },
-    {
-      platformName: "TELEGRAM", // Telegram group 1
-      platformGuildId: "-1003847238493",
-    },
-    {
-      platformName: "TELEGRAM", // Telegram group 2
-      platformGuildId: "-1008347384212",
-    },
-  ],
-  roles: [
-    {
-      name: "My First Role",
-      logic: "AND",
-      requirements: [
-        {
-          type: "ALLOWLIST",
-          data: {
-            addresses: [
-              "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be",
-              "0x1b64230Ad5092A4ABeecE1a50Dc7e9e0F0280304",
-            ],
+const myGuild = await guildClient.guild.create(
+  {
+    name: "My Telegram Guild",
+    guildPlatforms: [
+      {
+        platformName: "TELEGRAM", // Telegram group 0
+        platformGuildId: "-1001190870894",
+      },
+      {
+        platformName: "TELEGRAM", // Telegram group 1
+        platformGuildId: "-1003847238493",
+      },
+      {
+        platformName: "TELEGRAM", // Telegram group 2
+        platformGuildId: "-1008347384212",
+      },
+    ],
+    roles: [
+      {
+        name: "My First Role",
+        logic: "AND",
+        requirements: [
+          {
+            type: "ALLOWLIST",
+            data: {
+              addresses: [
+                "0xedd9C1954c77beDD8A2a524981e1ea08C7E484Be",
+                "0x1b64230Ad5092A4ABeecE1a50Dc7e9e0F0280304",
+              ],
+            },
           },
-        },
-      ],
-      rolePlatforms: [
-        {
-          guildPlatformIndex: 0, // Telegram group 0
-        },
-        {
-          guildPlatformIndex: 2, // Telegram group 2
-        },
-      ],
-    },
-    {
-      name: "My Second Role",
-      logic: "OR",
-      requirements: [
-        {
-          type: "ERC20",
-          chain: "ETHEREUM",
-          address: "0xf76d80200226ac250665139b9e435617e4ba55f9",
-          data: {
-            amount: 1,
+        ],
+        rolePlatforms: [
+          {
+            guildPlatformIndex: 0, // Telegram group 0
           },
-        },
-      ],
-      rolePlatforms: [
-        {
-          guildPlatformIndex: 1, // Telegram group 1
-        },
-      ],
-    },
-  ],
-});
+          {
+            guildPlatformIndex: 2, // Telegram group 2
+          },
+        ],
+      },
+      {
+        name: "My Second Role",
+        logic: "OR",
+        requirements: [
+          {
+            type: "ERC20",
+            chain: "ETHEREUM",
+            address: "0xf76d80200226ac250665139b9e435617e4ba55f9",
+            data: {
+              amount: 1,
+            },
+          },
+        ],
+        rolePlatforms: [
+          {
+            guildPlatformIndex: 1, // Telegram group 1
+          },
+        ],
+      },
+    ],
+  },
+  signerFunction
+);
 ```
