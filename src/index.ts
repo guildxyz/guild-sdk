@@ -1,8 +1,2 @@
-export * from "./client";
-export {
-  setApiBaseUrl,
-  setApiKey,
-  setProjectName,
-  setServiceName,
-} from "./common";
+export { default as createGuildClient } from "./client";
 export { createSigner } from "./utils";
