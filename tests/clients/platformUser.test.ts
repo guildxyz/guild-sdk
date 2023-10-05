@@ -1,12 +1,14 @@
 import { Wallet } from "ethers";
 import { describe, expect, it } from "vitest";
-import { user } from "../../src/client";
+import { createGuildClient } from "../../src";
 import { createSigner } from "../../src/utils";
 
 const TEST_WALLET_ADDRESS = new Wallet(process.env.PRIVATE_KEY!).address;
 const TEST_WALLET_SIGNER = createSigner.fromPrivateKey(
   process.env.PRIVATE_KEY!
 );
+
+const { user } = createGuildClient("vitest");
 
 describe.concurrent("platformUser client", () => {
   it("can get a platformUser", async () => {

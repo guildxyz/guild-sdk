@@ -1,6 +1,6 @@
 import { describe } from "node:test";
 import { assert, expect, it } from "vitest";
-import { guild } from "../../src/client";
+import { createGuildClient } from "../../src";
 import { GuildAPICallFailed } from "../../src/error";
 import { createSigner } from "../../src/utils";
 
@@ -11,6 +11,8 @@ const GUILD_ID = "sdk-test-guild-62011a";
 const PLATFORM_GUILD_ID = "TEST_PLATFORM_GUILD_ID";
 
 let createdGuildPlatformId: number;
+
+const { guild } = createGuildClient("vitest");
 
 describe("guildPlatform client", () => {
   it("Can create guildPlatform", async () => {

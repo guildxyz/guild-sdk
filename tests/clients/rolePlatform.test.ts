@@ -1,5 +1,5 @@
 import { afterAll, assert, beforeAll, describe, expect, it } from "vitest";
-import { guild } from "../../src/client";
+import { createGuildClient } from "../../src";
 import { GuildAPICallFailed } from "../../src/error";
 import { createSigner } from "../../src/utils";
 
@@ -11,6 +11,8 @@ const ROLE_ID = 88123;
 
 let guildPlatformId: number;
 let createdRolePlatformId: number;
+
+const { guild } = createGuildClient("vitest");
 
 beforeAll(async () => {
   const created = await guild.reward.create(

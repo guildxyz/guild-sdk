@@ -1,14 +1,9 @@
-import { beforeAll, describe, expect, it } from "vitest";
-import { platform } from "../../src/client";
-import { setApiBaseUrl, setApiKey, setServiceName } from "../../src/common";
+import { describe, expect, it } from "vitest";
+import { createGuildClient } from "../../src";
 
 const OUR_GUILD_DC_SERVER_ID = "886314998131982336";
 
-beforeAll(() => {
-  setApiKey(process.env.API_KEY!);
-  setServiceName(process.env.SERVICE_NAME!);
-  setApiBaseUrl("http://localhost:8989/v2");
-});
+const { platform } = createGuildClient("vitest");
 
 describe("platform client", () => {
   it("Can get guild by platform data", async () => {

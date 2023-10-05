@@ -1,20 +1,15 @@
 import { Wallet } from "ethers";
-import { beforeAll, describe, expect, it } from "vitest";
-import { user } from "../src/client";
-import { setApiBaseUrl, setApiKey, setServiceName } from "../src/common";
+import { describe, expect, it } from "vitest";
+import { createGuildClient } from "../src";
 import { createSigner } from "../src/utils";
+
+const guildClient = createGuildClient("vitest");
 
 const TEST_WALLET_ADDRESS = new Wallet(process.env.PRIVATE_KEY!).address;
 
-beforeAll(() => {
-  setApiKey(process.env.API_KEY!);
-  setServiceName(process.env.SERVICE_NAME!);
-  setApiBaseUrl("http://localhost:8989/v2");
-});
-
 describe("api key privileged request", () => {
   it("Can make a privileged request", async () => {
-    const addresses = await user.address.getAll(
+    const addresses = await guildClient.user.address.getAll(
       TEST_WALLET_ADDRESS,
       createSigner.apiKeySigner()
     );

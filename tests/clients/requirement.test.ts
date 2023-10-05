@@ -1,5 +1,5 @@
 import { assert, describe, expect, it } from "vitest";
-import { guild } from "../../src/client";
+import { createGuildClient } from "../../src";
 import { GuildAPICallFailed } from "../../src/error";
 import { createSigner } from "../../src/utils";
 
@@ -9,6 +9,8 @@ const TEST_WALLET_SIGNER = createSigner.fromPrivateKey(
 const GUILD_ID = "sdk-test-guild-62011a";
 const ROLE_ID = 88123;
 const PRE_EXISTING_REQUIREMENT_ID = 284075;
+
+const { guild } = createGuildClient("vitest");
 
 describe.concurrent("Requirement client", () => {
   it("Can get a requirement", async () => {

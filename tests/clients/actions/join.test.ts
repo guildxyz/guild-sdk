@@ -1,10 +1,12 @@
 import { describe, expectTypeOf, it } from "vitest";
-import { createSigner, guild } from "../../../src";
+import { createGuildClient, createSigner } from "../../../src";
 
 const GUILD_ID = 4486;
 const TEST_WALLET_SIGNER = createSigner.fromPrivateKey(
   process.env.PRIVATE_KEY!
 );
+
+const { guild } = createGuildClient("vitest");
 
 describe("Join action", () => {
   it("can join", async () => {

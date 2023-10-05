@@ -39,7 +39,8 @@
     "build": "tsup ./src/index.ts",
     "prepublishOnly": "npm run build",
     "prepare": "npm run build",
-    "test": "npx dotenv-cli -e .test.env -- npx vitest run"
+    "test": "npx dotenv-cli -e .test.env -- npx vitest run",
+    "testWithPrivileged": "npx dotenv-cli -e .test.privileged.env -- npm run test"
   },
   "dependencies": {
     "@guildxyz/types": "^1.1.2",
