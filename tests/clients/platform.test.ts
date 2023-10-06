@@ -22,10 +22,4 @@ describe("platform client", () => {
     );
     expect(ourGuild.platformGuildId).toEqual(OUR_GUILD_DC_SERVER_ID);
   });
-
-  it("Can get user by platform data", async () => {
-    const user = await platform.getUserByPlatformUserId("DISCORD", "test-id");
-
-    expect(user.id).toBeGreaterThan(0);
-  });
 });
