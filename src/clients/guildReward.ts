@@ -1,4 +1,4 @@
-import { AvailableTextsResponse, GuildReward, Schemas } from "@guildxyz/types";
+import { GuildReward, Schemas } from "@guildxyz/types";
 import { SignerFunction, callGuildAPI } from "../utils";
 
 const guildReward = {
@@ -18,15 +18,6 @@ const guildReward = {
       url: `/guilds/${guildIdOrUrlName}/guild-platforms`,
       method: "GET",
       signer,
-    }),
-
-  getAvailableTexts: (
-    guildIdOrUrlName: string | number,
-    guildPlatformId: number
-  ) =>
-    callGuildAPI<AvailableTextsResponse>({
-      url: `/guilds/${guildIdOrUrlName}/guild-platforms/${guildPlatformId}/available-texts`,
-      method: "GET",
     }),
 
   create: (
