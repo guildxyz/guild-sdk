@@ -94,18 +94,6 @@ export const createSigner = {
 
       return { params, sig, payload: stringPayload };
     },
-  apiKeySigner: (): SignerFunction => async () => ({
-    params: {
-      addr: "",
-      method: "1",
-      msg: "",
-      nonce: "",
-      ts: "",
-      hash: "",
-    },
-    sig: "",
-    payload: "",
-  }),
 };
 
 type SchemasImportType = (typeof import("@guildxyz/types"))["schemas"];
@@ -177,12 +165,7 @@ export const callGuildAPI = async <ResponseType>(
     }
   }
 
-  const hasAPIKey =
-    !!globals.headers[consts.AUTH_HEADER_NAME] &&
-    !!globals.headers[consts.SERVICE_HEADER_NAME];
-
-  const authentication =
-    params.signer && !hasAPIKey ? await params.signer(parsedPayload) : null;
+  const authentication = await params.signer?.(parsedPayload);
 
   const response = await fetch(url, {
     method: params.method,
