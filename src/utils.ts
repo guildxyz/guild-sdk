@@ -179,7 +179,7 @@ export const callGuildAPI = async <ResponseType>(
         ? JSON.stringify(parsedPayload)
         : JSON.stringify(authentication ?? parsedPayload),
     headers: {
-      ...(params.method === "GET" && authentication
+      ...(params.method === "GET" && authentication && !isPrivileged
         ? {
             [consts.PARAMS_HEADER_NAME]: Buffer.from(
               JSON.stringify(authentication.params)
