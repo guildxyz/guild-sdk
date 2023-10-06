@@ -94,18 +94,20 @@ export const createSigner = {
 
       return { params, sig, payload: stringPayload };
     },
-  apiKeySigner: (): SignerFunction => async () => ({
-    params: {
-      addr: "",
-      method: "1",
-      msg: "",
-      nonce: "",
-      ts: "",
-      hash: "",
-    },
-    sig: "",
-    payload: "",
-  }),
+  apiKeySigner:
+    (addressOrUserId: string | number): SignerFunction =>
+    async () => ({
+      params: {
+        addr: addressOrUserId as string,
+        method: "1",
+        msg: "",
+        nonce: "",
+        ts: "",
+        hash: "",
+      },
+      sig: "",
+      payload: "",
+    }),
 };
 
 type SchemasImportType = (typeof import("@guildxyz/types"))["schemas"];
@@ -181,15 +183,16 @@ export const callGuildAPI = async <ResponseType>(
     !!globals.headers[consts.AUTH_HEADER_NAME] &&
     !!globals.headers[consts.SERVICE_HEADER_NAME];
 
-  const authentication =
-    params.signer && !hasAPIKey ? await params.signer(parsedPayload) : null;
+  const authentication = await params.signer?.(parsedPayload);
 
   const response = await fetch(url, {
     method: params.method,
     body:
       params.method === "GET"
         ? undefined
-        : JSON.stringify(authentication ?? parsedPayload),
+        : JSON.stringify(
+            params.signer && !hasAPIKey ? authentication : parsedPayload
+          ),
     headers: {
       ...(params.method === "GET" && authentication
         ? {
@@ -205,6 +208,11 @@ export const callGuildAPI = async <ResponseType>(
           }
         : {}),
       ...globals.headers,
+      ...(hasAPIKey && authentication?.params?.addr
+        ? {
+            [consts.PRIVILEGED_USER_ID_HEADER]: authentication.params.addr,
+          }
+        : {}),
     },
   });
 
