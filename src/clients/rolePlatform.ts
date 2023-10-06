@@ -23,7 +23,7 @@ const rolePlatform = {
     roleId: number,
     signer?: SignerFunction
   ) =>
-    callGuildAPI<RoleReward>({
+    callGuildAPI<RoleReward[]>({
       url: `/guilds/${guildIdOrUrlName}/roles/${roleId}/role-platforms`,
       method: "GET",
       signer,
