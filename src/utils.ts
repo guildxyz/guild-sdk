@@ -167,11 +167,16 @@ export const callGuildAPI = async <ResponseType>(
 
   const authentication = await params.signer?.(parsedPayload);
 
+  const isPrivileged = "headers" in (authentication ?? {});
+
   const response = await fetch(url, {
     method: params.method,
     body:
+      // eslint-disable-next-line no-nested-ternary
       params.method === "GET"
         ? undefined
+        : isPrivileged
+        ? JSON.stringify(parsedPayload)
         : JSON.stringify(authentication ?? parsedPayload),
     headers: {
       ...(params.method === "GET" && authentication
@@ -188,6 +193,7 @@ export const callGuildAPI = async <ResponseType>(
           }
         : {}),
       ...globals.headers,
+      ...(isPrivileged ? (authentication as any).headers : {}),
     },
   });
 
