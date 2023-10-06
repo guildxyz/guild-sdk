@@ -95,7 +95,7 @@ export const createSigner = {
       return { params, sig, payload: stringPayload };
     },
   apiKeySigner:
-    (addressOrUserId: string | number): SignerFunction =>
+    (addressOrUserId?: string | number): SignerFunction =>
     async () => ({
       params: {
         addr: addressOrUserId as string,
