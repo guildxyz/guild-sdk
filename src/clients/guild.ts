@@ -41,8 +41,12 @@ const guild = {
       signer,
     }),
 
-  getMemberAccess: (guildId: number, userId: number, signer?: SignerFunction) =>
-    callGuildAPI<GetGuildMembersResponse>({
+  getUserMemberships: (
+    guildId: number,
+    userId: number,
+    signer?: SignerFunction
+  ) =>
+    callGuildAPI<Array<{ roleId: number; access: boolean }>>({
       url: `/guilds/${guildId}/members/${userId}`,
       method: "GET",
       signer,

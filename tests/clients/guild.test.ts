@@ -68,12 +68,12 @@ describe.concurrent("Guild client", () => {
     expect(response).toHaveLength(numberOfPublicRoles);
   });
 
-  it("Can get guild member access", async () => {
+  it("Can get user membership for guild", async () => {
     const numberOfPublicRoles = await guild.role
       .getAll(1985)
       .then((res) => res.length);
 
-    const response = await guild.getMemberAccess(1985, 2738981);
+    const response = await guild.getUserMemberships(1985, 2738981);
 
     expect(response).toHaveLength(numberOfPublicRoles);
   });
