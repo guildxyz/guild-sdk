@@ -4,7 +4,16 @@
   "description": "SDK for Guild.xyz Public API ",
   "main": "./dist/index.js",
   "exports": {
-    ".": "./dist"
+    "./*": {
+      "types": "./dist/clients/*.d.ts",
+      "module": "./dist/clients/*.mjs",
+      "require": "./dist/clients/*.js"
+    },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "module": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
   },
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
