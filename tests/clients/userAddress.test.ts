@@ -1,25 +1,26 @@
 import { Wallet } from "ethers";
 import { describe, expect, it } from "vitest";
-import { createGuildClient } from "../../src";
+import { setProjectName } from "../../src";
+import userAddressClient from "../../src/clients/userAddress";
 import { createSigner } from "../../src/utils";
 
-const { user } = createGuildClient("vitest");
+setProjectName("vitest");
 
 const TEST_WALLET_ADDRESS = new Wallet(process.env.PRIVATE_KEY!).address;
-const TEST_WALLET_SIGNER = createSigner.fromPrivateKey(
-  process.env.PRIVATE_KEY!
+const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
+  new Wallet(process.env.PRIVATE_KEY!)
 );
 
 const ADDRESS_TO_LINK = new Wallet(
   process.env.PRIVATE_KEY_FOR_ADDRESS_LINK!
 ).address.toLowerCase();
-const WALLET_TO_LINK_SIGNER = createSigner.fromPrivateKey(
-  process.env.PRIVATE_KEY_FOR_ADDRESS_LINK!
+const WALLET_TO_LINK_SIGNER = createSigner.fromEthersWallet(
+  new Wallet(process.env.PRIVATE_KEY_FOR_ADDRESS_LINK!)
 );
 
 describe("userAddress client", () => {
   it("Can create userAddress", async () => {
-    const created = await user.address.create(
+    const created = await userAddressClient.create(
       TEST_WALLET_ADDRESS,
       WALLET_TO_LINK_SIGNER,
       TEST_WALLET_SIGNER
@@ -32,7 +33,7 @@ describe("userAddress client", () => {
   });
 
   it("Can get linked address", async () => {
-    const address = await user.address.get(
+    const address = await userAddressClient.get(
       TEST_WALLET_ADDRESS,
       ADDRESS_TO_LINK,
       TEST_WALLET_SIGNER
@@ -42,7 +43,7 @@ describe("userAddress client", () => {
   });
 
   it("Can get linked addresses", async () => {
-    const addresses = await user.address.getAll(
+    const addresses = await userAddressClient.getAll(
       TEST_WALLET_ADDRESS,
       TEST_WALLET_SIGNER
     );
@@ -51,7 +52,7 @@ describe("userAddress client", () => {
   });
 
   it("Can delete userAddress", async () => {
-    await user.address.delete(
+    await userAddressClient.delete(
       TEST_WALLET_ADDRESS,
       ADDRESS_TO_LINK,
       TEST_WALLET_SIGNER

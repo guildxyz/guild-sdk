@@ -1,10 +1,13 @@
+import { Wallet } from "ethers";
 import { afterAll, assert, beforeAll, describe, expect, it } from "vitest";
-import { createGuildClient } from "../../src";
+import { setProjectName } from "../../src";
+import guildReward from "../../src/clients/guildReward";
+import rolePlatform from "../../src/clients/rolePlatform";
 import { GuildAPICallFailed } from "../../src/error";
 import { createSigner } from "../../src/utils";
 
-const TEST_WALLET_SIGNER = createSigner.fromPrivateKey(
-  process.env.PRIVATE_KEY!
+const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
+  new Wallet(process.env.PRIVATE_KEY!)
 );
 const GUILD_ID = "sdk-test-guild-62011a";
 const ROLE_ID = 88123;
@@ -12,10 +15,10 @@ const ROLE_ID = 88123;
 let guildPlatformId: number;
 let createdRolePlatformId: number;
 
-const { guild } = createGuildClient("vitest");
+setProjectName("vitest");
 
 beforeAll(async () => {
-  const created = await guild.reward.create(
+  const created = await guildReward.create(
     GUILD_ID,
     {
       platformGuildId: "FOR_ROLE_PLATFORM_TEST",
@@ -28,12 +31,12 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await guild.reward.delete(GUILD_ID, guildPlatformId, TEST_WALLET_SIGNER);
+  await guildReward.delete(GUILD_ID, guildPlatformId, TEST_WALLET_SIGNER);
 });
 
 describe("rolePlatform client", () => {
   it("Can create rolePlatform", async () => {
-    const created = await guild.role.reward.create(
+    const created = await rolePlatform.create(
       GUILD_ID,
       ROLE_ID,
       {
@@ -49,7 +52,7 @@ describe("rolePlatform client", () => {
   });
 
   it("Can update rolePlatform", async () => {
-    const created = await guild.role.reward.update(
+    const created = await rolePlatform.update(
       GUILD_ID,
       ROLE_ID,
       createdRolePlatformId,
@@ -63,7 +66,7 @@ describe("rolePlatform client", () => {
   });
 
   it("Returns updated data", async () => {
-    const created = await guild.role.reward.get(
+    const created = await rolePlatform.get(
       GUILD_ID,
       ROLE_ID,
       createdRolePlatformId
@@ -73,13 +76,13 @@ describe("rolePlatform client", () => {
   });
 
   it("Returns updated data by role", async () => {
-    const created = await guild.role.reward.getAll(GUILD_ID, ROLE_ID);
+    const created = await rolePlatform.getAll(GUILD_ID, ROLE_ID);
 
     expect(created).toMatchObject([{ visibility: "PUBLIC" }]);
   });
 
   it("Can delete rolePlatform", async () => {
-    await guild.role.reward.delete(
+    await rolePlatform.delete(
       GUILD_ID,
       ROLE_ID,
       createdRolePlatformId,
@@ -89,7 +92,7 @@ describe("rolePlatform client", () => {
 
   it("404 after delete", async () => {
     try {
-      await guild.role.reward.get(GUILD_ID, ROLE_ID, createdRolePlatformId);
+      await rolePlatform.get(GUILD_ID, ROLE_ID, createdRolePlatformId);
       assert(false);
     } catch (error) {
       expect(error).toBeInstanceOf(GuildAPICallFailed);

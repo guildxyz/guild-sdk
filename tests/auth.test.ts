@@ -1,4 +1,4 @@
-import { schemas } from "@guildxyz/types";
+import { AuthenticationParamsSchema } from "@guildxyz/types/schemas/auth";
 import { randomBytes } from "crypto";
 import { Wallet, keccak256, toUtf8Bytes, verifyMessage } from "ethers";
 import { assert, describe, expect, test } from "vitest";
@@ -14,9 +14,7 @@ describe.concurrent("Authentication", () => {
       const signer = createSigner.fromEthersWallet(WALLET);
       const { params, sig, payload } = await signer();
 
-      expect(() =>
-        schemas.AuthenticationParamsSchema.parse(params)
-      ).not.toThrow();
+      expect(() => AuthenticationParamsSchema.parse(params)).not.toThrow();
       expect(payload).toEqual("{}");
       assert(sig.startsWith("0x"));
       expect(sig).toHaveLength(132);
@@ -29,9 +27,7 @@ describe.concurrent("Authentication", () => {
       const signer = createSigner.fromEthersWallet(WALLET);
       const { params, sig, payload } = await signer(TEST_PAYLOAD);
 
-      expect(() =>
-        schemas.AuthenticationParamsSchema.parse(params)
-      ).not.toThrow();
+      expect(() => AuthenticationParamsSchema.parse(params)).not.toThrow();
       expect(params).toMatchObject({
         hash: keccak256(toUtf8Bytes(JSON.stringify(TEST_PAYLOAD))),
       });
@@ -47,9 +43,7 @@ describe.concurrent("Authentication", () => {
       const signer = createSigner.fromEthersWallet(WALLET, { msg: TEST_MSG });
       const { params, sig, payload } = await signer();
 
-      expect(() =>
-        schemas.AuthenticationParamsSchema.parse(params)
-      ).not.toThrow();
+      expect(() => AuthenticationParamsSchema.parse(params)).not.toThrow();
       expect(params).toMatchObject({ msg: TEST_MSG });
       expect(payload).toEqual("{}");
       assert(sig.startsWith("0x"));
@@ -57,41 +51,6 @@ describe.concurrent("Authentication", () => {
       expect(verifyMessage(recreateMessage(params), sig)).toEqual(
         WALLET.address
       );
-    });
-
-    test("Can sign with given hex privateKey", async () => {
-      const privateKeyHex = `0x${randomBytes(32).toString("hex")}`;
-      const expectedAddr = new Wallet(privateKeyHex).address;
-
-      const signer = createSigner.fromPrivateKey(privateKeyHex);
-      const { params, sig, payload } = await signer();
-
-      expect(() =>
-        schemas.AuthenticationParamsSchema.parse(params)
-      ).not.toThrow();
-      expect(params.addr).toEqual(expectedAddr.toLowerCase());
-      expect(payload).toEqual("{}");
-      assert(sig.startsWith("0x"));
-      expect(sig).toHaveLength(132);
-      expect(verifyMessage(recreateMessage(params), sig)).toEqual(expectedAddr);
-    });
-
-    test("Can sign with given buffer privateKey", async () => {
-      const privateKeyBuffer = randomBytes(32);
-      const expectedAddr = new Wallet(`0x${privateKeyBuffer.toString("hex")}`)
-        .address;
-
-      const signer = createSigner.fromPrivateKey(privateKeyBuffer);
-      const { params, sig, payload } = await signer();
-
-      expect(() =>
-        schemas.AuthenticationParamsSchema.parse(params)
-      ).not.toThrow();
-      expect(params.addr).toEqual(expectedAddr.toLowerCase());
-      expect(payload).toEqual("{}");
-      assert(sig.startsWith("0x"));
-      expect(sig).toHaveLength(132);
-      expect(verifyMessage(recreateMessage(params), sig)).toEqual(expectedAddr);
     });
   });
 });

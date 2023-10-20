@@ -1,20 +1,22 @@
+import { Wallet } from "ethers";
 import { assert, describe, expect, it } from "vitest";
-import { createGuildClient } from "../../src";
+import { setProjectName } from "../../src";
+import roleClient from "../../src/clients/role";
 import { GuildAPICallFailed } from "../../src/error";
 import { createSigner } from "../../src/utils";
 
-const TEST_WALLET_SIGNER = createSigner.fromPrivateKey(
-  process.env.PRIVATE_KEY!
+const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
+  new Wallet(process.env.PRIVATE_KEY!)
 );
 const GUILD_ID = "sdk-test-guild-62011a";
 
-const { guild } = createGuildClient("vitest");
+setProjectName("vitest");
 
 describe("role create - update - delete", () => {
   let createdRoleId: number;
 
   it("Can create role", async () => {
-    const created = await guild.role.create(
+    const created = await roleClient.create(
       GUILD_ID,
       { name: "SDK Role Creation test", requirements: [{ type: "FREE" }] },
       TEST_WALLET_SIGNER
@@ -28,12 +30,12 @@ describe("role create - update - delete", () => {
   });
 
   it("Can get created role", async () => {
-    const role = await guild.role.get(GUILD_ID, createdRoleId);
+    const role = await roleClient.get(GUILD_ID, createdRoleId);
     expect(role.name).toEqual("SDK Role Creation test");
   });
 
   it("Can update role", async () => {
-    const created = await guild.role.update(
+    const created = await roleClient.update(
       GUILD_ID,
       createdRoleId,
       { description: "EDITED" },
@@ -43,17 +45,17 @@ describe("role create - update - delete", () => {
   });
 
   it("Returns edited role", async () => {
-    const role = await guild.role.get(GUILD_ID, createdRoleId);
+    const role = await roleClient.get(GUILD_ID, createdRoleId);
     expect(role.description).toEqual("EDITED");
   });
 
   it("Can delete role", async () => {
-    await guild.role.delete(GUILD_ID, createdRoleId, TEST_WALLET_SIGNER);
+    await roleClient.delete(GUILD_ID, createdRoleId, TEST_WALLET_SIGNER);
   });
 
   it("Doesn't return after delete", async () => {
     try {
-      await guild.role.get(GUILD_ID, createdRoleId);
+      await roleClient.get(GUILD_ID, createdRoleId);
       assert(false);
     } catch (error) {
       expect(error).toBeInstanceOf(GuildAPICallFailed);

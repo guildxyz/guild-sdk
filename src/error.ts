@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import type { ZodError } from "zod";
 
-class GuildAPICallFailed extends Error {
+export class GuildAPICallFailed extends Error {
   endpoint: string;
 
   message: string;
@@ -34,7 +34,7 @@ class GuildAPICallFailed extends Error {
  * `zodError` field, which contains information on why the supplied data
  * didn't pass validation
  */
-class GuildSDKValidationError<Err extends ZodError<any>> extends Error {
+export class GuildSDKValidationError<Err extends ZodError<any>> extends Error {
   zodError: Err;
 
   constructor(zodError: Err) {
@@ -43,4 +43,10 @@ class GuildSDKValidationError<Err extends ZodError<any>> extends Error {
   }
 }
 
-export { GuildAPICallFailed, GuildSDKValidationError };
+export class UndefinedProjectName extends Error {
+  constructor() {
+    super(
+      "Before making API calls, please set a project name with setProjectName"
+    );
+  }
+}

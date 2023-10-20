@@ -1,18 +1,19 @@
 import { Wallet } from "ethers";
 import { describe, expect, it } from "vitest";
-import { createGuildClient } from "../../src";
+import { setProjectName } from "../../src";
+import platformUser from "../../src/clients/platformUser";
 import { createSigner } from "../../src/utils";
 
 const TEST_WALLET_ADDRESS = new Wallet(process.env.PRIVATE_KEY!).address;
-const TEST_WALLET_SIGNER = createSigner.fromPrivateKey(
-  process.env.PRIVATE_KEY!
+const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
+  new Wallet(process.env.PRIVATE_KEY!)
 );
 
-const { user } = createGuildClient("vitest");
+setProjectName("vitest");
 
 describe.concurrent("platformUser client", () => {
   it("can get a platformUser", async () => {
-    const result = await user.platform.get(
+    const result = await platformUser.get(
       TEST_WALLET_ADDRESS,
       2,
       TEST_WALLET_SIGNER
@@ -22,7 +23,7 @@ describe.concurrent("platformUser client", () => {
   });
 
   it("can get all platformUsers of user", async () => {
-    const results = await user.platform.getAll(
+    const results = await platformUser.getAll(
       TEST_WALLET_ADDRESS,
       TEST_WALLET_SIGNER
     );

@@ -1,9 +1,14 @@
-import {
+import type {
   RolePlatformClaimResponse,
   RoleReward,
   Schemas,
 } from "@guildxyz/types";
-import { SignerFunction, callGuildAPI } from "../utils";
+import {
+  RolePlatformClaimPayloadSchema,
+  RoleRewardCreationPayloadSchema,
+  RoleRewardUpdatePayloadSchema,
+} from "@guildxyz/types/schemas/roleReward";
+import { callGuildAPI, type SignerFunction } from "../utils";
 
 const rolePlatform = {
   get: (
@@ -11,8 +16,8 @@ const rolePlatform = {
     roleId: number,
     rolePlatformId: number,
     signer?: SignerFunction
-  ) =>
-    callGuildAPI<RoleReward>({
+  ): Promise<RoleReward> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/roles/${roleId}/role-platforms/${rolePlatformId}`,
       method: "GET",
       signer,
@@ -22,8 +27,8 @@ const rolePlatform = {
     guildIdOrUrlName: string | number,
     roleId: number,
     signer?: SignerFunction
-  ) =>
-    callGuildAPI<RoleReward[]>({
+  ): Promise<RoleReward[]> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/roles/${roleId}/role-platforms`,
       method: "GET",
       signer,
@@ -35,13 +40,13 @@ const rolePlatform = {
     rolePlatformId: number,
     args: string[],
     signer: SignerFunction
-  ) =>
-    callGuildAPI<RolePlatformClaimResponse>({
+  ): Promise<RolePlatformClaimResponse> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/roles/${roleId}/role-platforms/${rolePlatformId}/claim`,
       method: "POST",
       body: {
         data: { args },
-        schema: "RolePlatformClaimPayloadSchema",
+        schema: RolePlatformClaimPayloadSchema,
       },
       signer,
     }),
@@ -51,13 +56,13 @@ const rolePlatform = {
     roleId: number,
     rolePlatformCreationParams: Schemas["RoleRewardCreationPayload"],
     signer: SignerFunction
-  ) =>
-    callGuildAPI<RoleReward>({
+  ): Promise<RoleReward> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/roles/${roleId}/role-platforms`,
       method: "POST",
       body: {
         data: rolePlatformCreationParams,
-        schema: "RoleRewardCreationPayloadSchema",
+        schema: RoleRewardCreationPayloadSchema,
       },
       signer,
     }),
@@ -68,13 +73,13 @@ const rolePlatform = {
     rolePlatformId: number,
     rolePlatformUpdateParams: Schemas["RoleRewardUpdatePayload"],
     signer: SignerFunction
-  ) =>
-    callGuildAPI<RoleReward>({
+  ): Promise<RoleReward> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/roles/${roleId}/role-platforms/${rolePlatformId}`,
       method: "PUT",
       body: {
         data: rolePlatformUpdateParams,
-        schema: "RoleRewardUpdatePayloadSchema",
+        schema: RoleRewardUpdatePayloadSchema,
       },
       signer,
     }),
@@ -84,8 +89,8 @@ const rolePlatform = {
     roleId: number,
     rolePlatformId: number,
     signer: SignerFunction
-  ) =>
-    callGuildAPI<void>({
+  ): Promise<void> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/roles/${roleId}/role-platforms/${rolePlatformId}`,
       method: "DELETE",
       signer,

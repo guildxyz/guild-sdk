@@ -1,5 +1,8 @@
 "use client";
-import { createSigner, user } from "@guildxyz/sdk";
+
+import { createSigner } from "@guildxyz/sdk";
+import roleClient from "@guildxyz/sdk/clients/role";
+import user from "@guildxyz/sdk/clients/user";
 import { useState } from "react";
 import { polygon } from "viem/chains";
 import { useAccount, useConnect, useDisconnect, useSignMessage } from "wagmi";
@@ -38,7 +41,8 @@ export default function Home() {
           />
           <button onClick={() => disconnect()}>Disconnect</button>
           <button
-            onClick={() =>
+            onClick={() => {
+              roleClient.get(1985, 1904).then(console.log);
               user
                 .getProfile(
                   address,
@@ -52,8 +56,8 @@ export default function Home() {
                     }
                   )
                 )
-                .then(console.log)
-            }
+                .then(console.log);
+            }}
           >
             Call Guild API
           </button>

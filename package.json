@@ -36,16 +36,16 @@
   },
   "homepage": "https://guild.xyz",
   "scripts": {
-    "build": "tsup ./src/index.ts",
+    "build": "tsup ./src/index.ts ./src/clients/*",
     "prepublishOnly": "npm run build",
     "prepare": "npm run build",
     "test": "npx dotenv-cli -e .test.env -- npx vitest run",
     "testWithPrivileged": "npx dotenv-cli -e .test.privileged.env -- npm run test"
   },
   "dependencies": {
-    "@guildxyz/types": "^1.1.2",
+    "@guildxyz/types": "1.2.0-rc.0",
     "ethers": "^6.7.1",
-    "fast-json-stable-stringify": "^2.1.0"
+    "viem": "^1.16.6"
   },
   "devDependencies": {
     "@guildxyz/queues": "^0.0.8",
@@ -75,15 +75,14 @@
     ],
     "dts": {
       "resolve": true,
-      "entry": [
-        "./src/index.ts"
-      ],
       "compilerOptions": {
         "moduleResolution": "node",
         "strict": true,
         "strictNullChecks": true
       }
     },
+    "splitting": true,
+    "bundle": true,
     "clean": true,
     "target": "esnext"
   }

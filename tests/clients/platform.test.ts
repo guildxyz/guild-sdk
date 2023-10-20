@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { createGuildClient } from "../../src";
+import { setProjectName } from "../../src";
+import platform from "../../src/clients/platform";
 
 const OUR_GUILD_DC_SERVER_ID = "886314998131982336";
 
-const { platform } = createGuildClient("vitest");
+setProjectName("vitest");
 
 describe("platform client", () => {
   it("Can get guild by platform data", async () => {

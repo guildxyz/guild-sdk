@@ -1,17 +1,25 @@
 /* eslint-disable no-unused-vars */
-import { consts, schemas, Schemas } from "@guildxyz/types";
-import assert from "assert";
+import { type Schemas } from "@guildxyz/types";
+import {
+  AuthMethod,
+  PARAMS_HEADER_NAME,
+  SDK_PROJECT_NAME_HEADER_NAME,
+  SIG_HEADER_NAME,
+} from "@guildxyz/types/consts";
 import { randomBytes } from "crypto";
-import { BytesLike, keccak256, SigningKey, toUtf8Bytes, Wallet } from "ethers";
-import type { z } from "zod";
+import type { Wallet } from "ethers";
+import { keccak256 } from "viem";
+import type { ZodType, z } from "zod";
 import { globals } from "./common";
-import { GuildAPICallFailed, GuildSDKValidationError } from "./error";
+import {
+  GuildAPICallFailed,
+  GuildSDKValidationError,
+  UndefinedProjectName,
+} from "./error";
 
 export const recreateMessage = (params: Schemas["Authentication"]["params"]) =>
   `${params.msg}\n\nAddress: ${params.addr}\nMethod: ${params.method}${
-    params.method === consts.AuthMethod.EIP1271
-      ? `\nChainId: ${params.chainId}`
-      : ""
+    params.method === AuthMethod.EIP1271 ? `\nChainId: ${params.chainId}` : ""
   }${params.hash ? `\nHash: ${params.hash}` : ""}\nNonce: ${
     params.nonce
   }\nTimestamp: ${params.ts}`;
@@ -40,28 +48,23 @@ export const createSigner = {
     async (payload = {}, getMessage = recreateMessage) => {
       const stringPayload = JSON.stringify(payload);
 
-      const params = schemas.AuthenticationParamsSchema.parse({
-        method: consts.AuthMethod.EOA,
-        addr: wallet.address,
+      const params = {
+        method: AuthMethod.EOA,
+        addr: wallet.address?.toLowerCase(),
         msg,
         nonce: randomBytes(32).toString("base64"),
         ts: `${Date.now()}`,
-        hash: keccak256(toUtf8Bytes(stringPayload)),
-      });
+        hash: keccak256(Buffer.from(stringPayload)),
+      };
 
-      // To have proper output typing (only EOA variant). Should never throw, as method is hardcoded
-      assert(params.method === consts.AuthMethod.EOA);
+      if (params.method !== AuthMethod.EOA) {
+        throw Error("Unexpected error");
+      }
 
-      const sig = await wallet.signMessage(toUtf8Bytes(getMessage(params)));
+      const sig = await wallet.signMessage(Buffer.from(getMessage(params)));
 
       return { params, sig, payload: stringPayload };
     },
-
-  fromPrivateKey: (privateKey: BytesLike, options: SignerOptions = {}) =>
-    createSigner.fromEthersWallet(
-      new Wallet(new SigningKey(privateKey)),
-      options
-    ),
 
   custom:
     (
@@ -76,19 +79,19 @@ export const createSigner = {
     async (payload = {}, getMessage = recreateMessage) => {
       const stringPayload = JSON.stringify(payload);
 
-      const params = schemas.AuthenticationParamsSchema.parse({
-        addr: address,
+      const params = {
+        addr: address.toLowerCase(),
         msg,
         nonce: randomBytes(32).toString("base64"),
         ts: `${Date.now()}`,
-        hash: keccak256(toUtf8Bytes(stringPayload)),
+        hash: keccak256(Buffer.from(stringPayload)),
         ...(typeof chainIdOfSmartContractWallet === "number"
           ? {
               chainId: chainIdOfSmartContractWallet.toString(),
-              method: consts.AuthMethod.EIP1271,
+              method: AuthMethod.EIP1271,
             }
-          : { method: consts.AuthMethod.EOA }),
-      });
+          : { method: AuthMethod.EOA }),
+      };
 
       const sig = await sign(getMessage(params));
 
@@ -96,19 +99,13 @@ export const createSigner = {
     },
 };
 
-type SchemasImportType = (typeof import("@guildxyz/types"))["schemas"];
-type SchemaNames = keyof SchemasImportType;
-type MappedSchemas = {
-  [Schema in SchemaNames]: {
-    schema: Schema;
-    data: z.input<SchemasImportType[Schema]>;
-  };
-}[SchemaNames];
-
-type CallGuildAPIParams = {
+type CallGuildAPIParams<
+  QueryParamsSchema extends ZodType<any, any, any>,
+  BodySchema extends ZodType<any, any, any>,
+> = {
   url: string;
-  queryParams?: Record<string, any>;
-  queryParamsSchema?: MappedSchemas["schema"];
+  queryParams?: z.input<QueryParamsSchema>;
+  queryParamsSchema?: QueryParamsSchema;
   signer?: SignerFunction;
 } & (
   | {
@@ -116,18 +113,28 @@ type CallGuildAPIParams = {
     }
   | {
       method: "POST" | "PUT" | "DELETE" | "PATCH";
-      body?: MappedSchemas;
+      body?: {
+        schema: BodySchema;
+        data: z.input<BodySchema>;
+      };
     }
 );
 
 // Couldn't get proper type inference if the type params are on the same function
-export const callGuildAPI = async <ResponseType>(
-  params: CallGuildAPIParams
-): Promise<ResponseType> => {
+export const callGuildAPI = async <
+  QueryParamsSchema extends ZodType<any, any, any>,
+  BodySchema extends ZodType<any, any, any>,
+>(
+  params: CallGuildAPIParams<QueryParamsSchema, BodySchema>
+): Promise<any> => {
+  if (!globals.headers[SDK_PROJECT_NAME_HEADER_NAME]) {
+    throw new UndefinedProjectName();
+  }
+
   let parsedQueryParams = null;
   if (params.queryParams) {
     if (params.queryParamsSchema) {
-      const validationResult = schemas[params.queryParamsSchema].safeParse(
+      const validationResult = params.queryParamsSchema.safeParse(
         params.queryParams
       );
       if (validationResult.success) {
@@ -135,6 +142,7 @@ export const callGuildAPI = async <ResponseType>(
       } else {
         throw new GuildSDKValidationError(validationResult.error);
       }
+      parsedQueryParams = params.queryParams;
     } else {
       parsedQueryParams = params.queryParams;
     }
@@ -155,14 +163,13 @@ export const callGuildAPI = async <ResponseType>(
 
   let parsedPayload = {};
   if (params.method !== "GET" && !!params.body?.schema && !!params.body?.data) {
-    const validationResult = schemas[params.body.schema].safeParse(
-      params.body.data
-    );
+    const validationResult = params.body.schema.safeParse(params.body.data);
     if (validationResult.success) {
       parsedPayload = validationResult.data;
     } else {
       throw new GuildSDKValidationError(validationResult.error);
     }
+    parsedPayload = params.body?.data;
   }
 
   const authentication = await params.signer?.(parsedPayload);
@@ -181,10 +188,10 @@ export const callGuildAPI = async <ResponseType>(
     headers: {
       ...(params.method === "GET" && authentication && !isPrivileged
         ? {
-            [consts.PARAMS_HEADER_NAME]: Buffer.from(
+            [PARAMS_HEADER_NAME]: Buffer.from(
               JSON.stringify(authentication.params)
             ).toString("base64"),
-            [consts.SIG_HEADER_NAME]: Buffer.from(
+            [SIG_HEADER_NAME]: Buffer.from(
               authentication.sig.startsWith("0x")
                 ? authentication.sig.slice(2)
                 : authentication.sig,
@@ -225,14 +232,18 @@ export type PollOptions<Job> = { onPoll?: OnPoll<Job>; intervalMs?: number };
 
 export const createAndAwaitJob = async <
   Job extends { done?: boolean; error?: any; errorMsg?: any },
+  BodySchema extends ZodType<any, any, any>,
 >(
   url: string,
-  body: MappedSchemas,
+  body: {
+    schema: BodySchema;
+    data: z.infer<BodySchema>;
+  },
   queryParams: Record<string, any>,
   signer: SignerFunction,
   { onPoll, intervalMs = 1000 }: PollOptions<Job> = {}
 ) => {
-  await callGuildAPI<{ jobId: string }>({
+  await callGuildAPI({
     url,
     method: "POST",
     body,
@@ -243,12 +254,12 @@ export const createAndAwaitJob = async <
 
   return new Promise<Job | null>((resolve, reject) => {
     interval = setInterval(() => {
-      callGuildAPI<Job[]>({
+      callGuildAPI({
         url,
         method: "GET",
         queryParams,
         signer,
-      }).then(([job = null]) => {
+      }).then(([job = null]: (Job | null)[]) => {
         onPoll?.(job, { resolve, reject });
 
         if (!job) {

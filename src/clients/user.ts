@@ -1,21 +1,15 @@
-import {
+import type {
   MembershipResult,
   PlatformName,
   PublicUserProfile,
   User,
   UserProfile,
 } from "@guildxyz/types";
-import { SignerFunction, callGuildAPI } from "../utils";
-import platformUser from "./platformUser";
-import userAddress from "./userAddress";
+import { callGuildAPI, type SignerFunction } from "../utils";
 
 const user = {
-  platform: platformUser,
-
-  address: userAddress,
-
-  get: (userIdOrAddress: string | number) =>
-    callGuildAPI<User>({
+  get: (userIdOrAddress: string | number): Promise<User> =>
+    callGuildAPI({
       url: `/users/${userIdOrAddress}`,
       method: "GET",
     }),
@@ -23,22 +17,28 @@ const user = {
   getProfile: <Sig extends SignerFunction | "_" = "_">(
     userIdOrAddress: string | number,
     signer?: Sig
-  ) =>
-    callGuildAPI<Sig extends "_" ? PublicUserProfile : UserProfile>({
+  ): Promise<Sig extends "_" ? PublicUserProfile : UserProfile> =>
+    callGuildAPI({
       url: `/users/${userIdOrAddress}/profile`,
       method: "GET",
       signer: typeof signer === "string" ? undefined : signer,
     }),
 
-  getMemberships: (userIdOrAddress: string | number, signer?: SignerFunction) =>
-    callGuildAPI<MembershipResult[]>({
+  getMemberships: (
+    userIdOrAddress: string | number,
+    signer?: SignerFunction
+  ): Promise<MembershipResult[]> =>
+    callGuildAPI({
       url: `/users/${userIdOrAddress}/memberships`,
       method: "GET",
       signer,
     }),
 
-  delete: (userIdOrAddress: string | number, signer: SignerFunction) =>
-    callGuildAPI<void>({
+  delete: (
+    userIdOrAddress: string | number,
+    signer: SignerFunction
+  ): Promise<void> =>
+    callGuildAPI({
       url: `/users/${userIdOrAddress}`,
       method: "DELETE",
       signer,
@@ -48,7 +48,7 @@ const user = {
     userIdOrAddress: string | number,
     platformName: PlatformName,
     signer: SignerFunction
-  ) =>
+  ): Promise<any> =>
     callGuildAPI({
       url: `/users/${userIdOrAddress}/platforms/${platformName}/gateables`,
       method: "GET",

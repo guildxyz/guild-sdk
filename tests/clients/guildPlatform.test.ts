@@ -1,22 +1,24 @@
+import { Wallet } from "ethers";
 import { describe } from "node:test";
 import { assert, expect, it } from "vitest";
-import { createGuildClient } from "../../src";
+import { setProjectName } from "../../src";
+import guildReward from "../../src/clients/guildReward";
 import { GuildAPICallFailed } from "../../src/error";
 import { createSigner } from "../../src/utils";
 
-const TEST_WALLET_SIGNER = createSigner.fromPrivateKey(
-  process.env.PRIVATE_KEY!
+const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
+  new Wallet(process.env.PRIVATE_KEY!)
 );
 const GUILD_ID = "sdk-test-guild-62011a";
 const PLATFORM_GUILD_ID = "TEST_PLATFORM_GUILD_ID";
 
 let createdGuildPlatformId: number;
 
-const { guild } = createGuildClient("vitest");
+setProjectName("vitest");
 
 describe("guildPlatform client", () => {
   it("Can create guildPlatform", async () => {
-    const created = await guild.reward.create(
+    const created = await guildReward.create(
       GUILD_ID,
       {
         platformGuildId: PLATFORM_GUILD_ID,
@@ -33,7 +35,7 @@ describe("guildPlatform client", () => {
   });
 
   it("Can update guildPlatform", async () => {
-    const updated = await guild.reward.update(
+    const updated = await guildReward.update(
       GUILD_ID,
       createdGuildPlatformId,
       { platformGuildData: { invite: "testInvite" } },
@@ -47,7 +49,7 @@ describe("guildPlatform client", () => {
   });
 
   it("Can fetch updated guildPlatform", async () => {
-    const fetched = await guild.reward.get(
+    const fetched = await guildReward.get(
       GUILD_ID,
       createdGuildPlatformId,
       TEST_WALLET_SIGNER
@@ -60,7 +62,7 @@ describe("guildPlatform client", () => {
   });
 
   it("Can fetch updated guildPlatform by guildId", async () => {
-    const fetched = await guild.reward.getAll(GUILD_ID, TEST_WALLET_SIGNER);
+    const fetched = await guildReward.getAll(GUILD_ID, TEST_WALLET_SIGNER);
 
     expect(
       fetched.some(
@@ -70,7 +72,7 @@ describe("guildPlatform client", () => {
   });
 
   it("Can delete guildPlatform", async () => {
-    await guild.reward.delete(
+    await guildReward.delete(
       GUILD_ID,
       createdGuildPlatformId,
       TEST_WALLET_SIGNER
@@ -79,7 +81,7 @@ describe("guildPlatform client", () => {
 
   it("Returns 404 after delete", async () => {
     try {
-      await guild.reward.get(
+      await guildReward.get(
         GUILD_ID,
         createdGuildPlatformId,
         TEST_WALLET_SIGNER
