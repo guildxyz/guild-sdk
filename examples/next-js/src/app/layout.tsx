@@ -1,5 +1,7 @@
 "use client";
+
 import { Inter } from "next/font/google";
+import React from "react";
 import { createPublicClient, http } from "viem";
 import { polygon } from "viem/chains";
 import { WagmiConfig, createConfig } from "wagmi";

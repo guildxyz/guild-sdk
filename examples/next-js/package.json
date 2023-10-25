@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@guildxyz/sdk": "file:../../dist",
-    "@guildxyz/types": "file:../../../guild-backend/lib/types/dist",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",

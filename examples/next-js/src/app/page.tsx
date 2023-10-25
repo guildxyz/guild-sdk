@@ -1,11 +1,12 @@
 "use client";
-import { createSigner, user } from "@guildxyz/sdk";
+
+import { createSigner } from "@guildxyz/sdk";
 import { useState } from "react";
 import { polygon } from "viem/chains";
 import { useAccount, useConnect, useDisconnect, useSignMessage } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
-import "../lib/guild";
+import guildClient from "../lib/guild";
 
 export default function Home() {
   const { address } = useAccount();
@@ -39,7 +40,7 @@ export default function Home() {
           <button onClick={() => disconnect()}>Disconnect</button>
           <button
             onClick={() =>
-              user
+              guildClient.user
                 .getProfile(
                   address,
                   createSigner.custom(

@@ -1,4 +1,6 @@
-import { setApiBaseUrl, setProjectName } from "@guildxyz/sdk";
+import { createGuildClient } from "@guildxyz/sdk";
 
-setProjectName("next-js-example-app");
-setApiBaseUrl("http://localhost:8989/v2");
+const client = createGuildClient("next-js-example-app");
+
+
+export default client
