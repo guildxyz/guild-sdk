@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { consts, schemas, Schemas } from "@guildxyz/types";
-import assert from "assert";
-import { randomBytes } from "crypto";
-import { BytesLike, keccak256, SigningKey, toUtf8Bytes, Wallet } from "ethers";
+import { keccak256, type Wallet } from "ethers";
+import randomBytes from 'randombytes';
 import type { z } from "zod";
 import { globals } from "./common";
 import { GuildAPICallFailed, GuildSDKValidationError } from "./error";
@@ -46,22 +45,17 @@ export const createSigner = {
         msg,
         nonce: randomBytes(32).toString("base64"),
         ts: `${Date.now()}`,
-        hash: keccak256(toUtf8Bytes(stringPayload)),
+        hash: keccak256(Buffer.from(stringPayload)),
       });
 
-      // To have proper output typing (only EOA variant). Should never throw, as method is hardcoded
-      assert(params.method === consts.AuthMethod.EOA);
+      if(params.method !== consts.AuthMethod.EOA) {
+        throw new Error("This shouldn't happen, please open an issue")
+      }
 
-      const sig = await wallet.signMessage(toUtf8Bytes(getMessage(params)));
+      const sig = await wallet.signMessage(Buffer.from(getMessage(params)));
 
       return { params, sig, payload: stringPayload };
     },
-
-  fromPrivateKey: (privateKey: BytesLike, options: SignerOptions = {}) =>
-    createSigner.fromEthersWallet(
-      new Wallet(new SigningKey(privateKey)),
-      options
-    ),
 
   custom:
     (
@@ -81,7 +75,7 @@ export const createSigner = {
         msg,
         nonce: randomBytes(32).toString("base64"),
         ts: `${Date.now()}`,
-        hash: keccak256(toUtf8Bytes(stringPayload)),
+        hash: keccak256(Buffer.from(stringPayload)),
         ...(typeof chainIdOfSmartContractWallet === "number"
           ? {
               chainId: chainIdOfSmartContractWallet.toString(),

@@ -45,11 +45,12 @@
   "dependencies": {
     "@guildxyz/types": "^1.1.2",
     "ethers": "^6.7.1",
-    "fast-json-stable-stringify": "^2.1.0"
+    "randombytes": "^2.1.0"
   },
   "devDependencies": {
     "@guildxyz/queues": "^0.0.8",
     "@types/node": "^20.6.3",
+    "@types/randombytes": "^2.0.2",
     "@typescript-eslint/eslint-plugin": "^6.7.2",
     "@typescript-eslint/parser": "^6.7.2",
     "dotenv-cli": "^7.3.0",
