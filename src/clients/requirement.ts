@@ -19,7 +19,7 @@ const requirement = {
     roleId: number,
     signer?: SignerFunction
   ) =>
-    callGuildAPI<Requirement>({
+    callGuildAPI<Requirement[]>({
       url: `/guilds/${guildIdOrUrlName}/roles/${roleId}/requirements`,
       method: "GET",
       signer,

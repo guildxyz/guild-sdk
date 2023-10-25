@@ -12,4 +12,6 @@ const createGuildClient = (projectName: string) => {
   return { guild, platform, user };
 };
 
+export type GuildClient = ReturnType<typeof createGuildClient>
+
 export default createGuildClient;
