@@ -1,17 +1,23 @@
 /* eslint-disable no-unused-vars */
-import { consts, schemas, Schemas } from "@guildxyz/types";
+import {
+  AuthMethod,
+  AuthenticationParamsSchema,
+  PARAMS_HEADER_NAME,
+  SIG_HEADER_NAME,
+  types,
+} from "@guildxyz/types";
 import assert from "assert";
 import { randomBytes } from "crypto";
-import { BytesLike, keccak256, SigningKey, toUtf8Bytes, Wallet } from "ethers";
+import { BytesLike, SigningKey, Wallet, keccak256, toUtf8Bytes } from "ethers";
 import type { z } from "zod";
 import { globals } from "./common";
 import { GuildAPICallFailed, GuildSDKValidationError } from "./error";
 
-export const recreateMessage = (params: Schemas["Authentication"]["params"]) =>
+export const recreateMessage = (
+  params: types.Schemas["Authentication"]["params"]
+) =>
   `${params.msg}\n\nAddress: ${params.addr}\nMethod: ${params.method}${
-    params.method === consts.AuthMethod.EIP1271
-      ? `\nChainId: ${params.chainId}`
-      : ""
+    params.method === AuthMethod.EIP1271 ? `\nChainId: ${params.chainId}` : ""
   }${params.hash ? `\nHash: ${params.hash}` : ""}\nNonce: ${
     params.nonce
   }\nTimestamp: ${params.ts}`;
@@ -20,9 +26,9 @@ export type SignerFunction = (
   // eslint-disable-next-line no-unused-vars
   payload?: any,
   // eslint-disable-next-line no-unused-vars
-  getMessage?: (params: Schemas["Authentication"]["params"]) => string
+  getMessage?: (params: types.Schemas["Authentication"]["params"]) => string
 ) => Promise<{
-  params: Schemas["Authentication"]["params"];
+  params: types.Schemas["Authentication"]["params"];
   sig: string;
   payload: string;
 }>;
@@ -40,8 +46,8 @@ export const createSigner = {
     async (payload = {}, getMessage = recreateMessage) => {
       const stringPayload = JSON.stringify(payload);
 
-      const params = schemas.AuthenticationParamsSchema.parse({
-        method: consts.AuthMethod.EOA,
+      const params = AuthenticationParamsSchema.parse({
+        method: AuthMethod.EOA,
         addr: wallet.address,
         msg,
         nonce: randomBytes(32).toString("base64"),
@@ -50,7 +56,7 @@ export const createSigner = {
       });
 
       // To have proper output typing (only EOA variant). Should never throw, as method is hardcoded
-      assert(params.method === consts.AuthMethod.EOA);
+      assert(params.method === AuthMethod.EOA);
 
       const sig = await wallet.signMessage(toUtf8Bytes(getMessage(params)));
 
@@ -76,7 +82,7 @@ export const createSigner = {
     async (payload = {}, getMessage = recreateMessage) => {
       const stringPayload = JSON.stringify(payload);
 
-      const params = schemas.AuthenticationParamsSchema.parse({
+      const params = AuthenticationParamsSchema.parse({
         addr: address,
         msg,
         nonce: randomBytes(32).toString("base64"),
@@ -85,9 +91,9 @@ export const createSigner = {
         ...(typeof chainIdOfSmartContractWallet === "number"
           ? {
               chainId: chainIdOfSmartContractWallet.toString(),
-              method: consts.AuthMethod.EIP1271,
+              method: AuthMethod.EIP1271,
             }
-          : { method: consts.AuthMethod.EOA }),
+          : { method: AuthMethod.EOA }),
       });
 
       const sig = await sign(getMessage(params));
@@ -96,19 +102,13 @@ export const createSigner = {
     },
 };
 
-type SchemasImportType = (typeof import("@guildxyz/types"))["schemas"];
-type SchemaNames = keyof SchemasImportType;
-type MappedSchemas = {
-  [Schema in SchemaNames]: {
-    schema: Schema;
-    data: z.input<SchemasImportType[Schema]>;
-  };
-}[SchemaNames];
-
-type CallGuildAPIParams = {
+type CallGuildAPIParams<
+  QuerySchema extends z.ZodType<any, any, any>,
+  BodySchema extends z.ZodType<any, any, any>,
+> = {
   url: string;
-  queryParams?: Record<string, any>;
-  queryParamsSchema?: MappedSchemas["schema"];
+  queryParams?: z.input<QuerySchema>;
+  queryParamsSchema?: QuerySchema;
   signer?: SignerFunction;
 } & (
   | {
@@ -116,18 +116,24 @@ type CallGuildAPIParams = {
     }
   | {
       method: "POST" | "PUT" | "DELETE" | "PATCH";
-      body?: MappedSchemas;
+      body?: {
+        schema: BodySchema;
+        data: z.input<BodySchema>;
+      };
     }
 );
 
 // Couldn't get proper type inference if the type params are on the same function
-export const callGuildAPI = async <ResponseType>(
-  params: CallGuildAPIParams
-): Promise<ResponseType> => {
+export const callGuildAPI = async <
+  QuerySchema extends z.ZodType<any, any, any>,
+  BodySchema extends z.ZodType<any, any, any>,
+>(
+  params: CallGuildAPIParams<QuerySchema, BodySchema>
+): Promise<any> => {
   let parsedQueryParams = null;
   if (params.queryParams) {
     if (params.queryParamsSchema) {
-      const validationResult = schemas[params.queryParamsSchema].safeParse(
+      const validationResult = params.queryParamsSchema.safeParse(
         params.queryParams
       );
       if (validationResult.success) {
@@ -155,9 +161,7 @@ export const callGuildAPI = async <ResponseType>(
 
   let parsedPayload = {};
   if (params.method !== "GET" && !!params.body?.schema && !!params.body?.data) {
-    const validationResult = schemas[params.body.schema].safeParse(
-      params.body.data
-    );
+    const validationResult = params.body.schema.safeParse(params.body.data);
     if (validationResult.success) {
       parsedPayload = validationResult.data;
     } else {
@@ -181,10 +185,10 @@ export const callGuildAPI = async <ResponseType>(
     headers: {
       ...(params.method === "GET" && authentication && !isPrivileged
         ? {
-            [consts.PARAMS_HEADER_NAME]: Buffer.from(
+            [PARAMS_HEADER_NAME]: Buffer.from(
               JSON.stringify(authentication.params)
             ).toString("base64"),
-            [consts.SIG_HEADER_NAME]: Buffer.from(
+            [SIG_HEADER_NAME]: Buffer.from(
               authentication.sig.startsWith("0x")
                 ? authentication.sig.slice(2)
                 : authentication.sig,
@@ -225,14 +229,18 @@ export type PollOptions<Job> = { onPoll?: OnPoll<Job>; intervalMs?: number };
 
 export const createAndAwaitJob = async <
   Job extends { done?: boolean; error?: any; errorMsg?: any },
+  BodySchema extends z.ZodType<any, any, any>,
 >(
   url: string,
-  body: MappedSchemas,
+  body: {
+    schema: BodySchema;
+    data: z.input<BodySchema>;
+  },
   queryParams: Record<string, any>,
   signer: SignerFunction,
   { onPoll, intervalMs = 1000 }: PollOptions<Job> = {}
 ) => {
-  await callGuildAPI<{ jobId: string }>({
+  await callGuildAPI({
     url,
     method: "POST",
     body,
@@ -243,12 +251,12 @@ export const createAndAwaitJob = async <
 
   return new Promise<Job | null>((resolve, reject) => {
     interval = setInterval(() => {
-      callGuildAPI<Job[]>({
+      callGuildAPI({
         url,
         method: "GET",
         queryParams,
         signer,
-      }).then(([job = null]) => {
+      }).then(([job = null]: (Job | null)[]) => {
         onPoll?.(job, { resolve, reject });
 
         if (!job) {

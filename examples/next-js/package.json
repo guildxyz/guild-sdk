@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@guildxyz/sdk": "file:../../dist",
-    "@guildxyz/types": "file:../../../guild-backend/lib/types/dist",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
@@ -18,6 +17,7 @@
     "wagmi": "^1.4.2"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^13.5.6",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",

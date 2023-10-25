@@ -1,36 +1,31 @@
-import {
-  GuildByPlatformResponse,
-  PlatformName,
-  User,
-  UserGuildAccessesByPlatformResponse,
-} from "@guildxyz/types";
-import { SignerFunction, callGuildAPI } from "../utils";
+import { type types } from "@guildxyz/types";
+import { callGuildAPI, type SignerFunction } from "../utils";
 
 const platform = {
   getGuildByPlatform: (
-    platformName: PlatformName,
+    platformName: types.PlatformName,
     platformGuildId: string,
     signer?: SignerFunction
-  ) =>
-    callGuildAPI<GuildByPlatformResponse>({
+  ): Promise<types.GuildByPlatformResponse> =>
+    callGuildAPI({
       url: `/platforms/${platformName}/guilds/${platformGuildId}`,
       method: "GET",
       signer,
     }),
 
   getUserGuildAccessByPlatform: (
-    platformName: PlatformName,
+    platformName: types.PlatformName,
     platformGuildId: string,
     platformUserId: string,
     signer?: SignerFunction
-  ) =>
-    callGuildAPI<UserGuildAccessesByPlatformResponse>({
+  ): Promise<types.UserGuildAccessesByPlatformResponse> =>
+    callGuildAPI({
       url: `/platforms/${platformName}/guilds/${platformGuildId}/users/${platformUserId}/access`,
       method: "GET",
       signer,
     }),
 
-  withPlatformName: (platformName: PlatformName) => ({
+  withPlatformName: (platformName: types.PlatformName) => ({
     getGuildByPlatform: (platformGuildId: string, signer?: SignerFunction) =>
       platform.getGuildByPlatform(platformName, platformGuildId, signer),
 
@@ -46,8 +41,11 @@ const platform = {
         signer
       ),
 
-    getUserByPlatformUserId: (platformUserId: string, signer: SignerFunction) =>
-      callGuildAPI<User>({
+    getUserByPlatformUserId: (
+      platformUserId: string,
+      signer: SignerFunction
+    ): Promise<types.User> =>
+      callGuildAPI({
         url: `/platforms/${platformName}/users/${platformUserId}`,
         method: "GET",
         signer,

@@ -1,20 +1,27 @@
-import { GuildReward, Schemas } from "@guildxyz/types";
-import { SignerFunction, callGuildAPI } from "../utils";
+import {
+  GuildRewardCreationSchema,
+  GuildRewardUpdateSchema,
+  type types,
+} from "@guildxyz/types";
+import { callGuildAPI, type SignerFunction } from "../utils";
 
 const guildReward = {
   get: (
     guildIdOrUrlName: string | number,
     guildPlatformId: number,
     signer?: SignerFunction
-  ) =>
-    callGuildAPI<GuildReward>({
+  ): Promise<types.GuildReward> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/guild-platforms/${guildPlatformId}`,
       method: "GET",
       signer,
     }),
 
-  getAll: (guildIdOrUrlName: string | number, signer?: SignerFunction) =>
-    callGuildAPI<GuildReward[]>({
+  getAll: (
+    guildIdOrUrlName: string | number,
+    signer?: SignerFunction
+  ): Promise<types.GuildReward[]> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/guild-platforms`,
       method: "GET",
       signer,
@@ -22,14 +29,14 @@ const guildReward = {
 
   create: (
     guildIdOrUrlName: string | number,
-    guildPlatformCreationParams: Schemas["GuildRewardCreation"],
+    guildPlatformCreationParams: types.Schemas["GuildRewardCreation"],
     signer: SignerFunction
-  ) =>
-    callGuildAPI<GuildReward>({
+  ): Promise<types.GuildReward> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/guild-platforms`,
       method: "POST",
       body: {
-        schema: "GuildRewardCreationSchema",
+        schema: GuildRewardCreationSchema,
         data: guildPlatformCreationParams,
       },
       signer,
@@ -38,14 +45,14 @@ const guildReward = {
   update: (
     guildIdOrUrlName: string | number,
     guildPlatformId: number,
-    guildPlatformUpdateParams: Schemas["GuildRewardUpdate"],
+    guildPlatformUpdateParams: types.Schemas["GuildRewardUpdate"],
     signer: SignerFunction
-  ) =>
-    callGuildAPI<GuildReward>({
+  ): Promise<types.GuildReward> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/guild-platforms/${guildPlatformId}`,
       method: "PUT",
       body: {
-        schema: "GuildRewardUpdateSchema",
+        schema: GuildRewardUpdateSchema,
         data: guildPlatformUpdateParams,
       },
       signer,
@@ -55,8 +62,8 @@ const guildReward = {
     guildIdOrUrlName: string | number,
     guildPlatformId: number,
     signer: SignerFunction
-  ) =>
-    callGuildAPI<void>({
+  ): Promise<void> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/guild-platforms/${guildPlatformId}`,
       method: "DELETE",
       signer,

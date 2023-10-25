@@ -1,20 +1,23 @@
-import { PlatformUser, Schemas } from "@guildxyz/types";
-import { SignerFunction, callGuildAPI } from "../utils";
+import { PlatformUserCreationSchema, type types } from "@guildxyz/types";
+import { callGuildAPI, type SignerFunction } from "../utils";
 
 const platformUser = {
   get: (
     userIdOrAddress: string | number,
     platformId: number,
     signer: SignerFunction
-  ) =>
-    callGuildAPI<PlatformUser>({
+  ): Promise<types.PlatformUser> =>
+    callGuildAPI({
       url: `/users/${userIdOrAddress}/platform-users/${platformId}`,
       method: "GET",
       signer,
     }),
 
-  getAll: (userIdOrAddress: string | number, signer: SignerFunction) =>
-    callGuildAPI<PlatformUser[]>({
+  getAll: (
+    userIdOrAddress: string | number,
+    signer: SignerFunction
+  ): Promise<types.PlatformUser[]> =>
+    callGuildAPI({
       url: `/users/${userIdOrAddress}/platform-users`,
       method: "GET",
       signer,
@@ -22,14 +25,14 @@ const platformUser = {
 
   create: (
     userIdOrAddress: string | number,
-    platformUserCreationParams: Schemas["PlatformUserCreation"],
+    platformUserCreationParams: types.Schemas["PlatformUserCreation"],
     signer: SignerFunction
-  ) =>
-    callGuildAPI<PlatformUser>({
+  ): Promise<types.PlatformUser> =>
+    callGuildAPI({
       url: `/users/${userIdOrAddress}/platform-users`,
       method: "POST",
       body: {
-        schema: "PlatformUserCreationSchema",
+        schema: PlatformUserCreationSchema,
         data: platformUserCreationParams,
       },
       signer,
@@ -39,8 +42,8 @@ const platformUser = {
     userIdOrAddress: string | number,
     platformId: number,
     signer: SignerFunction
-  ) =>
-    callGuildAPI<void>({
+  ): Promise<void> =>
+    callGuildAPI({
       url: `/users/${userIdOrAddress}/platform-users/${platformId}`,
       method: "DELETE",
       signer,

@@ -1,5 +1,9 @@
-import { Requirement, Schemas } from "@guildxyz/types";
-import { SignerFunction, callGuildAPI } from "../utils";
+import {
+  RequirementCreationPayloadSchema,
+  RequirementUpdatePayloadSchema,
+  type types,
+} from "@guildxyz/types";
+import { callGuildAPI, type SignerFunction } from "../utils";
 
 const requirement = {
   get: (
@@ -7,8 +11,8 @@ const requirement = {
     roleId: number,
     requirementId: number,
     signer?: SignerFunction
-  ) =>
-    callGuildAPI<Requirement>({
+  ): Promise<types.Requirement> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/roles/${roleId}/requirements/${requirementId}`,
       method: "GET",
       signer,
@@ -18,8 +22,8 @@ const requirement = {
     guildIdOrUrlName: string | number,
     roleId: number,
     signer?: SignerFunction
-  ) =>
-    callGuildAPI<Requirement>({
+  ): Promise<types.Requirement[]> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/roles/${roleId}/requirements`,
       method: "GET",
       signer,
@@ -28,15 +32,15 @@ const requirement = {
   create: (
     guildIdOrUrlName: string | number,
     roleId: number,
-    requirementCreationParams: Schemas["RequirementCreationPayload"],
+    requirementCreationParams: types.Schemas["RequirementCreationPayload"],
     signer: SignerFunction
-  ) =>
-    callGuildAPI<Requirement>({
+  ): Promise<types.Requirement> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/roles/${roleId}/requirements`,
       method: "POST",
       body: {
         data: requirementCreationParams,
-        schema: "RequirementCreationPayloadSchema",
+        schema: RequirementCreationPayloadSchema,
       },
       signer,
     }),
@@ -45,15 +49,15 @@ const requirement = {
     guildIdOrUrlName: string | number,
     roleId: number,
     requirementId: number,
-    requirementUpdateParams: Schemas["RequirementUpdatePayload"],
+    requirementUpdateParams: types.Schemas["RequirementUpdatePayload"],
     signer: SignerFunction
-  ) =>
-    callGuildAPI<Requirement>({
+  ): Promise<types.Requirement> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/roles/${roleId}/requirements/${requirementId}`,
       method: "PUT",
       body: {
         data: requirementUpdateParams,
-        schema: "RequirementUpdatePayloadSchema",
+        schema: RequirementUpdatePayloadSchema,
       },
       signer,
     }),
@@ -63,8 +67,8 @@ const requirement = {
     roleId: number,
     requirementId: number,
     signer: SignerFunction
-  ) =>
-    callGuildAPI<Requirement>({
+  ): Promise<void> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/roles/${roleId}/requirements/${requirementId}`,
       method: "DELETE",
       signer,

@@ -43,7 +43,7 @@
     "testWithPrivileged": "npx dotenv-cli -e .test.privileged.env -- npm run test"
   },
   "dependencies": {
-    "@guildxyz/types": "^1.1.2",
+    "@guildxyz/types": "file:../guild-backend/lib/types/dist",
     "ethers": "^6.7.1",
     "fast-json-stable-stringify": "^2.1.0"
   },
@@ -79,7 +79,6 @@
         "./src/index.ts"
       ],
       "compilerOptions": {
-        "moduleResolution": "node",
         "strict": true,
         "strictNullChecks": true
       }

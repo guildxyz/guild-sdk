@@ -1,20 +1,27 @@
-import { Role, RoleCreationResponse, Schemas } from "@guildxyz/types";
-import { SignerFunction, callGuildAPI } from "../utils";
+import {
+  RoleCreationPayloadSchema,
+  RoleUpdatePayloadSchema,
+  type types,
+} from "@guildxyz/types";
+import { callGuildAPI, type SignerFunction } from "../utils";
 
 const role = {
   get: (
     guildIdOrUrlName: number | string,
     roleId: number,
     signer?: SignerFunction
-  ) =>
-    callGuildAPI<Role>({
+  ): Promise<types.Role> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/roles/${roleId}`,
       method: "GET",
       signer,
     }),
 
-  getAll: (guildIdOrUrlName: number | string, signer?: SignerFunction) =>
-    callGuildAPI<Role[]>({
+  getAll: (
+    guildIdOrUrlName: number | string,
+    signer?: SignerFunction
+  ): Promise<types.Role[]> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/roles`,
       method: "GET",
       signer,
@@ -22,15 +29,15 @@ const role = {
 
   create: (
     guildIdOrUrlName: number | string,
-    roleCreationParams: Schemas["RoleCreationPayload"],
+    roleCreationParams: types.Schemas["RoleCreationPayload"],
     signer: SignerFunction
-  ) =>
-    callGuildAPI<RoleCreationResponse>({
+  ): Promise<types.RoleCreationResponse> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/roles`,
       method: "POST",
       body: {
         data: roleCreationParams,
-        schema: "RoleCreationPayloadSchema",
+        schema: RoleCreationPayloadSchema,
       },
       signer,
     }),
@@ -38,15 +45,15 @@ const role = {
   update: (
     guildIdOrUrlName: number | string,
     roleId: number,
-    roleUpdateParams: Schemas["RoleUpdatePayload"],
+    roleUpdateParams: types.Schemas["RoleUpdatePayload"],
     signer: SignerFunction
-  ) =>
-    callGuildAPI<Role>({
+  ): Promise<types.Role> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/roles/${roleId}`,
       method: "PUT",
       body: {
         data: roleUpdateParams,
-        schema: "RoleUpdatePayloadSchema",
+        schema: RoleUpdatePayloadSchema,
       },
       signer,
     }),
@@ -55,8 +62,8 @@ const role = {
     guildIdOrUrlName: number | string,
     roleId: number,
     signer: SignerFunction
-  ) =>
-    callGuildAPI<void>({
+  ): Promise<void> =>
+    callGuildAPI({
       url: `/guilds/${guildIdOrUrlName}/roles/${roleId}`,
       method: "DELETE",
       signer,

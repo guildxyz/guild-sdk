@@ -1,35 +1,42 @@
 import {
-  GetGuildMembersResponse,
-  Guild,
-  GuildCreationResponse,
-  Schemas,
+  GuildCreationPayloadSchema,
+  GuildGetManyQueryParamsSchema,
+  GuildSearchQueryParamsSchema,
+  GuildUpdatePayloadSchema,
+  JoinActionPayloadSchema,
+  type types,
 } from "@guildxyz/types";
-import { SignerFunction, callGuildAPI } from "../utils";
+import { callGuildAPI, type SignerFunction } from "../utils";
 
 const guild = {
-  get: (guildIdOrUrlName: number | string) =>
-    callGuildAPI<Guild>({ url: `/guilds/${guildIdOrUrlName}`, method: "GET" }),
+  get: (guildIdOrUrlName: number | string): Promise<types.Guild> =>
+    callGuildAPI({ url: `/guilds/${guildIdOrUrlName}`, method: "GET" }),
 
-  getMany: (guildIds: number[]) =>
-    callGuildAPI<Guild[]>({
+  getMany: (guildIds: number[]): Promise<types.Guild[]> =>
+    callGuildAPI({
       url: `/guilds`,
       method: "GET",
       queryParams: {
         guildIds: guildIds.join(","),
       },
-      queryParamsSchema: "GuildGetManyQueryParamsSchema",
+      queryParamsSchema: GuildGetManyQueryParamsSchema,
     }),
 
-  search: (params: Schemas["GuildSearchQueryParams"]) =>
-    callGuildAPI<Guild[]>({
+  search: (
+    params: types.Schemas["GuildSearchQueryParams"]
+  ): Promise<types.Guild[]> =>
+    callGuildAPI({
       url: `/guilds`,
       method: "GET",
       queryParams: params,
-      queryParamsSchema: "GuildSearchQueryParamsSchema",
+      queryParamsSchema: GuildSearchQueryParamsSchema,
     }),
 
-  getMembers: (guildId: number, signer?: SignerFunction) =>
-    callGuildAPI<GetGuildMembersResponse>({
+  getMembers: (
+    guildId: number,
+    signer?: SignerFunction
+  ): Promise<types.GetGuildMembersResponse> =>
+    callGuildAPI({
       url: `/guilds/${guildId}/members`,
       method: "GET",
       signer,
@@ -39,55 +46,58 @@ const guild = {
     guildId: number,
     userId: number,
     signer?: SignerFunction
-  ) =>
-    callGuildAPI<Array<{ roleId: number; access: boolean }>>({
+  ): Promise<Array<{ roleId: number; access: boolean }>> =>
+    callGuildAPI({
       url: `/guilds/${guildId}/members/${userId}`,
       method: "GET",
       signer,
     }),
 
   create: (
-    guildCreationParams: Schemas["GuildCreationPayload"],
+    guildCreationParams: types.Schemas["GuildCreationPayload"],
     signer: SignerFunction
-  ) =>
-    callGuildAPI<GuildCreationResponse>({
+  ): Promise<types.GuildCreationResponse> =>
+    callGuildAPI({
       url: `/guilds`,
       method: "POST",
       signer,
       body: {
         data: guildCreationParams,
-        schema: "GuildCreationPayloadSchema",
+        schema: GuildCreationPayloadSchema,
       },
     }),
 
   update: (
     guildId: number,
-    guildUpdateParams: Schemas["GuildUpdatePayload"],
+    guildUpdateParams: types.Schemas["GuildUpdatePayload"],
     signer: SignerFunction
-  ) =>
-    callGuildAPI<Guild>({
+  ): Promise<types.Guild> =>
+    callGuildAPI({
       url: `/guilds/${guildId}`,
       method: "PUT",
       body: {
         data: guildUpdateParams,
-        schema: "GuildUpdatePayloadSchema",
+        schema: GuildUpdatePayloadSchema,
       },
       signer,
     }),
 
-  delete: (guildId: number, signer: SignerFunction) =>
-    callGuildAPI<void>({
+  delete: (guildId: number, signer: SignerFunction): Promise<void> =>
+    callGuildAPI({
       url: `/guilds/${guildId}`,
       method: "DELETE",
       signer,
     }),
 
-  join: (guildId: number, signer: SignerFunction) =>
-    callGuildAPI<{ success: boolean; accessedRoleIds: number[] }>({
+  join: (
+    guildId: number,
+    signer: SignerFunction
+  ): Promise<{ success: boolean; accessedRoleIds: number[] }> =>
+    callGuildAPI({
       url: `/v1/user/join`,
       method: "POST",
       body: {
-        schema: "JoinActionPayloadSchema",
+        schema: JoinActionPayloadSchema,
         data: {
           guildId,
         },
@@ -111,20 +121,23 @@ const guild = {
   //     pollOptions
   //   ),
 
-  accessCheck: (guildId: number, signer: SignerFunction) =>
-    callGuildAPI<
-      Array<{
-        roleId: number;
-        access: boolean | null;
-        requirements: Array<{ requirementId: number; access: boolean | null }>;
-        errors: Array<{
-          requirementId: number;
-          msg: string;
-          errorType: string;
-          subType: string;
-        }>;
-      }>
-    >({
+  accessCheck: (
+    guildId: number,
+    signer: SignerFunction
+  ): Promise<
+    Array<{
+      roleId: number;
+      access: boolean | null;
+      requirements: Array<{ requirementId: number; access: boolean | null }>;
+      errors: Array<{
+        requirementId: number;
+        msg: string;
+        errorType: string;
+        subType: string;
+      }>;
+    }>
+  > =>
+    callGuildAPI({
       url: `/v1/guild/access/${guildId}/0x0000000000000000000000000000000000000000`,
       method: "GET",
       signer,
