@@ -6,14 +6,8 @@ import {
   UserProfile,
 } from "@guildxyz/types";
 import { SignerFunction, callGuildAPI } from "../utils";
-import platformUser from "./platformUser";
-import userAddress from "./userAddress";
 
 const user = {
-  platform: platformUser,
-
-  address: userAddress,
-
   get: (userIdOrAddress: string | number) =>
     callGuildAPI<User>({
       url: `/users/${userIdOrAddress}`,
@@ -56,4 +50,5 @@ const user = {
     }),
 };
 
+export type UserClient = typeof user;
 export default user;

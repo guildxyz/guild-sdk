@@ -92,4 +92,5 @@ const rolePlatform = {
     }),
 };
 
+export type RolePlatformClient = typeof rolePlatform;
 export default rolePlatform;

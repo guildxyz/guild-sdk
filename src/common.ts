@@ -1,4 +1,9 @@
 import { consts } from "@guildxyz/types";
+import { InvalidProjectName } from "./error";
+
+export type GuildInit = {
+  projectName: string;
+};
 
 const globals = {
   apiBaseUrl: process.env.GUILD_SDK_BASE_URL ?? "https://api.guild.xyz/v2",
@@ -10,7 +15,15 @@ const globals = {
 };
 
 const setProjectName = (projectName: string) => {
+  if (typeof projectName !== "string" || projectName.length <= 0) {
+    throw new InvalidProjectName();
+  }
+
   globals.headers[consts.SDK_PROJECT_NAME_HEADER_NAME] = projectName;
 };
 
-export { globals, setProjectName };
+function initializeGuildClient({ projectName }: GuildInit) {
+  setProjectName(projectName);
+}
+
+export { globals, initializeGuildClient };

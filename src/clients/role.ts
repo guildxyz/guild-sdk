@@ -1,13 +1,7 @@
 import { Role, RoleCreationResponse, Schemas } from "@guildxyz/types";
 import { SignerFunction, callGuildAPI } from "../utils";
-import requirement from "./requirement";
-import rolePlatform from "./rolePlatform";
 
 const role = {
-  requirement,
-
-  reward: rolePlatform,
-
   get: (
     guildIdOrUrlName: number | string,
     roleId: number,
@@ -69,4 +63,5 @@ const role = {
     }),
 };
 
+export type RoleClient = typeof role;
 export default role;

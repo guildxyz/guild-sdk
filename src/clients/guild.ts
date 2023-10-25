@@ -5,14 +5,8 @@ import {
   Schemas,
 } from "@guildxyz/types";
 import { SignerFunction, callGuildAPI } from "../utils";
-import guildReward from "./guildReward";
-import role from "./role";
 
 const guild = {
-  role,
-
-  reward: guildReward,
-
   get: (guildIdOrUrlName: number | string) =>
     callGuildAPI<Guild>({ url: `/guilds/${guildIdOrUrlName}`, method: "GET" }),
 
@@ -173,4 +167,5 @@ const guild = {
   // },
 };
 
+export type GuildClient = typeof guild;
 export default guild;

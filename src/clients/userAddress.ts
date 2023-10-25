@@ -74,4 +74,5 @@ const userAddress = {
     }),
 };
 
+export type UserAddressClient = typeof userAddress;
 export default userAddress;

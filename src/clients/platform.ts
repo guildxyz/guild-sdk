@@ -55,4 +55,5 @@ const platform = {
   }),
 };
 
+export type PlatformClient = typeof platform;
 export default platform;

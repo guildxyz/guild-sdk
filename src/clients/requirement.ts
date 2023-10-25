@@ -71,4 +71,5 @@ const requirement = {
     }),
 };
 
+export type RequirementClient = typeof requirement;
 export default requirement;

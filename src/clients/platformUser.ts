@@ -47,4 +47,5 @@ const platformUser = {
     }),
 };
 
+export type PlatformUserClient = typeof platformUser;
 export default platformUser;

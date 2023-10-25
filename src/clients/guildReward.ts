@@ -63,4 +63,5 @@ const guildReward = {
     }),
 };
 
+export type GuildRewardClient = typeof guildReward;
 export default guildReward;
