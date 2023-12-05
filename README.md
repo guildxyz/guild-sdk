@@ -1,18 +1,14 @@
 <div align="center">
 <h1> Guild SDK for TypeScript | WIP </h1>
 <a href="https://www.npmjs.com/package/@guildxyz/sdk"><img src="https://img.shields.io/npm/v/@guildxyz/sdk.svg?style=flat" /></a>
-  <a href="https://github.com/agoraxyz/guild-sdk/blob/main/CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" /></a>
+  <a href="https://github.com/guildxyz/guild-sdk/blob/main/CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" /></a>
   <a><img src="https://img.shields.io/badge/license-MIT-blue" /></a>
   <br/>
   <a href="https://guild.xyz">Application</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
     <a href="https://twitter.com/guildxyz">Twitter</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-    <a href="https://docs.guild.xyz/guild/">Docs</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-    <a href="https://roadmap.guild.xyz/">Community Roadmap</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-    <a href="https://github.com/agoraxyz">Github</a>
+    <a href="https://github.com/guildxyz">Github</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
     <a href="https://discord.gg/guildxyz">Discord</a>
 </div>
@@ -25,12 +21,11 @@ The Guild SDK library is a Typescript library for interacting with the Guild API
 
 Guild.xyz is the membership layer protocol for web3 communities, making community management easy and interoperable between platforms.
 
-Developed and maintained by the @agoraxyz team.  
-Twitter: https://twitter.com/agora_xyz  
-Webpage: https://agora.xyz  
-GitHub: https://github.com/agoraxyz
+## Migration Guide to V2
 
-#### Installation
+ **⚠️ `1.x.x versions` of the SDK are deprecated, these versions won't work after 2024-01-31. Please migrate to `2.x.x` versions. You can find the migration guide [<a href="https://github.com/guildxyz/guild-sdk/blob/main/v2-migration-guide.md#guild-sdk-v2-migration-guide">HERE</a>].**
+
+## Installation
 
 To install our SDK, open your terminal and run:
 
