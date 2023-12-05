@@ -23,9 +23,32 @@ Guild.xyz is the membership layer protocol for web3 communities, making communit
 
 ## Migration Guide to V2
 
- **⚠️ `1.x.x versions` of the SDK are deprecated, these versions won't work after 2024-01-31. Please migrate to `2.x.x` versions. You can find the migration guide [<a href="https://github.com/guildxyz/guild-sdk/blob/main/v2-migration-guide.md#guild-sdk-v2-migration-guide">HERE</a>].**
+⚠️ `1.x.x versions` of the SDK are ***deprecated***, these versions won't work after ***2024-01-31***. Please migrate to the latest version. You can find the migration guide [HERE](https://github.com/guildxyz/guild-sdk/blob/main/v2-migration-guide.md#guild-sdk-v2-migration-guide).
 
-## Installation
+## Contents
+
+- [Installation](#installation)
+- [Importing the package and creating a Guild client](#importing-the-package-and-creating-a-guild-client)
+- [SignerFunctions and Authentication](#signerfunctions-and-authentication)
+  + [ethers.js](#creating-a-signer-from-an-ethers-wallet)
+  + [web3-react](#creating-a-custom-signer-for-usage-with-web3-react)
+  + [wagmi](#creating-a-custom-signer-for-usage-with-wagmi)
+  + [EIP-1271](#support-for-eip-1271-smart-contract-wallets)
+- [Clients](#clients)
+  + [Guild client](#guild-client)
+  + [Guild reward client](#guild-reward-client)
+  + [Role client](#role-client)
+  + [Requirement client](#requirement-client)
+  + [Role reward client](#role-reward-client)
+  + [User client](#user-client)
+  + [User address client](#user-address-client)
+  + [User platform client](#user-platform-client)
+- [Modular / multi-platform architecture](#modular--multi-platform-architecture)
+- [Examples](#examples)
+  + [Example flow from Create Guild to Join](#example-flow-from-create-guild-to-join)
+  + [Multiple telegram groups guild](#multiple-telegram-groups-guild)
+
+### Installation
 
 To install our SDK, open your terminal and run:
 
@@ -33,7 +56,7 @@ To install our SDK, open your terminal and run:
 npm i @guildxyz/sdk
 ```
 
-#### Importing the package and creating a Guild client
+### Importing the package and creating a Guild client
 
 ```typescript
 import { createGuildClient, createSigner } from "@guildxyz/sdk";
@@ -42,7 +65,9 @@ import { createGuildClient, createSigner } from "@guildxyz/sdk";
 const guildClient = createGuildClient("My project");
 ```
 
-#### Creating a signer from an ethers wallet
+### SignerFunctions and Authentication
+
+#### `Creating a signer from an ethers wallet`
 
 ```ts
 import { ethers } from "ethers";
@@ -52,7 +77,7 @@ const ethersWallet = new ethers.Wallet(...);
 const signerFunction = createSigner.fromEthersWallet(ethersWallet);
 ```
 
-#### Creating a custom signer for usage with web3-react
+#### `Creating a custom signer for usage with web3-react`
 
 ```ts
 import { useWeb3React } from "@web3-react/core";
@@ -65,7 +90,7 @@ const signerFunction = createSigner.custom(
 );
 ```
 
-#### Creating a custom signer for usage with wagmi
+#### `Creating a custom signer for usage with wagmi`
 
 ```ts
 import { useAccount, useSignMessage } from "wagmi";
@@ -79,12 +104,16 @@ const signerFunction = createSigner.custom(
 );
 ```
 
-#### Support for EIP-1271 smart contract wallets
+#### `Support for EIP-1271 smart contract wallets`
 
-For signatures produced by EIP-1272 wallets, pass `{ chainIdOfSmartContractWallet: chainId }` as the thord parameter of `createSigner.custom`, where `chainId` is the chain where the wallet operates. The Guild backend will try to call `isValidSignature` on the specified chain  
-We have an example app under `examples`, which covers this parameter
+For signatures produced by EIP-1272 wallets, pass `{ chainIdOfSmartContractWallet: chainId }` as the third parameter of `createSigner.custom`, where `chainId` is the chain where the wallet operates. The Guild backend will try to call `isValidSignature` on the specified chain.
+We have an example app under [`examples`](https://github.com/guildxyz/guild-sdk/tree/main/examples), which covers this parameter
 
-#### Guild client
+### Clients
+
+We have multiple clients for different entities. These clients are created from the `guildClient` that we created above.
+
+#### `Guild client`
 
 ```ts
 const { guild: client } = guildClient;
@@ -131,7 +160,7 @@ await client.update(guildId, { description: "Edited" }, signerFunction);
 await client.delete(guildId, signerFunction);
 ```
 
-#### Guild reward client
+#### `Guild reward client`
 
 ```ts
 const {
@@ -165,7 +194,7 @@ await guildRewardClient.delete(
 );
 ```
 
-#### Role client
+#### `Role client`
 
 ```ts
 const {
@@ -207,7 +236,7 @@ const updatedRole = await roleClient.update(
 await roleClient.delete(guildIdOrUrlName, roleId, signerFunction);
 ```
 
-#### Requirement client
+#### `Requirement client`
 
 ```ts
 const {
@@ -257,7 +286,7 @@ await requirementClient.delete(
 );
 ```
 
-#### Role reward client
+#### `Role reward client`
 
 ```ts
 const {
@@ -320,7 +349,7 @@ const updatedRoleReward = rewardClient.update(
 rewardClient.delete(guildIdOrUrlName, roleId, rolePlatformId, signerFunction);
 ```
 
-#### User client
+#### `User client`
 
 ```ts
 const { user: userClient } = guildClient;
@@ -344,7 +373,7 @@ const profile = await userClient.getProfile(
 await userClient.delete(userIdOrAddress, signerFunction);
 ```
 
-#### User address client
+#### `User address client`
 
 ```ts
 const {
@@ -387,7 +416,7 @@ await userAddressClient.delete(
 );
 ```
 
-#### User platform client
+#### `User platform client`
 
 ```ts
 const {
@@ -411,7 +440,19 @@ const userPlatforms = await userPlatformClient.getAll(
 await userPlatformClient.delete(userIdOrAddress, platformId, signerFunction);
 ```
 
-#### Quick Start flow from Create Guild to Join
+### Modular / multi-platform architecture
+
+Guild.xyz no longer limits its platform gating functionalities to a single gateable Discord server or Telegram group. In the new multi-platform architecture you can gate more platforms in a single guild/role.
+
+The `guildPlatform` entity refers to a platform gated by the guild. It contains information about the gate platform, e.g.: a Discord server's id (`platformGuildId` which is a uniqu identifier of this platform) and optionally some additional data like the `inviteChannel` in the `platformRoleData` property in this case.
+
+The `rolePlatform` entity connects a `guildPlatform` to a role indicating that this role gives access to that platform. It can also contain some additional information about the platform (`platformRoleId` and `platformRoleData`), in Discord's case it's the Discord-role's id.
+
+Note that for example in Telegram's case `platformRoleId` is not required; only `platformGuild` (which refers to a telegram group's id) needs to be provided in `guildPlatform`.
+
+### Examples
+
+#### `Example flow from Create Guild to Join`
 
 ```typescript
 import { createGuildClient, createSigner } from "@guildxyz/sdk";
@@ -507,17 +548,7 @@ await guildClient.guild.create(
 await guildClient.guild.join(myGuild.id, signerFunction);
 ```
 
-### Modular / multi-platform architecture
-
-Guild.xyz no longer limits its platform gating functionalities to a single gateable Discord server or Telegram group. In the new multi-platform architecture you can gate more platforms in a single guild/role.
-
-The `guildPlatform` entity refers to a platform gated by the guild. It contains information about the gate platform, e.g.: a Discord server's id (`platformGuildId` which is a uniqu identifier of this platform) and optionally some additional data like the `inviteChannel` in the `platformRoleData` property in this case.
-
-The `rolePlatform` entity connects a `guildPlatform` to a role indicating that this role gives access to that platform. It can also contain some additional information about the platform (`platformRoleId` and `platformRoleData`), in Discord's case it's the Discord-role's id.
-
-Note that for example in Telegram's case `platformRoleId` is not required; only `platformGuild` (which refers to a telegram group's id) needs to be provided in `guildPlatform`.
-
-### Multiple telegram groups guild example
+#### `Multiple telegram groups guild`
 
 ```typescript
 const myGuild = await guildClient.guild.create(
