@@ -11,7 +11,6 @@ import { randomBytes } from "crypto";
 
 const privateKey = randomBytes(32);
 
-// Alternatively createSigner.fromPrivateKey(privateKey)
 const mySigner = createSigner.fromEthersWallet(
   new Wallet(privateKey.toString("hex"))
 );

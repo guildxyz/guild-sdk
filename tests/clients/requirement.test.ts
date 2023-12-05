@@ -1,10 +1,11 @@
+import { Wallet } from "ethers";
 import { assert, describe, expect, it } from "vitest";
 import { createGuildClient } from "../../src";
 import { GuildAPICallFailed } from "../../src/error";
 import { createSigner } from "../../src/utils";
 
-const TEST_WALLET_SIGNER = createSigner.fromPrivateKey(
-  process.env.PRIVATE_KEY!
+const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
+  new Wallet(process.env.PRIVATE_KEY!)
 );
 const GUILD_ID = "sdk-test-guild-62011a";
 const ROLE_ID = 88123;

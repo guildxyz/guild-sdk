@@ -6,15 +6,16 @@ import { createSigner } from "../../src/utils";
 const { user } = createGuildClient("vitest");
 
 const TEST_WALLET_ADDRESS = new Wallet(process.env.PRIVATE_KEY!).address;
-const TEST_WALLET_SIGNER = createSigner.fromPrivateKey(
-  process.env.PRIVATE_KEY!
+const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
+  new Wallet(process.env.PRIVATE_KEY!)
 );
 
 const ADDRESS_TO_LINK = new Wallet(
   process.env.PRIVATE_KEY_FOR_ADDRESS_LINK!
 ).address.toLowerCase();
-const WALLET_TO_LINK_SIGNER = createSigner.fromPrivateKey(
-  process.env.PRIVATE_KEY_FOR_ADDRESS_LINK!
+
+const WALLET_TO_LINK_SIGNER = createSigner.fromEthersWallet(
+  new Wallet(process.env.PRIVATE_KEY_FOR_ADDRESS_LINK!)
 );
 
 describe("userAddress client", () => {

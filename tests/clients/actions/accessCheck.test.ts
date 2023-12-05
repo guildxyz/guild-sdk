@@ -1,9 +1,10 @@
+import { Wallet } from "ethers";
 import { describe, expect, it } from "vitest";
 import { createGuildClient, createSigner } from "../../../src";
 
 const GUILD_ID = 1984;
-const TEST_WALLET_SIGNER = createSigner.fromPrivateKey(
-  process.env.PRIVATE_KEY!
+const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
+  new Wallet(process.env.PRIVATE_KEY!)
 );
 
 const { guild } = createGuildClient("vitest");

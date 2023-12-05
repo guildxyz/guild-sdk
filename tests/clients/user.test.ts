@@ -7,8 +7,8 @@ import { createSigner } from "../../src/utils";
 const { user } = createGuildClient("vitest");
 
 const TEST_WALLET_ADDRESS = new Wallet(process.env.PRIVATE_KEY!).address;
-const TEST_WALLET_SIGNER = createSigner.fromPrivateKey(
-  process.env.PRIVATE_KEY!
+const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
+  new Wallet(process.env.PRIVATE_KEY!)
 );
 
 const WALLET_OF_CREATED_USER = new Wallet(randomBytes(32).toString("hex"));

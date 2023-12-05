@@ -44,7 +44,7 @@ describe.concurrent("callGuildAPI", () => {
       expect(error).toBeInstanceOf(GuildAPICallFailed);
       expect(error.endpoint).toEqual(`/guilds/0/roles/0/requirements`);
       expect(error.statusCode).toEqual(404);
-      expect(error.message).toEqual("Guild doesn't exist");
+      expect(error.message).toEqual("Guild not found");
     }
   });
 });

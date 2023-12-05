@@ -61,9 +61,10 @@ describe.concurrent("Authentication", () => {
 
     test("Can sign with given hex privateKey", async () => {
       const privateKeyHex = `0x${randomBytes(32).toString("hex")}`;
-      const expectedAddr = new Wallet(privateKeyHex).address;
+      const ethersWallet = new Wallet(privateKeyHex);
+      const expectedAddr = ethersWallet.address;
 
-      const signer = createSigner.fromPrivateKey(privateKeyHex);
+      const signer = createSigner.fromEthersWallet(ethersWallet);
       const { params, sig, payload } = await signer();
 
       expect(() =>
@@ -78,10 +79,10 @@ describe.concurrent("Authentication", () => {
 
     test("Can sign with given buffer privateKey", async () => {
       const privateKeyBuffer = randomBytes(32);
-      const expectedAddr = new Wallet(`0x${privateKeyBuffer.toString("hex")}`)
-        .address;
+      const ethersWallet = new Wallet(`0x${privateKeyBuffer.toString("hex")}`);
+      const expectedAddr = ethersWallet.address;
 
-      const signer = createSigner.fromPrivateKey(privateKeyBuffer);
+      const signer = createSigner.fromEthersWallet(ethersWallet);
       const { params, sig, payload } = await signer();
 
       expect(() =>

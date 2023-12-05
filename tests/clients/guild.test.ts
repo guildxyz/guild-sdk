@@ -1,4 +1,5 @@
 import { Guild } from "@guildxyz/types";
+import { Wallet } from "ethers";
 import { assert, describe, expect, it } from "vitest";
 import { createGuildClient } from "../../src";
 import { GuildSDKValidationError } from "../../src/error";
@@ -6,8 +7,8 @@ import { createSigner } from "../../src/utils";
 
 // TODO Create test guilds for these instead of using data like our-guild
 
-const TEST_WALLET_SIGNER = createSigner.fromPrivateKey(
-  process.env.PRIVATE_KEY!
+const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
+  new Wallet(process.env.PRIVATE_KEY!)
 );
 
 const { guild } = createGuildClient("vitest");
@@ -73,7 +74,7 @@ describe.concurrent("Guild client", () => {
       .getAll(1985)
       .then((res) => res.length);
 
-    const response = await guild.getUserMemberships(1985, 2738981);
+    const response = await guild.getUserMemberships(1985, 4226297);
 
     expect(response).toHaveLength(numberOfPublicRoles);
   });

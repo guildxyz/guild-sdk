@@ -1,10 +1,11 @@
+import { Wallet } from "ethers";
 import { afterAll, assert, beforeAll, describe, expect, it } from "vitest";
 import { createGuildClient } from "../../src";
 import { GuildAPICallFailed } from "../../src/error";
 import { createSigner } from "../../src/utils";
 
-const TEST_WALLET_SIGNER = createSigner.fromPrivateKey(
-  process.env.PRIVATE_KEY!
+const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
+  new Wallet(process.env.PRIVATE_KEY!)
 );
 const GUILD_ID = "sdk-test-guild-62011a";
 const ROLE_ID = 88123;
@@ -15,6 +16,18 @@ let createdRolePlatformId: number;
 const { guild } = createGuildClient("vitest");
 
 beforeAll(async () => {
+  const guildPlatforms = await guild.reward.getAll(
+    GUILD_ID,
+    TEST_WALLET_SIGNER
+  );
+
+  const tgPlatform = guildPlatforms.find(({ platformId }) => platformId === 2);
+
+  if (tgPlatform) {
+    guildPlatformId = tgPlatform.id;
+    return;
+  }
+
   const created = await guild.reward.create(
     GUILD_ID,
     {
