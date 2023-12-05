@@ -3,3 +3,5 @@ others/
 node_modules/
 .vscode
 .env*
+dist
+*.env

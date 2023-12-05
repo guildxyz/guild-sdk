@@ -1,45 +1,98 @@
-import { Bytes } from "ethers/lib/utils";
-import { prepareBodyWithSign } from "../src/auth";
-import { testWallet } from "./common";
+import { schemas } from "@guildxyz/types";
+import { randomBytes } from "crypto";
+import { Wallet, keccak256, toUtf8Bytes, verifyMessage } from "ethers";
+import { assert, describe, expect, test } from "vitest";
+import { createSigner, recreateMessage } from "../src/utils";
 
-describe("Check prepareRequest", () => {
-  test("Check request without payload returns valid json", async () => {
-    const sign = (signableMessage: string | Bytes) =>
-      testWallet.signMessage(signableMessage);
-    const preparedRequestString = await prepareBodyWithSign(
-      testWallet.address,
-      sign
-    );
-    const preparedRequest = JSON.parse(preparedRequestString);
-    expect(preparedRequest.payload).toStrictEqual({});
-    expect(preparedRequest.validation.address).toBe(
-      testWallet.address.toLowerCase()
-    );
-    expect(preparedRequest.validation.addressSignedMessage.length).toBe(132);
-    expect(preparedRequest.validation.nonce.length).toBe(66);
-    expect(preparedRequest.validation.random.length).toBe(44);
-    expect(preparedRequest.validation.hash).toBe("");
-    expect(preparedRequest.validation.timestamp).not.toBeNull();
-  });
+const WALLET = new Wallet(randomBytes(32).toString("hex"));
+const TEST_PAYLOAD = { someKey: "someValue" };
+const TEST_MSG = "Some test message";
 
-  test("Check request with payload returns valid json", async () => {
-    const payload = { test: 1234 };
-    const sign = (signableMessage: string | Bytes) =>
-      testWallet.signMessage(signableMessage);
-    const preparedRequestString = await prepareBodyWithSign(
-      testWallet.address,
-      sign,
-      payload
-    );
-    const preparedRequest = JSON.parse(preparedRequestString);
-    expect(preparedRequest.payload).toStrictEqual(payload);
-    expect(preparedRequest.validation.address).toBe(
-      testWallet.address.toLowerCase()
-    );
-    expect(preparedRequest.validation.addressSignedMessage.length).toBe(132);
-    expect(preparedRequest.validation.nonce.length).toBe(66);
-    expect(preparedRequest.validation.random.length).toBe(44);
-    expect(preparedRequest.validation.hash.length).toBe(66);
-    expect(preparedRequest.validation.timestamp).not.toBeNull();
+describe.concurrent("Authentication", () => {
+  describe.concurrent("EOA Wallet", () => {
+    test("Can sign simple message", async () => {
+      const signer = createSigner.fromEthersWallet(WALLET);
+      const { params, sig, payload } = await signer();
+
+      expect(() =>
+        schemas.AuthenticationParamsSchema.parse(params)
+      ).not.toThrow();
+      expect(payload).toEqual("{}");
+      assert(sig.startsWith("0x"));
+      expect(sig).toHaveLength(132);
+      expect(verifyMessage(recreateMessage(params), sig)).toEqual(
+        WALLET.address
+      );
+    });
+
+    test("Can sign message with some payload", async () => {
+      const signer = createSigner.fromEthersWallet(WALLET);
+      const { params, sig, payload } = await signer(TEST_PAYLOAD);
+
+      expect(() =>
+        schemas.AuthenticationParamsSchema.parse(params)
+      ).not.toThrow();
+      expect(params).toMatchObject({
+        hash: keccak256(toUtf8Bytes(JSON.stringify(TEST_PAYLOAD))),
+      });
+      expect(payload).toEqual(JSON.stringify(TEST_PAYLOAD));
+      assert(sig.startsWith("0x"));
+      expect(sig).toHaveLength(132);
+      expect(verifyMessage(recreateMessage(params), sig)).toEqual(
+        WALLET.address
+      );
+    });
+
+    test("Can sign message with some payload", async () => {
+      const signer = createSigner.fromEthersWallet(WALLET, { msg: TEST_MSG });
+      const { params, sig, payload } = await signer();
+
+      expect(() =>
+        schemas.AuthenticationParamsSchema.parse(params)
+      ).not.toThrow();
+      expect(params).toMatchObject({ msg: TEST_MSG });
+      expect(payload).toEqual("{}");
+      assert(sig.startsWith("0x"));
+      expect(sig).toHaveLength(132);
+      expect(verifyMessage(recreateMessage(params), sig)).toEqual(
+        WALLET.address
+      );
+    });
+
+    test("Can sign with given hex privateKey", async () => {
+      const privateKeyHex = `0x${randomBytes(32).toString("hex")}`;
+      const ethersWallet = new Wallet(privateKeyHex);
+      const expectedAddr = ethersWallet.address;
+
+      const signer = createSigner.fromEthersWallet(ethersWallet);
+      const { params, sig, payload } = await signer();
+
+      expect(() =>
+        schemas.AuthenticationParamsSchema.parse(params)
+      ).not.toThrow();
+      expect(params.addr).toEqual(expectedAddr.toLowerCase());
+      expect(payload).toEqual("{}");
+      assert(sig.startsWith("0x"));
+      expect(sig).toHaveLength(132);
+      expect(verifyMessage(recreateMessage(params), sig)).toEqual(expectedAddr);
+    });
+
+    test("Can sign with given buffer privateKey", async () => {
+      const privateKeyBuffer = randomBytes(32);
+      const ethersWallet = new Wallet(`0x${privateKeyBuffer.toString("hex")}`);
+      const expectedAddr = ethersWallet.address;
+
+      const signer = createSigner.fromEthersWallet(ethersWallet);
+      const { params, sig, payload } = await signer();
+
+      expect(() =>
+        schemas.AuthenticationParamsSchema.parse(params)
+      ).not.toThrow();
+      expect(params.addr).toEqual(expectedAddr.toLowerCase());
+      expect(payload).toEqual("{}");
+      assert(sig.startsWith("0x"));
+      expect(sig).toHaveLength(132);
+      expect(verifyMessage(recreateMessage(params), sig)).toEqual(expectedAddr);
+    });
   });
 });
