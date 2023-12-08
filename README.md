@@ -23,30 +23,31 @@ Guild.xyz is the membership layer protocol for web3 communities, making communit
 
 ## Migration Guide to V2
 
-⚠️ `1.x.x versions` of the SDK are ***deprecated***, these versions won't work after ***2024-01-31***. Please migrate to the latest version. You can find the migration guide [HERE](https://github.com/guildxyz/guild-sdk/blob/main/v2-migration-guide.md#guild-sdk-v2-migration-guide).
+⚠️ `1.x.x versions` of the SDK are **_deprecated_**, these versions won't work after **_2024-01-31_**. Please migrate to the latest version. You can find the migration guide [HERE](https://github.com/guildxyz/guild-sdk/blob/main/v2-migration-guide.md#guild-sdk-v2-migration-guide).
 
 ## Contents
 
 - [Installation](#installation)
 - [Importing the package and creating a Guild client](#importing-the-package-and-creating-a-guild-client)
 - [SignerFunctions and Authentication](#signerfunctions-and-authentication)
-  + [ethers.js](#creating-a-signer-from-an-ethers-wallet)
-  + [web3-react](#creating-a-custom-signer-for-usage-with-web3-react)
-  + [wagmi](#creating-a-custom-signer-for-usage-with-wagmi)
-  + [EIP-1271](#support-for-eip-1271-smart-contract-wallets)
+  - [ethers.js](#creating-a-signer-from-an-ethers-wallet)
+  - [web3-react](#creating-a-custom-signer-for-usage-with-web3-react)
+  - [wagmi](#creating-a-custom-signer-for-usage-with-wagmi)
+  - [EIP-1271](#support-for-eip-1271-smart-contract-wallets)
 - [Clients](#clients)
-  + [Guild client](#guild-client)
-  + [Guild reward client](#guild-reward-client)
-  + [Role client](#role-client)
-  + [Requirement client](#requirement-client)
-  + [Role reward client](#role-reward-client)
-  + [User client](#user-client)
-  + [User address client](#user-address-client)
-  + [User platform client](#user-platform-client)
+  - [Guild client](#guild-client)
+  - [Guild admin client](#guild-admin-client)
+  - [Guild reward client](#guild-reward-client)
+  - [Role client](#role-client)
+  - [Requirement client](#requirement-client)
+  - [Role reward client](#role-reward-client)
+  - [User client](#user-client)
+  - [User address client](#user-address-client)
+  - [User platform client](#user-platform-client)
 - [Modular / multi-platform architecture](#modular--multi-platform-architecture)
 - [Examples](#examples)
-  + [Example flow from Create Guild to Join](#example-flow-from-create-guild-to-join)
-  + [Multiple telegram groups guild](#multiple-telegram-groups-guild)
+  - [Example flow from Create Guild to Join](#example-flow-from-create-guild-to-join)
+  - [Multiple telegram groups guild](#multiple-telegram-groups-guild)
 
 ### Installation
 
@@ -158,6 +159,20 @@ await client.update(guildId, { description: "Edited" }, signerFunction);
 
 // Delete a guild
 await client.delete(guildId, signerFunction);
+```
+
+#### `Guild admin client`
+
+```ts
+const {
+  guild: { admin: adminClient },
+} = guildClient;
+
+// Get all admins of a guild
+const admins = await adminClient.getAll(guildIdOrUrlName);
+
+// Get a specific admin of a guild
+const admin = await adminClient.get(guildIdOrUrlName, userIdOfAdmin);
 ```
 
 #### `Guild reward client`
