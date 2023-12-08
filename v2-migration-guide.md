@@ -130,13 +130,18 @@ This method doesn't exist anymore
 
 #### `get`
 
-Use `guild.get`. The response won't include roles, nor rewards. Those can be fetched with `guild.role.getAll` and `guild.reward.getAll`
+Use `guild.get`. The response won't include roles, rewards, nor admins. Those can be fetched with `guild.role.getAll`, `guild.reward.getAll`, and `guild.admin.getAll`
 
 ```ts
 import { guild } from "@guildxyz/sdk";
 
-const result = await guild.get(someGuildId);
+const guild = await guild.get(someGuildId);
+const guildPlatforms = await guild.reward.getAll(someGuildId);
+const roles = await guild.role.getAll(someGuildId);
+const admins = await guild.admin.getAll(someGuildId);
 ```
+
+> Note that the role response won't include everything either, rolePlatforms/rewards, and requirements will be missing, those can be fetched with `guild.role.reward.getAll` and `guild.role.requirement.getAll`
 
 #### `getUserAccess`
 
