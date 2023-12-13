@@ -5,6 +5,7 @@ import {
   Schemas,
 } from "@guildxyz/types";
 import { SignerFunction, callGuildAPI } from "../utils";
+import guildAdmin from "./guildAdmin";
 import guildReward from "./guildReward";
 import role from "./role";
 
@@ -12,6 +13,8 @@ const guild = {
   role,
 
   reward: guildReward,
+
+  admin: guildAdmin,
 
   get: (guildIdOrUrlName: number | string) =>
     callGuildAPI<Guild>({ url: `/guilds/${guildIdOrUrlName}`, method: "GET" }),
