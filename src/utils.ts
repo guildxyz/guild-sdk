@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
-import { consts, schemas, Schemas } from "@guildxyz/types";
+import { consts, LeaderboardItem, schemas, Schemas } from "@guildxyz/types";
 import { keccak256, type Wallet } from "ethers";
-import randomBytes from 'randombytes';
+import randomBytes from "randombytes";
 import type { z } from "zod";
 import { globals } from "./common";
 import { GuildAPICallFailed, GuildSDKValidationError } from "./error";
@@ -48,8 +48,8 @@ export const createSigner = {
         hash: keccak256(Buffer.from(stringPayload)),
       });
 
-      if(params.method !== consts.AuthMethod.EOA) {
-        throw new Error("This shouldn't happen, please open an issue")
+      if (params.method !== consts.AuthMethod.EOA) {
+        throw new Error("This shouldn't happen, please open an issue");
       }
 
       const sig = await wallet.signMessage(Buffer.from(getMessage(params)));
@@ -259,3 +259,10 @@ export const createAndAwaitJob = async <
     clearInterval(interval);
   });
 };
+
+export function castDateInLeaderboardItem(leaderboardItem: LeaderboardItem) {
+  return <LeaderboardItem>{
+    ...leaderboardItem,
+    oldestRoleDate: new Date(leaderboardItem.oldestRoleDate),
+  };
+}

@@ -36,6 +36,7 @@ Guild.xyz is the membership layer protocol for web3 communities, making communit
   - [EIP-1271](#support-for-eip-1271-smart-contract-wallets)
 - [Clients](#clients)
   - [Guild client](#guild-client)
+    - [Points](#points)
   - [Guild admin client](#guild-admin-client)
   - [Guild reward client](#guild-reward-client)
   - [Role client](#role-client)
@@ -159,6 +160,49 @@ await client.update(guildId, { description: "Edited" }, signerFunction);
 
 // Delete a guild
 await client.delete(guildId, signerFunction);
+```
+
+##### `Points`
+
+```ts
+// For a given role, create a new point system, and assign some points as reward
+const created = await guild.role.reward.create(
+  guildId,
+  roleId, // This role will have the 5 points reward
+  {
+    guildPlatform: {
+      platformGuildId: "my-points", // Some unique name for your point system
+      platformName: "POINTS",
+      platformGuildData: { name: "coins" }, // Assign a custome name for the points
+    },
+    platformRoleData: { score: 5 }, // Members will get this many points
+  },
+  signerFunction
+);
+
+// Use an existing point system for a role
+const created = await guild.role.reward.create(
+  guildId,
+  roleId, // This role will have the 10 points reward
+  {
+    guildPlatformId, // The ID of the existing guildPlatform (reward) object
+    platformRoleData: { score: 10 },
+  },
+  signerFunction
+);
+
+// Get leaderboard for a specific point guild reward
+const { leaderboard, aroundUser } = await guild.getLeaderboard(
+  guildId,
+  guildPlatformId,
+  signerFunction // Optional. If provided, the response will include an "aroundUser" field, which contains leaderboard items from around the user's position, otherwise it will be undefined
+);
+
+// Get user's rank in a specific reward
+const response = await user.getRankInGuild(userId, guildId, guildPlatformId); // Returns an item of the leaderboard for the given reward
+
+// Get all the points of a user across all relevant rewards
+const response = await user.getPoints(userId, signerFunction);
 ```
 
 #### `Guild admin client`

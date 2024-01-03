@@ -1,10 +1,15 @@
 import {
   GetGuildMembersResponse,
+  GetLeaderboardResponse,
   Guild,
   GuildCreationResponse,
   Schemas,
 } from "@guildxyz/types";
-import { SignerFunction, callGuildAPI } from "../utils";
+import {
+  SignerFunction,
+  callGuildAPI,
+  castDateInLeaderboardItem,
+} from "../utils";
 import guildAdmin from "./guildAdmin";
 import guildReward from "./guildReward";
 import role from "./role";
@@ -36,6 +41,26 @@ const guild = {
       queryParams: params,
       queryParamsSchema: "GuildSearchQueryParamsSchema",
     }),
+
+  /**
+   * If a signer is provided, the response will include an aroundUser field, which holds leaderboard items from around the signer user
+   */
+  getLeaderboard: (
+    guildIdOrUrlName: number | string,
+    guildPlatformId: number,
+    signer?: SignerFunction
+  ) =>
+    callGuildAPI<GetLeaderboardResponse>({
+      url: `/guilds/${guildIdOrUrlName}/points/${guildPlatformId}/leaderboard`,
+      method: "GET",
+      signer,
+    }).then(
+      (result) =>
+        <GetLeaderboardResponse>{
+          aroundUser: result.aroundUser?.map(castDateInLeaderboardItem),
+          leaderboard: result.leaderboard.map(castDateInLeaderboardItem),
+        }
+    ),
 
   getMembers: (guildId: number, signer?: SignerFunction) =>
     callGuildAPI<GetGuildMembersResponse>({
