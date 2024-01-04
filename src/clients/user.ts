@@ -1,11 +1,17 @@
 import {
+  LeaderboardItem,
   MembershipResult,
   PlatformName,
   PublicUserProfile,
   User,
+  UserPointsResponse,
   UserProfile,
 } from "@guildxyz/types";
-import { SignerFunction, callGuildAPI } from "../utils";
+import {
+  SignerFunction,
+  callGuildAPI,
+  castDateInLeaderboardItem,
+} from "../utils";
 import platformUser from "./platformUser";
 import userAddress from "./userAddress";
 
@@ -19,6 +25,23 @@ const user = {
       url: `/users/${userIdOrAddress}`,
       method: "GET",
     }),
+
+  getPoints: (userIdOrAddress: number | string, signer: SignerFunction) =>
+    callGuildAPI<UserPointsResponse>({
+      url: `/users/${userIdOrAddress}/points`,
+      method: "GET",
+      signer,
+    }),
+
+  getRankInGuild: (
+    userIdOrAddress: number | string,
+    guildIdOrUrlName: number | string,
+    guildPlatformId: number
+  ) =>
+    callGuildAPI<LeaderboardItem>({
+      url: `/guilds/${guildIdOrUrlName}/points/${guildPlatformId}/users/${userIdOrAddress}`,
+      method: "GET",
+    }).then(castDateInLeaderboardItem),
 
   getProfile: <Sig extends SignerFunction | "_" = "_">(
     userIdOrAddress: string | number,

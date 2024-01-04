@@ -1,6 +1,6 @@
 {
   "name": "@guildxyz/sdk",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "SDK for Guild.xyz Public API ",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -43,7 +43,7 @@
     "testWithPrivileged": "npx dotenv-cli -e .test.privileged.env -- npm run test"
   },
   "dependencies": {
-    "@guildxyz/types": "^1.3.0",
+    "@guildxyz/types": "^1.3.2",
     "ethers": "^6.7.1",
     "randombytes": "^2.1.0"
   },
