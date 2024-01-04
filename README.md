@@ -173,7 +173,7 @@ const created = await guild.role.reward.create(
     guildPlatform: {
       platformGuildId: "my-points", // Some unique name for your point system
       platformName: "POINTS",
-      platformGuildData: { name: "coins" }, // Assign a custome name for the points
+      platformGuildData: { name: "coins" }, // Assign a custom name for the points
     },
     platformRoleData: { score: 5 }, // Members will get this many points
   },
@@ -199,7 +199,7 @@ const { leaderboard, aroundUser } = await guild.getLeaderboard(
 );
 
 // Get user's rank in a specific reward
-const response = await user.getRankInGuild(userId, guildId, guildPlatformId); // Returns an item of the leaderboard for the given reward
+const response = await user.getRankInGuild(userId, guildId, guildPlatformId); // Returns the leaderboard position of a user for the given reward
 
 // Get all the points of a user across all relevant rewards
 const response = await user.getPoints(userId, signerFunction);
