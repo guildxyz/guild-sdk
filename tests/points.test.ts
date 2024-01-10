@@ -1,69 +1,77 @@
-import { LeaderboardItem, RoleReward, UserPointsItem } from "@guildxyz/types";
-import { Wallet } from "ethers";
-import { describe, expect, test } from "vitest";
-import { createGuildClient, createSigner } from "../src";
+import {
+  LeaderboardItem,
+  RoleCreationResponse,
+  RoleReward,
+  UserPointsItem,
+} from "@guildxyz/types";
+import { describe, expect, it, test } from "vitest";
+import { CLIENT, TEST_ADDRESS, TEST_SIGNER, TEST_USER } from "./common";
+import { createTestGuild } from "./utils";
 
-const TEST_WALLET = new Wallet(process.env.PRIVATE_KEY!);
-const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(TEST_WALLET);
-const TEST_USER_ID = 4069666;
+const guild = await createTestGuild();
+const role1 = guild.roles[0];
 
-// https://guild.xyz/guild-for-sdk-points-test
-const TEST_GUILD_DATA = {
-  urlName: "guild-for-sdk-points-test",
-  guildId: 58167,
-  roleId1: 98849,
-  roleId2: 98850,
-};
-
-const { guild, user } = createGuildClient("vitest");
+let createdRolePlatform: RoleReward;
+let role2: RoleCreationResponse;
 
 describe("points", () => {
+  it("created second role", async () => {
+    role2 = await CLIENT.guild.role.create(
+      guild.id,
+      {
+        name: "Role 2",
+        requirements: [{ type: "FREE" }],
+      },
+      TEST_SIGNER
+    );
+
+    expect(role2.id).toBeGreaterThan(0);
+  });
+
   test("initially has no guildPlatform", async () => {
-    const guildPlatforms = await guild.reward.getAll(
-      TEST_GUILD_DATA.guildId,
-      TEST_WALLET_SIGNER
+    const guildPlatforms = await CLIENT.guild.reward.getAll(
+      guild.id,
+      TEST_SIGNER
     );
 
     expect(guildPlatforms).toHaveLength(0);
   });
 
-  let createdRolePlatform: RoleReward;
-
   test("can create a points reward", async () => {
-    createdRolePlatform = await guild.role.reward.create(
-      TEST_GUILD_DATA.guildId,
-      TEST_GUILD_DATA.roleId1,
+    createdRolePlatform = await CLIENT.guild.role.reward.create(
+      guild.id,
+      role1.id,
       {
         guildPlatform: {
           platformGuildId: "my-points",
           platformName: "POINTS",
           platformGuildData: { name: "coins" },
         },
-        platformRoleData: { score: 5 },
+        platformRoleData: { score: "5" },
       },
-      TEST_WALLET_SIGNER
+      TEST_SIGNER
     );
 
     expect(createdRolePlatform.platformRoleData).toEqual({ score: "5" });
   });
 
   test("can create a points reward for other role", async () => {
-    createdRolePlatform = await guild.role.reward.create(
-      TEST_GUILD_DATA.guildId,
-      TEST_GUILD_DATA.roleId2,
+    createdRolePlatform = await CLIENT.guild.role.reward.create(
+      guild.id,
+      role2.id,
       {
         guildPlatformId: createdRolePlatform.guildPlatformId,
-        platformRoleData: { score: 10 },
+        platformRoleData: { score: "10" },
       },
-      TEST_WALLET_SIGNER
+      TEST_SIGNER
     );
 
     expect(createdRolePlatform.platformRoleData).toEqual({ score: "10" });
   });
 
   test("get leaderboard - not signed", async () => {
-    const { leaderboard, aroundUser } = await guild.getLeaderboard(
-      TEST_GUILD_DATA.guildId,
+    const { leaderboard, aroundUser } = await CLIENT.guild.getLeaderboard(
+      guild.id,
       createdRolePlatform.guildPlatformId
     );
 
@@ -71,18 +79,18 @@ describe("points", () => {
     expect(aroundUser).toBeFalsy();
     expect(leaderboard).toHaveLength(1);
     expect(leaderboard[0]).toMatchObject(<LeaderboardItem>{
-      roleIds: [TEST_GUILD_DATA.roleId1, TEST_GUILD_DATA.roleId2],
-      userId: TEST_USER_ID,
+      roleIds: [role1.id, role2.id],
+      userId: TEST_USER.id,
       totalPoints: 15,
       // rank: 1,
     });
   });
 
   test("get leaderboard - signed", async () => {
-    const { leaderboard, aroundUser } = await guild.getLeaderboard(
-      TEST_GUILD_DATA.guildId,
+    const { leaderboard, aroundUser } = await CLIENT.guild.getLeaderboard(
+      guild.id,
       createdRolePlatform.guildPlatformId,
-      TEST_WALLET_SIGNER
+      TEST_SIGNER
     );
 
     expect(leaderboard).toBeTruthy();
@@ -90,52 +98,52 @@ describe("points", () => {
     expect(aroundUser).toHaveLength(1);
     expect(leaderboard).toHaveLength(1);
     expect(leaderboard[0]).toMatchObject(<LeaderboardItem>{
-      roleIds: [TEST_GUILD_DATA.roleId1, TEST_GUILD_DATA.roleId2],
-      userId: TEST_USER_ID,
+      roleIds: [role1.id, role2.id],
+      userId: TEST_USER.id,
       totalPoints: 15,
       // rank: 1,
     });
     expect(aroundUser![0]).toMatchObject(<LeaderboardItem>{
-      roleIds: [TEST_GUILD_DATA.roleId1, TEST_GUILD_DATA.roleId2],
-      userId: TEST_USER_ID,
+      roleIds: [role1.id, role2.id],
+      userId: TEST_USER.id,
       totalPoints: 15,
       // rank: 1,
     });
   });
 
   test("get user points", async () => {
-    const response = await user.getPoints(TEST_USER_ID, TEST_WALLET_SIGNER);
+    const response = await CLIENT.user.getPoints(TEST_USER.id, TEST_SIGNER);
 
     expect(response).toHaveLength(1);
     expect(response[0]).toEqual(<UserPointsItem>{
-      guildId: TEST_GUILD_DATA.guildId,
+      guildId: guild.id,
       guildPlatformId: createdRolePlatform.guildPlatformId,
-      roleIds: [TEST_GUILD_DATA.roleId1, TEST_GUILD_DATA.roleId2],
+      roleIds: [role1.id, role2.id],
       totalPoints: 15,
     });
   });
 
   test("get user rank", async () => {
-    const response = await user.getRankInGuild(
-      TEST_USER_ID,
-      TEST_GUILD_DATA.guildId,
+    const response = await CLIENT.user.getRankInGuild(
+      TEST_USER.id,
+      guild.id,
       createdRolePlatform.guildPlatformId
     );
 
     expect(response).toMatchObject({
-      userId: TEST_USER_ID,
-      roleIds: [TEST_GUILD_DATA.roleId1, TEST_GUILD_DATA.roleId2],
+      userId: TEST_USER.id,
+      roleIds: [role1.id, role2.id],
       totalPoints: 15,
       rank: 1,
-      address: TEST_WALLET.address.toLowerCase(),
+      address: TEST_ADDRESS,
     });
   });
 
   test("can delete guildPlatform", async () => {
-    await guild.reward.delete(
-      TEST_GUILD_DATA.guildId,
+    await CLIENT.guild.reward.delete(
+      guild.id,
       createdRolePlatform.guildPlatformId,
-      TEST_WALLET_SIGNER
+      TEST_SIGNER
     );
   });
 });

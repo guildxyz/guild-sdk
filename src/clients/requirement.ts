@@ -31,7 +31,7 @@ const requirement = {
     requirementCreationParams: Schemas["RequirementCreationPayload"],
     signer: SignerFunction
   ) =>
-    callGuildAPI<Requirement>({
+    callGuildAPI<Schemas["RequirementCreateResponse"]>({
       url: `/guilds/${guildIdOrUrlName}/roles/${roleId}/requirements`,
       method: "POST",
       body: {

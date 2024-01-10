@@ -1,89 +1,89 @@
-import { Wallet } from "ethers";
+import { GuildReward } from "@guildxyz/types";
 import { describe } from "node:test";
 import { assert, expect, it } from "vitest";
-import { createGuildClient } from "../../src";
 import { GuildAPICallFailed } from "../../src/error";
-import { createSigner } from "../../src/utils";
+import { CLIENT, TEST_SIGNER } from "../common";
+import { createTestGuild, omit } from "../utils";
 
-const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
-  new Wallet(process.env.PRIVATE_KEY!)
-);
-const GUILD_ID = "sdk-test-guild-62011a";
-const PLATFORM_GUILD_ID = "TEST_PLATFORM_GUILD_ID";
+const guildPlatformToCreate = {
+  platformGuildId: "my-point-system",
+  platformName: "POINTS",
+  platformGuildData: { name: "xp" },
+} as const;
 
-let createdGuildPlatformId: number;
+const guildPlatformUpdate = {
+  platformGuildData: { name: "coins" },
+} as const;
 
-const { guild } = createGuildClient("vitest");
+let createdGuildPlatform: GuildReward;
+
+const guild = await createTestGuild();
 
 describe("guildPlatform client", () => {
   it("Can create guildPlatform", async () => {
-    const created = await guild.reward.create(
-      GUILD_ID,
-      {
-        platformGuildId: PLATFORM_GUILD_ID,
-        platformName: "TELEGRAM",
-      },
-      TEST_WALLET_SIGNER
+    createdGuildPlatform = await CLIENT.guild.reward.create(
+      guild.id,
+      guildPlatformToCreate,
+      TEST_SIGNER
     );
 
-    createdGuildPlatformId = created.id;
-
-    expect(created).toMatchObject({
-      platformGuildId: PLATFORM_GUILD_ID,
-    });
+    expect(createdGuildPlatform).toMatchObject(
+      omit(guildPlatformToCreate, ["platformName"])
+    );
   });
 
   it("Can update guildPlatform", async () => {
-    const updated = await guild.reward.update(
-      GUILD_ID,
-      createdGuildPlatformId,
-      { platformGuildData: { invite: "testInvite" } },
-      TEST_WALLET_SIGNER
+    const updated = await CLIENT.guild.reward.update(
+      guild.id,
+      createdGuildPlatform.id,
+      guildPlatformUpdate,
+      TEST_SIGNER
     );
 
     expect(updated).toMatchObject({
-      platformGuildId: PLATFORM_GUILD_ID,
-      platformGuildData: { invite: "testInvite" },
+      ...omit(guildPlatformToCreate, ["platformName"]),
+      ...guildPlatformUpdate,
     });
   });
 
   it("Can fetch updated guildPlatform", async () => {
-    const fetched = await guild.reward.get(
-      GUILD_ID,
-      createdGuildPlatformId,
-      TEST_WALLET_SIGNER
+    const fetched = await CLIENT.guild.reward.get(
+      guild.id,
+      createdGuildPlatform.id,
+      TEST_SIGNER
     );
 
     expect(fetched).toMatchObject({
-      platformGuildId: PLATFORM_GUILD_ID,
-      platformGuildData: { invite: "testInvite" },
+      ...omit(guildPlatformToCreate, ["platformName"]),
+      ...guildPlatformUpdate,
     });
   });
 
   it("Can fetch updated guildPlatform by guildId", async () => {
-    const fetched = await guild.reward.getAll(GUILD_ID, TEST_WALLET_SIGNER);
+    const fetched = await CLIENT.guild.reward.getAll(guild.id, TEST_SIGNER);
 
     expect(
       fetched.some(
-        ({ platformGuildData }) => platformGuildData.invite === "testInvite"
+        ({ platformGuildData }) =>
+          platformGuildData.name === guildPlatformUpdate.platformGuildData.name
       )
     ).toBeTruthy();
   });
 
   it("Can delete guildPlatform", async () => {
-    await guild.reward.delete(
-      GUILD_ID,
-      createdGuildPlatformId,
-      TEST_WALLET_SIGNER
+    await CLIENT.guild.reward.delete(
+      guild.id,
+      createdGuildPlatform.id,
+      TEST_SIGNER
     );
   });
 
   it("Returns 404 after delete", async () => {
     try {
-      await guild.reward.get(
-        GUILD_ID,
-        createdGuildPlatformId,
-        TEST_WALLET_SIGNER
+      await CLIENT.guild.reward.get(
+        guild.id,
+        createdGuildPlatform.id,
+        TEST_SIGNER
       );
       assert(false);
     } catch (error) {

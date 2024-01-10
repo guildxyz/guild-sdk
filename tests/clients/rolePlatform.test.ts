@@ -1,108 +1,98 @@
-import { Wallet } from "ethers";
-import { afterAll, assert, beforeAll, describe, expect, it } from "vitest";
-import { createGuildClient } from "../../src";
+import { GuildReward, RoleReward } from "@guildxyz/types";
+import { randomBytes } from "crypto";
+import { assert, describe, expect, it } from "vitest";
 import { GuildAPICallFailed } from "../../src/error";
-import { createSigner } from "../../src/utils";
+import { CLIENT, TEST_SIGNER } from "../common";
+import { createTestGuild } from "../utils";
 
-const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
-  new Wallet(process.env.PRIVATE_KEY!)
-);
-const GUILD_ID = "sdk-test-guild-62011a";
-const ROLE_ID = 88123;
+const guild = await createTestGuild();
 
-let guildPlatformId: number;
-let createdRolePlatformId: number;
+const guildPlatformToCreate = {
+  platformGuildId: `my-point-system-${randomBytes(4).toString("hex")}`,
+  platformName: "POINTS",
+  platformGuildData: { name: "xp" },
+} as const;
 
-const { guild } = createGuildClient("vitest");
-
-beforeAll(async () => {
-  const guildPlatforms = await guild.reward.getAll(
-    GUILD_ID,
-    TEST_WALLET_SIGNER
-  );
-
-  const tgPlatform = guildPlatforms.find(({ platformId }) => platformId === 2);
-
-  if (tgPlatform) {
-    guildPlatformId = tgPlatform.id;
-    return;
-  }
-
-  const created = await guild.reward.create(
-    GUILD_ID,
-    {
-      platformGuildId: "FOR_ROLE_PLATFORM_TEST",
-      platformName: "TELEGRAM",
-    },
-    TEST_WALLET_SIGNER
-  );
-
-  guildPlatformId = created.id;
-});
-
-afterAll(async () => {
-  await guild.reward.delete(GUILD_ID, guildPlatformId, TEST_WALLET_SIGNER);
-});
+let createdGuildPlatform: GuildReward;
+let createdRolePlatform: RoleReward;
 
 describe("rolePlatform client", () => {
-  it("Can create rolePlatform", async () => {
-    const created = await guild.role.reward.create(
-      GUILD_ID,
-      ROLE_ID,
-      {
-        guildPlatformId,
-        visibility: "HIDDEN",
-      },
-      TEST_WALLET_SIGNER
+  it("Can create guildPlatform", async () => {
+    createdGuildPlatform = await CLIENT.guild.reward.create(
+      guild.id,
+      guildPlatformToCreate,
+      TEST_SIGNER
     );
 
-    createdRolePlatformId = created.id;
+    expect(createdGuildPlatform.platformGuildId).toEqual(
+      guildPlatformToCreate.platformGuildId
+    );
+  });
 
-    expect(created.visibility).toEqual("HIDDEN");
+  it("Can create rolePlatform", async () => {
+    createdRolePlatform = await CLIENT.guild.role.reward.create(
+      guild.id,
+      guild.roles[0].id,
+      {
+        guildPlatformId: createdGuildPlatform.id,
+        platformRoleData: { score: "5" },
+      },
+      TEST_SIGNER
+    );
+
+    expect(createdRolePlatform).toMatchObject({
+      guildPlatformId: createdGuildPlatform.id,
+      platformRoleData: { score: "5" },
+    });
   });
 
   it("Can update rolePlatform", async () => {
-    const created = await guild.role.reward.update(
-      GUILD_ID,
-      ROLE_ID,
-      createdRolePlatformId,
-      {
-        visibility: "PUBLIC",
-      },
-      TEST_WALLET_SIGNER
+    const updated = await CLIENT.guild.role.reward.update(
+      guild.id,
+      guild.roles[0].id,
+      createdRolePlatform.id,
+      { platformRoleData: { score: "15" } },
+      TEST_SIGNER
     );
 
-    expect(created.visibility).toEqual("PUBLIC");
+    expect(updated.platformRoleData!.score).toEqual("15");
   });
 
   it("Returns updated data", async () => {
-    const created = await guild.role.reward.get(
-      GUILD_ID,
-      ROLE_ID,
-      createdRolePlatformId
+    const created = await CLIENT.guild.role.reward.get(
+      guild.id,
+      guild.roles[0].id,
+      createdRolePlatform.id
     );
 
-    expect(created.visibility).toEqual("PUBLIC");
+    expect(created.platformRoleData!.score).toEqual("15");
   });
 
   it("Returns updated data by role", async () => {
-    const created = await guild.role.reward.getAll(GUILD_ID, ROLE_ID);
+    const created = await CLIENT.guild.role.reward.getAll(
+      guild.id,
+      guild.roles[0].id
+    );
 
-    expect(created).toMatchObject([{ visibility: "PUBLIC" }]);
+    expect(created).toMatchObject([{ platformRoleData: { score: "15" } }]);
   });
 
   it("Can delete rolePlatform", async () => {
-    await guild.role.reward.delete(
-      GUILD_ID,
-      ROLE_ID,
-      createdRolePlatformId,
-      TEST_WALLET_SIGNER
+    await CLIENT.guild.role.reward.delete(
+      guild.id,
+      guild.roles[0].id,
+      createdRolePlatform.id,
+      TEST_SIGNER
     );
   });
 
   it("404 after delete", async () => {
     try {
-      await guild.role.reward.get(GUILD_ID, ROLE_ID, createdRolePlatformId);
+      await CLIENT.guild.role.reward.get(
+        guild.id,
+        guild.roles[0].id,
+        createdRolePlatform.id
+      );
       assert(false);
     } catch (error) {
       expect(error).toBeInstanceOf(GuildAPICallFailed);

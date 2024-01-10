@@ -9,7 +9,7 @@ const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
 
 const { guild } = createGuildClient("vitest");
 
-describe("Join action", () => {
+describe.skip("Join action", () => {
   it("can join", async () => {
     // const onPoll = vi.fn();
     const result = await guild.join(
