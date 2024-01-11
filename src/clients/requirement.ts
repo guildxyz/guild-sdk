@@ -1,4 +1,8 @@
-import { Requirement, Schemas } from "@guildxyz/types";
+import {
+  Requirement,
+  RequirementUpdatePayload,
+  Schemas,
+} from "@guildxyz/types";
 import { SignerFunction, callGuildAPI } from "../utils";
 
 const requirement = {
@@ -45,7 +49,7 @@ const requirement = {
     guildIdOrUrlName: string | number,
     roleId: number,
     requirementId: number,
-    requirementUpdateParams: Schemas["RequirementUpdatePayload"],
+    requirementUpdateParams: RequirementUpdatePayload,
     signer: SignerFunction
   ) =>
     callGuildAPI<Requirement>({
