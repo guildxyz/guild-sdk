@@ -36,7 +36,7 @@ describe.concurrent("callGuildAPI", () => {
         method: "POST",
         body: {
           schema: "RequirementCreationPayloadSchema",
-          data: { type: "ALLOWLIST" },
+          data: { type: "ALLOWLIST", data: { addresses: [] } },
         },
         signer,
       });

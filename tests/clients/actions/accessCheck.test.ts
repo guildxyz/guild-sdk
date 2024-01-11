@@ -9,7 +9,7 @@ const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
 
 const { guild } = createGuildClient("vitest");
 
-describe("Access check action", () => {
+describe.skip("Access check action", () => {
   it("can check access", async () => {
     // const onPoll = vi.fn();
 

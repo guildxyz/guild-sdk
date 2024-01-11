@@ -1,36 +1,34 @@
 import { Wallet } from "ethers";
 import { describe, expect, it } from "vitest";
-import { GuildAPICallFailed, createGuildClient, createSigner } from "../../src";
+import { GuildAPICallFailed } from "../../src";
+import { CLIENT, TEST_SIGNER, TEST_USER } from "../common";
+import { createTestGuild } from "../utils";
 
-const client = createGuildClient("vitest");
-
-const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
-  new Wallet(process.env.PRIVATE_KEY!)
-);
-const GUILD_ID = "sdk-test-guild-62011a";
 const adminAddress = Wallet.createRandom().address.toLowerCase();
+
+const guild = await createTestGuild();
 
 describe("Guild admins", () => {
   it("get all", async () => {
-    const admins = await client.guild.admin.getAll(1985);
+    const admins = await CLIENT.guild.admin.getAll(guild.id);
     expect(admins.length).toBeGreaterThan(0);
   });
 
   it("get", async () => {
-    const admin = await client.guild.admin.get(1985, 45);
-    expect(admin).toMatchObject({ userId: 45 });
+    const admin = await CLIENT.guild.admin.get(guild.id, TEST_USER.id);
+    expect(admin).toMatchObject({ userId: TEST_USER.id });
   });
 
   let adminUserId: number;
 
   it("create", async () => {
-    const newAdmin = await client.guild.admin.create(
-      GUILD_ID,
+    const newAdmin = await CLIENT.guild.admin.create(
+      guild.id,
       {
         address: adminAddress,
         isOwner: false,
       },
-      TEST_WALLET_SIGNER
+      TEST_SIGNER
     );
 
     adminUserId = newAdmin.userId;
@@ -39,22 +37,22 @@ describe("Guild admins", () => {
   });
 
   it("get created admin", async () => {
-    const admin = await client.guild.admin.get(GUILD_ID, adminUserId);
+    const admin = await CLIENT.guild.admin.get(guild.id, adminUserId);
     expect(admin).toMatchObject({ userId: adminUserId, isOwner: false });
   });
 
   it("delete", async () => {
-    await client.guild.admin.delete(
-      GUILD_ID,
+    await CLIENT.guild.admin.delete(
+      guild.id,
       adminUserId,
 
-      TEST_WALLET_SIGNER
+      TEST_SIGNER
     );
   });
 
   it("can't get created admin", async () => {
     try {
-      await client.guild.admin.get(GUILD_ID, adminUserId);
+      await CLIENT.guild.admin.get(guild.id, adminUserId);
     } catch (error) {
       expect(error).toBeInstanceOf(GuildAPICallFailed);
       expect(error.statusCode).toEqual(404);

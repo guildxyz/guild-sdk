@@ -1,94 +1,120 @@
+import { Schemas } from "@guildxyz/types";
 import { Wallet } from "ethers";
 import { assert, describe, expect, it } from "vitest";
-import { createGuildClient } from "../../src";
-import { GuildAPICallFailed } from "../../src/error";
-import { createSigner } from "../../src/utils";
+import { GuildAPICallFailed, GuildSDKValidationError } from "../../src/error";
+import { CLIENT, TEST_SIGNER } from "../common";
+import { createTestGuild, omit } from "../utils";
 
-const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
-  new Wallet(process.env.PRIVATE_KEY!)
-);
-const GUILD_ID = "sdk-test-guild-62011a";
-const ROLE_ID = 88123;
-const PRE_EXISTING_REQUIREMENT_ID = 284075;
+const ALLOWLIST_ADDRESS = Wallet.createRandom().address;
 
-const { guild } = createGuildClient("vitest");
+const guild = await createTestGuild();
+let createdRequirement: Schemas["RequirementCreateResponse"];
 
-describe.concurrent("Requirement client", () => {
-  it("Can get a requirement", async () => {
-    const role = await guild.role.requirement.get(
-      GUILD_ID,
-      ROLE_ID,
-      PRE_EXISTING_REQUIREMENT_ID
+describe("Requirement client", () => {
+  const requirementToCreate: Schemas["RequirementCreationPayload"] = {
+    type: "ALLOWLIST",
+    data: { addresses: [] },
+  };
+
+  it("Can create requirement", async () => {
+    createdRequirement = await CLIENT.guild.role.requirement.create(
+      guild.id,
+      guild.roles[0].id,
+      requirementToCreate,
+      TEST_SIGNER
     );
-    expect(role.type).toEqual("ALLOWLIST");
+
+    expect(createdRequirement).toMatchObject(requirementToCreate);
   });
 
-  it("Can get requirements of role", async () => {
-    const roles = await guild.role.requirement.getAll(GUILD_ID, ROLE_ID);
-
-    expect(roles).toMatchObject([{ type: "ALLOWLIST" }]);
+  it("Can get a requirement", async () => {
+    const role = await CLIENT.guild.role.requirement.get(
+      guild.id,
+      guild.roles[0].id,
+      createdRequirement.id
+    );
+    expect(role).toMatchObject(
+      omit(createdRequirement, ["deletedRequirements"])
+    );
   });
 
-  describe("requirement create - update - delete", () => {
-    let createdRequirementId: number;
+  it("Can get all requirements of role", async () => {
+    const roles = await CLIENT.guild.role.requirement.getAll(
+      guild.id,
+      guild.roles[0].id
+    );
 
-    it("Can create requirement", async () => {
-      const created = await guild.role.requirement.create(
-        GUILD_ID,
-        ROLE_ID,
-        { type: "ALLOWLIST", data: { addresses: [] } },
-        TEST_WALLET_SIGNER
+    expect(roles).toMatchObject([
+      omit(createdRequirement, ["deletedRequirements"]),
+    ]);
+  });
+
+  it("Can update requirement", async () => {
+    const created = await CLIENT.guild.role.requirement.update(
+      guild.id,
+      guild.roles[0].id,
+      createdRequirement.id,
+      { data: { addresses: [ALLOWLIST_ADDRESS] } },
+      TEST_SIGNER
+    );
+    expect(created.data.addresses).toEqual([ALLOWLIST_ADDRESS.toLowerCase()]);
+  });
+
+  it("Can't change requirement type", async () => {
+    try {
+      await CLIENT.guild.role.requirement.update(
+        guild.id,
+        guild.roles[0].id,
+        createdRequirement.id,
+        { type: "FREE" } as any,
+        TEST_SIGNER
       );
+      assert(false);
+    } catch (error) {
+      expect(error).toBeInstanceOf(GuildSDKValidationError);
+    }
+  });
 
-      createdRequirementId = created.id;
-      expect(created).toMatchObject({
-        type: "ALLOWLIST",
-        data: { addresses: [] },
-        isNegated: false,
-      });
-    });
+  it("Returns edited requirement", async () => {
+    const role = await CLIENT.guild.role.requirement.get(
+      guild.id,
+      guild.roles[0].id,
+      createdRequirement.id
+    );
 
-    it("Can update requirement", async () => {
-      const created = await guild.role.requirement.update(
-        GUILD_ID,
-        ROLE_ID,
-        createdRequirementId,
-        { isNegated: true },
-        TEST_WALLET_SIGNER
+    expect(role.data.addresses).toEqual([ALLOWLIST_ADDRESS.toLowerCase()]);
+  });
+
+  // This is needed, so we can test deletion
+  it("Create one more requirement", async () => {
+    await CLIENT.guild.role.requirement.create(
+      guild.id,
+      guild.roles[0].id,
+      { type: "ALLOWLIST", data: { addresses: [] } },
+      TEST_SIGNER
+    );
+  });
+
+  it("Can delete requirement", async () => {
+    await CLIENT.guild.role.requirement.delete(
+      guild.id,
+      guild.roles[0].id,
+      createdRequirement.id,
+      TEST_SIGNER
+    );
+  });
+
+  it("Doesn't return after delete", async () => {
+    try {
+      await CLIENT.guild.role.requirement.get(
+        guild.id,
+        guild.roles[0].id,
+        createdRequirement.id
       );
-      expect(created.isNegated).toEqual(true);
-    });
-
-    it("Returns edited requirement", async () => {
-      const role = await guild.role.requirement.get(
-        GUILD_ID,
-        ROLE_ID,
-        createdRequirementId
-      );
-      expect(role.isNegated).toEqual(true);
-    });
-
-    it("Can delete requirement", async () => {
-      await guild.role.requirement.delete(
-        GUILD_ID,
-        ROLE_ID,
-        createdRequirementId,
-        TEST_WALLET_SIGNER
-      );
-    });
-
-    it("Doesn't return after delete", async () => {
-      try {
-        await guild.role.requirement.get(
-          GUILD_ID,
-          ROLE_ID,
-          createdRequirementId
-        );
-        assert(false);
-      } catch (error) {
-        expect(error).toBeInstanceOf(GuildAPICallFailed);
-        expect(error.statusCode).toEqual(404);
-      }
-    });
+      assert(false);
+    } catch (error) {
+      expect(error).toBeInstanceOf(GuildAPICallFailed);
+      expect(error.statusCode).toEqual(404);
+    }
   });
 });

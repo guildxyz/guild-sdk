@@ -1,61 +1,47 @@
+import { randomBytes } from "crypto";
 import { Wallet } from "ethers";
 import { describe, expect, it } from "vitest";
-import { createGuildClient } from "../../src";
 import { createSigner } from "../../src/utils";
+import { CLIENT, TEST_ADDRESS, TEST_SIGNER } from "../common";
 
-const { user } = createGuildClient("vitest");
-
-const TEST_WALLET_ADDRESS = new Wallet(process.env.PRIVATE_KEY!).address;
-const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
-  new Wallet(process.env.PRIVATE_KEY!)
-);
-
-const ADDRESS_TO_LINK = new Wallet(
-  process.env.PRIVATE_KEY_FOR_ADDRESS_LINK!
-).address.toLowerCase();
-
-const WALLET_TO_LINK_SIGNER = createSigner.fromEthersWallet(
-  new Wallet(process.env.PRIVATE_KEY_FOR_ADDRESS_LINK!)
-);
+const NEW_WALLET = new Wallet(randomBytes(32).toString("hex"));
+const NEW_ADDRESS = NEW_WALLET.address.toLowerCase();
+const NEW_SIGNER = createSigner.fromEthersWallet(NEW_WALLET);
 
 describe("userAddress client", () => {
   it("Can create userAddress", async () => {
-    const created = await user.address.create(
-      TEST_WALLET_ADDRESS,
-      WALLET_TO_LINK_SIGNER,
-      TEST_WALLET_SIGNER
+    const created = await CLIENT.user.address.create(
+      TEST_ADDRESS,
+      NEW_SIGNER,
+      TEST_SIGNER
     );
 
     expect(created).toMatchObject({
-      address: ADDRESS_TO_LINK,
+      address: NEW_ADDRESS,
       isPrimary: false,
     });
   });
 
   it("Can get linked address", async () => {
-    const address = await user.address.get(
-      TEST_WALLET_ADDRESS,
-      ADDRESS_TO_LINK,
-      TEST_WALLET_SIGNER
+    const address = await CLIENT.user.address.get(
+      TEST_ADDRESS,
+      NEW_ADDRESS,
+      TEST_SIGNER
     );
 
-    expect(address.address).toEqual(ADDRESS_TO_LINK);
+    expect(address.address).toEqual(NEW_ADDRESS);
   });
 
   it("Can get linked addresses", async () => {
-    const addresses = await user.address.getAll(
-      TEST_WALLET_ADDRESS,
-      TEST_WALLET_SIGNER
+    const addresses = await CLIENT.user.address.getAll(
+      TEST_ADDRESS,
+      TEST_SIGNER
     );
 
     expect(addresses.length).toEqual(2);
   });
 
   it("Can delete userAddress", async () => {
-    await user.address.delete(
-      TEST_WALLET_ADDRESS,
-      ADDRESS_TO_LINK,
-      TEST_WALLET_SIGNER
-    );
+    await CLIENT.user.address.delete(TEST_ADDRESS, NEW_ADDRESS, TEST_SIGNER);
   });
 });

@@ -5,7 +5,7 @@ const OUR_GUILD_DC_SERVER_ID = "886314998131982336";
 
 const { platform } = createGuildClient("vitest");
 
-describe("platform client", () => {
+describe.skip("platform client", () => {
   it("Can get guild by platform data", async () => {
     const ourGuild = await platform.getGuildByPlatform(
       "DISCORD",

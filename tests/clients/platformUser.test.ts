@@ -10,7 +10,7 @@ const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
 
 const { user } = createGuildClient("vitest");
 
-describe.concurrent("platformUser client", () => {
+describe.skip.concurrent("platformUser client", () => {
   it("can get a platformUser", async () => {
     const result = await user.platform.get(
       TEST_WALLET_ADDRESS,

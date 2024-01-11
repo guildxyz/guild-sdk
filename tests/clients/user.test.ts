@@ -1,62 +1,61 @@
 import { randomBytes } from "crypto";
 import { Wallet } from "ethers";
-import { describe, expect, it } from "vitest";
-import { createGuildClient } from "../../src";
+import { assert, describe, expect, it } from "vitest";
+import { GuildAPICallFailed } from "../../src";
 import { createSigner } from "../../src/utils";
+import { CLIENT } from "../common";
 
-const { user } = createGuildClient("vitest");
+const NEW_WALLET = new Wallet(randomBytes(32).toString("hex"));
+const NEW_ADDRESS = NEW_WALLET.address.toLowerCase();
+const NEW_SIGNER = createSigner.fromEthersWallet(NEW_WALLET);
 
-const TEST_WALLET_ADDRESS = new Wallet(process.env.PRIVATE_KEY!).address;
-const TEST_WALLET_SIGNER = createSigner.fromEthersWallet(
-  new Wallet(process.env.PRIVATE_KEY!)
-);
+describe("User client", () => {
+  it("user initially doesn't exist", async () => {
+    try {
+      await CLIENT.user.get(NEW_ADDRESS);
+      assert(false);
+    } catch (error) {
+      expect(error).toBeInstanceOf(GuildAPICallFailed);
+      expect((error as GuildAPICallFailed).statusCode).toEqual(404);
+    }
+  });
 
-const WALLET_OF_CREATED_USER = new Wallet(randomBytes(32).toString("hex"));
-const SIGNER_OF_CREATED_USER = createSigner.fromEthersWallet(
-  WALLET_OF_CREATED_USER
-);
+  it("created user with a signed request", async () => {
+    const profile = await CLIENT.user.getProfile(NEW_ADDRESS, NEW_SIGNER);
 
-describe.concurrent("User client", () => {
-  it("Can fetch user", async () => {
-    const fetchedUser = await user.get(TEST_WALLET_ADDRESS);
+    expect(profile.addresses).toMatchObject([{ address: NEW_ADDRESS }]);
+  });
+
+  it("can fetch user", async () => {
+    const fetchedUser = await CLIENT.user.get(NEW_ADDRESS);
 
     expect(fetchedUser.id).toBeGreaterThan(0);
   });
 
-  it("Can fetch user public user profile", async () => {
-    const fetchedUserProfile = await user.getProfile(TEST_WALLET_ADDRESS);
+  it("can fetch user public user profile", async () => {
+    const fetchedUserProfile = await CLIENT.user.getProfile(NEW_ADDRESS);
 
     expect(fetchedUserProfile.id).toBeGreaterThan(0);
-    expect("publicKey" in fetchedUserProfile).toBeTruthy();
   });
 
   it("Can fetch user private user profile", async () => {
-    const fetchedUserProfile = await user.getProfile(
-      TEST_WALLET_ADDRESS,
-      TEST_WALLET_SIGNER
+    const fetchedUserProfile = await CLIENT.user.getProfile(
+      NEW_ADDRESS,
+      NEW_SIGNER
     );
 
     expect(fetchedUserProfile.id).toBeGreaterThan(0);
-    expect(fetchedUserProfile.addresses).toHaveLength(1);
-    expect("publicKey" in fetchedUserProfile).toBeTruthy();
+    expect(fetchedUserProfile.addresses).toMatchObject([
+      { address: NEW_ADDRESS },
+    ]);
   });
 
   it("Can fetch memberships", async () => {
-    const memberships = await user.getMemberships(TEST_WALLET_ADDRESS);
-    expect(memberships.length).toBeGreaterThan(0);
+    const memberships = await CLIENT.user.getMemberships(NEW_ADDRESS);
+    expect(memberships.length).toBe(0);
   });
 
-  describe("user crete - delete", () => {
-    it("can create a user", async () => {
-      const profile = await user.getProfile(
-        WALLET_OF_CREATED_USER.address,
-        SIGNER_OF_CREATED_USER
-      );
-      expect(profile.addresses.length).toBeGreaterThan(0);
-    });
-
-    it("can delete user", async () => {
-      await user.delete(WALLET_OF_CREATED_USER.address, SIGNER_OF_CREATED_USER);
-    });
+  it("can delete user", async () => {
+    await CLIENT.user.delete(NEW_ADDRESS, NEW_SIGNER);
   });
 });

@@ -1,4 +1,8 @@
-import { Requirement, Schemas } from "@guildxyz/types";
+import {
+  Requirement,
+  RequirementUpdatePayload,
+  Schemas,
+} from "@guildxyz/types";
 import { SignerFunction, callGuildAPI } from "../utils";
 
 const requirement = {
@@ -31,7 +35,7 @@ const requirement = {
     requirementCreationParams: Schemas["RequirementCreationPayload"],
     signer: SignerFunction
   ) =>
-    callGuildAPI<Requirement>({
+    callGuildAPI<Schemas["RequirementCreateResponse"]>({
       url: `/guilds/${guildIdOrUrlName}/roles/${roleId}/requirements`,
       method: "POST",
       body: {
@@ -45,7 +49,7 @@ const requirement = {
     guildIdOrUrlName: string | number,
     roleId: number,
     requirementId: number,
-    requirementUpdateParams: Schemas["RequirementUpdatePayload"],
+    requirementUpdateParams: RequirementUpdatePayload,
     signer: SignerFunction
   ) =>
     callGuildAPI<Requirement>({
