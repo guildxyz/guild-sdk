@@ -1,7 +1,7 @@
 import { Schemas } from "@guildxyz/types";
 import { Wallet } from "ethers";
 import { assert, describe, expect, it } from "vitest";
-import { GuildAPICallFailed } from "../../src/error";
+import { GuildAPICallFailed, GuildSDKValidationError } from "../../src/error";
 import { CLIENT, TEST_SIGNER } from "../common";
 import { createTestGuild, omit } from "../utils";
 
@@ -54,7 +54,7 @@ describe("Requirement client", () => {
       guild.id,
       guild.roles[0].id,
       createdRequirement.id,
-      { type: "ALLOWLIST", data: { addresses: [ALLOWLIST_ADDRESS] } },
+      { data: { addresses: [ALLOWLIST_ADDRESS] } },
       TEST_SIGNER
     );
     expect(created.data.addresses).toEqual([ALLOWLIST_ADDRESS.toLowerCase()]);
@@ -66,13 +66,12 @@ describe("Requirement client", () => {
         guild.id,
         guild.roles[0].id,
         createdRequirement.id,
-        { type: "FREE" },
+        { type: "FREE" } as any,
         TEST_SIGNER
       );
       assert(false);
     } catch (error) {
-      expect(error).toBeInstanceOf(GuildAPICallFailed);
-      expect(error.statusCode).toEqual(400);
+      expect(error).toBeInstanceOf(GuildSDKValidationError);
     }
   });
 
