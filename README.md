@@ -25,6 +25,18 @@ Guild.xyz is the membership layer protocol for web3 communities, making communit
 
 ⚠️ `1.x.x versions` of the SDK are **_deprecated_**, these versions won't work after **_2024-01-31_**. Please migrate to the latest version. You can find the migration guide [HERE](https://github.com/guildxyz/guild-sdk/blob/main/v2-migration-guide.md#guild-sdk-v2-migration-guide).
 
+## Demo app
+
+A demo app is available [here](https://github.com/guildxyz/guild-sdk/tree/main/examples/next-js), it shows how to:
+
+- Connect wallet (with wagmi)
+- Sign a message
+- Get user profile with signature
+- Fetch data (with SWR)
+  - Guild roles
+  - User memberships
+  - Leaderboard
+
 ## Contents
 
 - [Installation](#installation)

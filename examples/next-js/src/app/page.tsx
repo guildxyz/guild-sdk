@@ -1,12 +1,53 @@
 "use client";
 
+import {
+  Button,
+  ChakraProvider,
+  HStack,
+  ListItem,
+  OrderedList,
+  Spinner,
+  Stack,
+  Text,
+  UnorderedList,
+} from "@chakra-ui/react";
 import { createSigner } from "@guildxyz/sdk";
+import { UserProfile } from "@guildxyz/types";
 import { useState } from "react";
-import { polygon } from "viem/chains";
+import useSWR from "swr";
 import { useAccount, useConnect, useDisconnect, useSignMessage } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 import guildClient from "../lib/guild";
+
+// Id of Our Guild (https://guild.xyz/our-guild)
+// You can check your guild's id with the following endpoint:
+// https://api.guild.xyz/v2/guilds/our-guild
+const GUILD_ID = 1985;
+
+function fetchUserMembershipsInGuild(address: `0x${string}`, guildId: number) {
+  return guildClient.user
+    .getMemberships(address)
+    .then((results) => results.find((item) => item.guildId === guildId));
+}
+
+function fetchRoleNames(guildId: number) {
+  return guildClient.guild.role
+    .getAll(guildId)
+    .then((roles) =>
+      Object.fromEntries(roles.map(({ id, name }) => [id, name]))
+    );
+}
+
+async function fetchLeaderboard(guildIdOrUrlName: number | string) {
+  const rewards = await guildClient.guild.reward.getAll(guildIdOrUrlName);
+
+  // platformId === 13 means that the reward is point-based
+  const pointsReward = rewards.find((reward) => reward.platformId === 13);
+
+  // The guildPlatformId parameter could also be hardcoded
+  return guildClient.guild.getLeaderboard(guildIdOrUrlName, pointsReward!.id);
+}
 
 export default function Home() {
   const { address } = useAccount();
@@ -22,51 +63,100 @@ export default function Home() {
   const { disconnect } = useDisconnect();
   const { signMessageAsync } = useSignMessage();
 
-  const [isSmartContractWallet, setIsSmartContractWallet] = useState(false);
+  const [profile, setProfile] = useState<UserProfile>();
+
+  const { data: userMemberships, isLoading: isUserMembershipsLoading } = useSWR(
+    !!address ? ["memberships", address, GUILD_ID] : null,
+    ([, ...props]) => fetchUserMembershipsInGuild(...props)
+  );
+
+  const { data: roles, isLoading: isRolesLoading } = useSWR(
+    ["roles", GUILD_ID],
+    ([, ...props]) => fetchRoleNames(...props)
+  );
+
+  const { data: leaderboard, isLoading: isLeaderboardLoading } = useSWR(
+    ["leaderboard", "walletconnect"],
+    ([, ...params]) => fetchLeaderboard(...params)
+  );
 
   return (
-    <>
-      {address ? (
-        <div>
-          Connected to {address}
-          <input
-            type="checkbox"
-            // value={isSmartContractWallet ? "true" : "false"}
-            checked={isSmartContractWallet}
-            onChange={(event) => {
-              setIsSmartContractWallet(event.target.checked);
-            }}
-          />
-          <button onClick={() => disconnect()}>Disconnect</button>
-          <button
-            onClick={() =>
-              guildClient.user
-                .getProfile(
-                  address,
-                  createSigner.custom(
-                    (message) => signMessageAsync({ message }),
-                    address,
-                    {
-                      chainIdOfSmartContractWallet: isSmartContractWallet
-                        ? polygon.id
-                        : undefined,
-                    }
-                  )
-                )
-                .then(console.log)
-            }
-          >
-            Call Guild API
-          </button>
-        </div>
-      ) : (
-        <>
-          <button onClick={() => connectInjected()}>Connect Injected</button>
-          <button onClick={() => connectWalletConnect()}>
-            Connect WalletConnect
-          </button>
-        </>
-      )}
-    </>
+    <ChakraProvider>
+      <Stack alignItems={"start"} spacing={8} padding={8}>
+        {address ? (
+          <>
+            <HStack>
+              <Text>Connected to {address}</Text>
+
+              <Button onClick={() => disconnect()}>Disconnect</Button>
+            </HStack>
+          </>
+        ) : (
+          <HStack spacing={8}>
+            <Button onClick={() => connectInjected()}>Connect Injected</Button>
+            <Button onClick={() => connectWalletConnect()}>
+              Connect WalletConnect
+            </Button>
+          </HStack>
+        )}
+
+        {!!address && (
+          <>
+            <Text fontSize={"xx-large"}>Fetch user profile</Text>
+            {!profile ? (
+              <Button
+                onClick={() =>
+                  guildClient.user
+                    .getProfile(
+                      address,
+                      createSigner.custom(
+                        (message) => signMessageAsync({ message }),
+                        address
+                      )
+                    )
+                    .then(setProfile)
+                }
+              >
+                Call Guild API
+              </Button>
+            ) : (
+              <Text>{JSON.stringify(profile)}</Text>
+            )}
+          </>
+        )}
+
+        <Text fontSize={"xx-large"}>List Memberships</Text>
+
+        {isUserMembershipsLoading || isRolesLoading ? (
+          <Spinner />
+        ) : !userMemberships || !roles ? (
+          <Text>No data</Text>
+        ) : (
+          <UnorderedList>
+            {userMemberships.roleIds.map((roleId) => (
+              <ListItem key={roleId}>
+                {roles[roleId]} (#{roleId})
+              </ListItem>
+            ))}
+          </UnorderedList>
+        )}
+
+        <Text fontSize={"xx-large"}>Listing Point Leaderboard</Text>
+
+        {isLeaderboardLoading ? (
+          <Spinner />
+        ) : !leaderboard ? (
+          <Text>No data</Text>
+        ) : (
+          <OrderedList>
+            {leaderboard.leaderboard.map(({ userId, address, totalPoints }) => (
+              <ListItem key={userId}>
+                {address} ({totalPoints} points)
+              </ListItem>
+            ))}
+          </OrderedList>
+        )}
+      </Stack>
+    </ChakraProvider>
   );
 }
