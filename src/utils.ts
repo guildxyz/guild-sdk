@@ -211,6 +211,7 @@ export const callGuildAPI = async <ResponseType>(
       url,
       method: params.method,
       body,
+      correlationId: response.headers.get("x-correlation-id"),
     });
   }
 

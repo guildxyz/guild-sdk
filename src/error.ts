@@ -54,18 +54,22 @@ class GuildAPIInvalidResponse extends Error {
 
   body: any;
 
+  correlationId: string;
+
   constructor({
     responseText,
     response,
     url,
     method,
     body,
+    correlationId,
   }: {
     responseText: string;
     response: Response;
     url: string;
     method: string;
     body: any;
+    correlationId?: string | null;
   }) {
     super(
       "Guild API returned invalid data. Please open an issue: https://github.com/guildxyz/guild-sdk/issues"
@@ -76,6 +80,7 @@ class GuildAPIInvalidResponse extends Error {
     this.url = url;
     this.method = method;
     this.body = body;
+    this.correlationId = correlationId ?? "UNKNOWN";
   }
 }
 
