@@ -43,4 +43,40 @@ class GuildSDKValidationError<Err extends ZodError<any>> extends Error {
   }
 }
 
-export { GuildAPICallFailed, GuildSDKValidationError };
+class GuildAPIInvalidResponse extends Error {
+  responseText: string;
+
+  responseCode: number;
+
+  url: string;
+
+  method: string;
+
+  body: any;
+
+  constructor({
+    responseText,
+    response,
+    url,
+    method,
+    body,
+  }: {
+    responseText: string;
+    response: Response;
+    url: string;
+    method: string;
+    body: any;
+  }) {
+    super(
+      "Guild API returned invalid data. Please open an issue: https://github.com/guildxyz/guild-sdk/issues"
+    );
+
+    this.responseCode = response.status;
+    this.responseText = responseText;
+    this.url = url;
+    this.method = method;
+    this.body = body;
+  }
+}
+
+export { GuildAPICallFailed, GuildAPIInvalidResponse, GuildSDKValidationError };

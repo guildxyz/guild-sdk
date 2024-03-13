@@ -4,7 +4,11 @@ import { keccak256, type Wallet } from "ethers";
 import randomBytes from "randombytes";
 import type { z } from "zod";
 import { globals } from "./common";
-import { GuildAPICallFailed, GuildSDKValidationError } from "./error";
+import {
+  GuildAPICallFailed,
+  GuildAPIInvalidResponse,
+  GuildSDKValidationError,
+} from "./error";
 
 export const recreateMessage = (params: Schemas["Authentication"]["params"]) =>
   `${params.msg}\n\nAddress: ${params.addr}\nMethod: ${params.method}${
@@ -163,15 +167,16 @@ export const callGuildAPI = async <ResponseType>(
 
   const isPrivileged = "headers" in (authentication ?? {});
 
+  const body = // eslint-disable-next-line no-nested-ternary
+    params.method === "GET"
+      ? undefined
+      : isPrivileged
+      ? JSON.stringify(parsedPayload)
+      : JSON.stringify(authentication ?? parsedPayload);
+
   const response = await fetch(url, {
     method: params.method,
-    body:
-      // eslint-disable-next-line no-nested-ternary
-      params.method === "GET"
-        ? undefined
-        : isPrivileged
-        ? JSON.stringify(parsedPayload)
-        : JSON.stringify(authentication ?? parsedPayload),
+    body,
     headers: {
       ...(params.method === "GET" && authentication && !isPrivileged
         ? {
@@ -191,7 +196,23 @@ export const callGuildAPI = async <ResponseType>(
     },
   });
 
-  const responseBody = await response.json();
+  const responseBody = await response
+    .json()
+    .catch(() => "FAILED_TO_PARSE_RESPONSE_JSON");
+
+  if (responseBody === "FAILED_TO_PARSE_RESPONSE_JSON") {
+    const responseText = await response
+      .text()
+      .catch(() => "FAILED_TO_PARSE_RESPONSE_TEXT");
+
+    throw new GuildAPIInvalidResponse({
+      responseText,
+      response,
+      url,
+      method: params.method,
+      body,
+    });
+  }
 
   if (!response.ok) {
     throw new GuildAPICallFailed(
