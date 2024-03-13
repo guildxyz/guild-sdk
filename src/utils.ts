@@ -197,6 +197,7 @@ export const callGuildAPI = async <ResponseType>(
   });
 
   const responseBody = await response
+    .clone()
     .json()
     .catch(() => "FAILED_TO_PARSE_RESPONSE_JSON");
 
