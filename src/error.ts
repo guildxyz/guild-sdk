@@ -56,6 +56,8 @@ class GuildAPIInvalidResponse extends Error {
 
   correlationId: string;
 
+  responseHeaders: Record<string, string>;
+
   constructor({
     responseText,
     response,
@@ -75,8 +77,14 @@ class GuildAPIInvalidResponse extends Error {
       "Guild API returned invalid data. Please open an issue: https://github.com/guildxyz/guild-sdk/issues"
     );
 
+    const responseHeaders: Record<string, string> = {};
+    response.headers.forEach((value, key) => {
+      responseHeaders[key] = value;
+    });
+
     this.responseCode = response.status;
     this.responseText = responseText;
+    this.responseHeaders = responseHeaders;
     this.url = url;
     this.method = method;
     this.body = body;
