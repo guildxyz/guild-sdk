@@ -147,7 +147,7 @@ export const callGuildAPI = async <ResponseType>(
       ? `${baseUrl}${params.url}?${new URLSearchParams(queryParamEntries)}`
       : `${baseUrl}${params.url}`;
 
-  let parsedPayload = {};
+  let parsedPayload: any = {};
   if (params.method !== "GET" && !!params.body?.schema && !!params.body?.data) {
     const validationResult = schemas[params.body.schema].safeParse(
       params.body.data
