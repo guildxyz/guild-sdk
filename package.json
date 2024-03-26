@@ -43,7 +43,7 @@
     "testWithPrivileged": "npx dotenv-cli -e .test.privileged.env -- npm run test"
   },
   "dependencies": {
-    "@guildxyz/types": "^1.4.2",
+    "@guildxyz/types": "^1.7.31",
     "ethers": "^6.7.1",
     "randombytes": "^2.1.0"
   },

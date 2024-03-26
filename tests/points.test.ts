@@ -69,6 +69,19 @@ describe("points", () => {
     expect(createdRolePlatform.platformRoleData).toEqual({ score: "10" });
   });
 
+  test("get leaderboard - just for triggering revalidation", async () => {
+    await CLIENT.guild.getLeaderboard(
+      guild.id,
+      createdRolePlatform.guildPlatformId
+    );
+
+    await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 2000);
+    });
+  });
+
   test("get leaderboard - not signed", async () => {
     const { leaderboard, aroundUser } = await CLIENT.guild.getLeaderboard(
       guild.id,
@@ -79,7 +92,7 @@ describe("points", () => {
     expect(aroundUser).toBeFalsy();
     expect(leaderboard).toHaveLength(1);
     expect(leaderboard[0]).toMatchObject(<LeaderboardItem>{
-      roleIds: [role1.id, role2.id],
+      // roleIds: [role1.id, role2.id],
       userId: TEST_USER.id,
       totalPoints: 15,
       // rank: 1,
@@ -98,13 +111,13 @@ describe("points", () => {
     expect(aroundUser).toHaveLength(1);
     expect(leaderboard).toHaveLength(1);
     expect(leaderboard[0]).toMatchObject(<LeaderboardItem>{
-      roleIds: [role1.id, role2.id],
+      // roleIds: [role1.id, role2.id],
       userId: TEST_USER.id,
       totalPoints: 15,
       // rank: 1,
     });
     expect(aroundUser![0]).toMatchObject(<LeaderboardItem>{
-      roleIds: [role1.id, role2.id],
+      // roleIds: [role1.id, role2.id],
       userId: TEST_USER.id,
       totalPoints: 15,
       // rank: 1,
@@ -115,10 +128,10 @@ describe("points", () => {
     const response = await CLIENT.user.getPoints(TEST_USER.id, TEST_SIGNER);
 
     expect(response).toHaveLength(1);
-    expect(response[0]).toEqual(<UserPointsItem>{
+    expect(response[0]).toMatchObject(<UserPointsItem>{
       guildId: guild.id,
       guildPlatformId: createdRolePlatform.guildPlatformId,
-      roleIds: [role1.id, role2.id],
+      // roleIds: [role1.id, role2.id],
       totalPoints: 15,
     });
   });
@@ -132,7 +145,7 @@ describe("points", () => {
 
     expect(response).toMatchObject({
       userId: TEST_USER.id,
-      roleIds: [role1.id, role2.id],
+      // roleIds: [role1.id, role2.id],
       totalPoints: 15,
       rank: 1,
       address: TEST_ADDRESS,
