@@ -1,0 +1,16 @@
+{
+  "name": "custom-point-distribution",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@guildxyz/sdk": "^2.5.0",
+    "viem": "^2.17.10"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  }
+}
