@@ -27,6 +27,7 @@ export async function createTestGuild() {
     {
       name: "SDK Test Guild",
       urlName: `sdk-test-guild-${random}`,
+      contacts: [],
       roles: [{ name: "SDK Test Role", requirements: [{ type: "FREE" }] }],
     },
     TEST_SIGNER
