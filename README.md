@@ -10,7 +10,7 @@
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
     <a href="https://github.com/guildxyz">Github</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-    <a href="https://discord.gg/guildxyz">Discord</a>
+    <a href="https://discord.gg/gu8qMJAp">Discord</a>
 </div>
   
   
