@@ -525,7 +525,7 @@ Note that for example in Telegram's case `platformRoleId` is not required; only 
 
 #### `Example flow from Create Guild to Join`
 
-```typescript
+```ts
 import { createGuildClient, createSigner } from "@guildxyz/sdk";
 import { Wallet } from "ethers";
 import { randomBytes } from "crypto";
