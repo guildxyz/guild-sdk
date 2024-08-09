@@ -7,7 +7,7 @@
   "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/agoraxyz/guild-sdk.git"
+    "url": "https://github.com/guildxyz/guild-sdk.git"
   },
   "keywords": [
     "guild",
@@ -17,22 +17,22 @@
     "agoraspace"
   ],
   "author": {
-    "name": "D3v",
-    "email": "d3v@agora.xyz"
+    "name": "baloo",
+    "email": "cs-balazs@guild.xyz"
   },
   "contributors": [
     {
       "name": "ejay",
-      "email": "ejay@agora.xyz"
+      "email": "ejay@guild.xyz"
     },
     {
       "name": "Devid",
-      "email": "devid@agora.xyz"
+      "email": "devid@guild.xyz"
     }
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/agoraxyz/guildsdk/issues"
+    "url": "https://github.com/guildxyz/guild-sdk/issues"
   },
   "homepage": "https://guild.xyz",
   "scripts": {
