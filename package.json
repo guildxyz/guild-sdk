@@ -1,6 +1,6 @@
 {
   "name": "@guildxyz/sdk",
-  "version": "2.5.0",
+  "version": "2.6.1",
   "description": "SDK for Guild.xyz Public API ",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
