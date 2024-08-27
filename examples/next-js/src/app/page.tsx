@@ -39,14 +39,23 @@ function fetchRoleNames(guildId: number) {
     );
 }
 
-async function fetchLeaderboard(guildIdOrUrlName: number | string) {
+async function fetchLeaderboard(
+  guildIdOrUrlName: number | string,
+  isAllUser: boolean = false
+) {
   const rewards = await guildClient.guild.reward.getAll(guildIdOrUrlName);
 
   // platformId === 13 means that the reward is point-based
   const pointsReward = rewards.find((reward) => reward.platformId === 13);
 
   // The guildPlatformId parameter could also be hardcoded
-  return guildClient.guild.getLeaderboard(guildIdOrUrlName, pointsReward!.id);
+  // isAllUser means, that the response contains the whole leaderboard, while the value is false, it returns the first 500 user & address
+  return guildClient.guild.getLeaderboard(
+    guildIdOrUrlName,
+    pointsReward!.id,
+    undefined,
+    isAllUser
+  );
 }
 
 export default function Home() {
@@ -76,7 +85,7 @@ export default function Home() {
   );
 
   const { data: leaderboard, isLoading: isLeaderboardLoading } = useSWR(
-    ["leaderboard", "walletconnect"],
+    ["leaderboard", "walletconnect", false],
     ([, ...params]) => fetchLeaderboard(...params)
   );
 
