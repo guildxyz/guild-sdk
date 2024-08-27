@@ -59,6 +59,7 @@ const guild = {
         <GetLeaderboardResponse>{
           aroundUser: result.aroundUser?.map(castDateInLeaderboardItem),
           leaderboard: result.leaderboard.map(castDateInLeaderboardItem),
+          isRevalidating: !!result.isRevalidating,
         }
     ),
 
