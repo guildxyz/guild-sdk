@@ -48,10 +48,11 @@ const guild = {
   getLeaderboard: (
     guildIdOrUrlName: number | string,
     guildPlatformId: number,
-    signer?: SignerFunction
+    signer?: SignerFunction,
+    isAllUser: boolean = false
   ) =>
     callGuildAPI<GetLeaderboardResponse>({
-      url: `/guilds/${guildIdOrUrlName}/points/${guildPlatformId}/leaderboard`,
+      url: `/guilds/${guildIdOrUrlName}/points/${guildPlatformId}/leaderboard?isAllUser=${isAllUser}`,
       method: "GET",
       signer,
     }).then(
