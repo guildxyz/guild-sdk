@@ -143,6 +143,13 @@ export default function Home() {
 
         <Text fontSize={"xx-large"}>Listing Point Leaderboard</Text>
 
+        {leaderboard?.isRevalidating && (
+          <Text color="red">
+            Leaderboard is currently revalidating, current data might be
+            inconsistent.
+          </Text>
+        )}
+
         {isLeaderboardLoading ? (
           <Spinner />
         ) : !leaderboard ? (
