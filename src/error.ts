@@ -43,4 +43,53 @@ class GuildSDKValidationError<Err extends ZodError<any>> extends Error {
   }
 }
 
-export { GuildAPICallFailed, GuildSDKValidationError };
+class GuildAPIInvalidResponse extends Error {
+  responseText: string;
+
+  responseCode: number;
+
+  url: string;
+
+  method: string;
+
+  body: any;
+
+  correlationId: string;
+
+  responseHeaders: Record<string, string>;
+
+  constructor({
+    responseText,
+    response,
+    url,
+    method,
+    body,
+    correlationId,
+  }: {
+    responseText: string;
+    response: Response;
+    url: string;
+    method: string;
+    body: any;
+    correlationId?: string | null;
+  }) {
+    super(
+      "Guild API returned invalid data. Please open an issue: https://github.com/guildxyz/guild-sdk/issues"
+    );
+
+    const responseHeaders: Record<string, string> = {};
+    response.headers.forEach((value, key) => {
+      responseHeaders[key] = value;
+    });
+
+    this.responseCode = response.status;
+    this.responseText = responseText;
+    this.responseHeaders = responseHeaders;
+    this.url = url;
+    this.method = method;
+    this.body = body;
+    this.correlationId = correlationId ?? "UNKNOWN";
+  }
+}
+
+export { GuildAPICallFailed, GuildAPIInvalidResponse, GuildSDKValidationError };
