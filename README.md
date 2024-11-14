@@ -6,11 +6,11 @@
   <br/>
   <a href="https://guild.xyz">Application</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-    <a href="https://twitter.com/guildxyz">Twitter</a>
+    <a href="https://x.com/guildxyz">X (formerly Twitter)</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
     <a href="https://github.com/guildxyz">Github</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-    <a href="https://discord.gg/gu8qMJAp">Discord</a>
+    <a href="https://discord.com/invite/KUkghUdk2G">Discord</a>
 </div>
   
   
