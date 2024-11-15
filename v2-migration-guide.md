@@ -68,7 +68,7 @@ const createdGuild = await guild.create(
 
 ## Clients
 
-These clients has changed in the latest version of the SDK, and are now more flexible, and easier to use. The `platformName` parameter is no longer needed, as it is now a property of the client. The `signerAddress` and `sign` parameters are no longer needed either, as the clients now accept a single `signer: SignerFunction` parameter. The `SignerFunction` is a function that takes a payload, and returns a signature. See [Signing a message](#signing-a-message) for more details.
+These clients have changed in the latest version of the SDK, and are now more flexible, and easier to use. The `platformName` parameter is no longer needed, as it is now a property of the client. The `signerAddress` and `sign` parameters are no longer needed either, as the clients now accept a single `signer: SignerFunction` parameter. The `SignerFunction` is a function that takes a payload, and returns a signature. See [Signing a message](#signing-a-message) for more details.
 
 ### Platform
 
@@ -116,7 +116,7 @@ const joinResult = actions.join.await(someGuildId, mySigner, console.log, 2000);
 
 #### `getAll`
 
-Use `guild.getMany` to fetch multiple guilds by their IDs. Use `guild.search` to search for guilds with paginated results. The `roles: string[]` field, containing the names of the guild's roles isn't returned anymore, if needed, it needs to be fetched separatly with a `guild.role.getAll` call
+Use `guild.getMany` to fetch multiple guilds by their IDs. Use `guild.search` to search for guilds with paginated results. The `roles: string[]` field, containing the names of the guild's roles isn't returned anymore, if needed, it needs to be fetched separately with a `guild.role.getAll` call
 
 ```ts
 import { guild } from "@guildxyz/sdk";
@@ -145,7 +145,7 @@ const admins = await guild.admin.getAll(someGuildId);
 
 #### `getUserAccess`
 
-Use `guild.getMemberAccess`. It now accepts user id as well, and optionally a signer to get more detaled output
+Use `guild.getMemberAccess`. It now accepts user id as well, and optionally a signer to get more detailed output
 
 ```ts
 import { guild } from "@guildxyz/sdk";
